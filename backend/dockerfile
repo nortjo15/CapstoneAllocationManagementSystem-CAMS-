@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim-buster
+FROM python:3.13.3
 
 # Set the working directory in the container
 WORKDIR /app
@@ -8,12 +8,11 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Install system dependencies
+# Install any necessary system dependencies (less for SQLite)
+# No need for postgresql-client or libpq-dev for SQLite
 RUN apt-get update && apt-get install -y \
-    postgresql-client \
     build-essential \
-    libpq-dev \
-    gcc \
+    # gcc (might be needed for some Python packages, keep for safety)
     # Clean up APT when done to reduce image size
     && rm -rf /var/lib/apt/lists/*
 
@@ -30,6 +29,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run your Django development server
-# You'll typically run migrations and then the server.
-# This CMD can be overridden by docker-compose, which is typical for development.
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
