@@ -10,7 +10,9 @@ ENV PYTHONUNBUFFERED 1
 
 # Install any necessary system dependencies (less for SQLite)
 # No need for postgresql-client or libpq-dev for SQLite
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \ 
+    postgresql-client \
+    libpq-dev \ 
     build-essential \
     # gcc (might be needed for some Python packages, keep for safety)
     # Clean up APT when done to reduce image size
