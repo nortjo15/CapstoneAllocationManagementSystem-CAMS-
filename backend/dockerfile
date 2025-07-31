@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED 1
 
 # Install any necessary system dependencies (less for SQLite)
 # No need for postgresql-client or libpq-dev for SQLite
-RUN apt-get update && apt-get install -y \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
     postgresql-client \
     libpq-dev \ 
     build-essential \
