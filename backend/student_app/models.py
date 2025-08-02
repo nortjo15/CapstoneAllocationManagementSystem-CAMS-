@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 # name, major, application_submitted not allowed to be null 
 # cwa, email, notes, cv, resume allowed to be null fields 
 class Student(models.Model):
-    student_id = models.charField(max_length=20, primary_key=True)
+    student_id = models.CharField(max_length=8, primary_key=True)
     name = models.CharField(max_length=100, null=False)
     cwa = models.DecimalField(
         max_digits=5,
