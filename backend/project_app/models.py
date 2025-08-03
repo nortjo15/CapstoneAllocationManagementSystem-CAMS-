@@ -79,7 +79,7 @@ class FinalGroup(models.Model):
     
 class FinalGroupMember(models.Model):
     final_group = models.ForeignKey(FinalGroup, on_delete=models.CASCADE, related_name='members')
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='suggested_group_memberships')
+    student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='final_group_member')
 
     class Meta:
         ordering = ['student_id']
