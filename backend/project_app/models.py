@@ -23,7 +23,7 @@ class Project(models.Model):
 class ProjectPreference(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    rank = models.PositiveBigIntegerField()
+    rank = models.PositiveBigIntegerField(MinValueValidator(1))
     created_at = models.DateTimeField(auto_now_add=True) 
 
     class Meta: 
