@@ -46,8 +46,9 @@ class GroupPreference(models.Model):
 
     # Student should not be able to preference themselves
     def clean(self):
-        if self.student == self.target_student:
-            raise ValidationError("A student cannot preference themselves.")
+        if self.student_id is not None and self.target_student_id is not None:
+            if self.student_id == self.target_student_id:
+                raise ValidationError("A student cannot preference themselves.")
         
     def save(self, *args, **kwargs):
         self.clean()

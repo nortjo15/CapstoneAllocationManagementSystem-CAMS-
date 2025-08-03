@@ -18,6 +18,7 @@ class ProjectModelTest(TestCase):
         self.assertEqual(project.capacity, 7)
         self.assertEqual(str(project), f"{project.project_id} - Cybersec Capstone")
 
+# ProjectPreference Model Tests
 class ProjectPreferenceModelTest(TestCase):
     def setUp(self):
         # Create student and projects 
