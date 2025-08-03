@@ -11,6 +11,10 @@ class Project(models.Model):
     description = models.TextField(null=True, blank=True)
     capacity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
+    host_name = models.CharField(max_length=100, null=False)
+    host_email = models.EmailField(null=False)
+    host_phone = models.CharField(max_length=20, null=True, blank=True)
+
     def __str__(self):
         return f"{self.project_id} - {self.title}"
     
