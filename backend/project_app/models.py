@@ -27,3 +27,49 @@ class ProjectPreference(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.project} (Rank {self.rank})"
+    
+# Stores information on a SuggestedGroup
+# Can be Strong, medium or weak (adjust for further functionality as needed  later)
+class SuggestedGroup(models.Model):
+    STRENGTH_CHOICES = [
+        ('strong', 'Strong Group'),
+        ('medium', 'Medium Group'),
+        ('weak', 'Weak Group'),
+    ]
+
+    suggestedgroup_id = models.AutoField(primary_key=True)
+    strength = models.CharField(max_length=6, choices=STRENGTH_CHOICES)
+    notes=models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"SuggestedGroup {self.suggestedgroup_id} ({self.get_strength_display()})"
+    
+# Stores information on each member of a SuggestedGroup
+# Can be used to track students already part of suggestions 
+class SuggestedGroupMember(models.Model):
+    suggested_group = models.ForeignKey(SuggestedGroup, on_delete=models.CASCADE, related_name='members')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='suggested_groups')
+
+    class Meta: 
+        unique_together = ('suggested_group', 'student')
+
+    def __str__(self):
+        return f"{self.student} in {self.suggested_group}"
+    
+# Similar to SuggestedGroup but a finalised one
+class FinalGroup(models.Model):
+    finalgroup_id = models.AutoField(primary_key=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='final_groups')
+    created_by_admin = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"FinalGroup {self.finalgroup_id} for {self.project.title}"
+    
+class FinalGroupMember(models.Model):
+    final_group = models.ForeignKey(FinalGroup, on_delete=models.CASCADE, related_name='members')
+    student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='final_groups')
+
+    def __str__(self):
+        return f"{self.student} in {self.final_group}"
