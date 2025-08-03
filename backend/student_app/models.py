@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
 # Student Information 
 # StudentID is the primary key 
@@ -28,7 +29,7 @@ class Student(models.Model):
     
 # Stores information on a Student's Group Preferences 
 # Can access who a student has preferred or avoided (given preferences)
-# Can access who has preferred or avoided this student (recieved preferences)
+# Can access who has preferred or avoided this student (received preferences)
 class GroupPreference(models.Model):
     PREFERENCE_TYPES = [
         ('like', 'Would Like to Work With'),
@@ -36,11 +37,21 @@ class GroupPreference(models.Model):
     ]
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='given_preferences')
-    target_student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='recieved_preferences')
+    target_student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='received_preferences')
     preference_type = models.CharField(max_length=10, choices=PREFERENCE_TYPES)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('student', 'target_student')
+
+    # Student should not be able to preference themselves
+    def clean(self):
+        if self.student == self.target_student:
+            raise ValidationError("A student cannot preference themselves.")
+        
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.student} → {self.target_student} ({self.preference_type})"

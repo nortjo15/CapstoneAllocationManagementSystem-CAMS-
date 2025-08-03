@@ -28,8 +28,8 @@ class AdminLog(models.Model):
 
     # Generic relation to any target model
     target_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    target_object_id = models.PositiveBigIntegerField()
-    target = GenericForeignKey('target_content_type', 'target_object_id')
+    target_id = models.PositiveBigIntegerField(null=True, blank=True, db_index=True)
+    target = GenericForeignKey('target_content_type', 'target_id')
 
     def __str__(self):
         return f"{self.user.username} - {self.action} {self.target} @ {self.timestamp}"

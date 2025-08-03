@@ -24,9 +24,13 @@ class ProjectPreference(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     rank = models.PositiveBigIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     class Meta: 
-        unique_together = ('student', 'rank') # multiple projects can't be given the same rank
+        unique_together = (
+            ('student', 'rank'), # multiple projects can't be given the same rank
+            ('student', 'project'), # prevent duplicate preferences
+        )
         ordering = ['rank']
 
     def __str__(self):
@@ -53,9 +57,11 @@ class SuggestedGroup(models.Model):
 class SuggestedGroupMember(models.Model):
     suggested_group = models.ForeignKey(SuggestedGroup, on_delete=models.CASCADE, related_name='members')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='suggested_groups')
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     class Meta: 
         unique_together = ('suggested_group', 'student')
+        ordering = ['student_id']
 
     def __str__(self):
         return f"{self.student} in {self.suggested_group}"
@@ -73,7 +79,10 @@ class FinalGroup(models.Model):
     
 class FinalGroupMember(models.Model):
     final_group = models.ForeignKey(FinalGroup, on_delete=models.CASCADE, related_name='members')
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='final_groups')
+    student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='suggested_group_memberships')
+
+    class Meta:
+        ordering = ['student_id']
 
     def __str__(self):
         return f"{self.student} in {self.final_group}"
