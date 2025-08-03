@@ -2,14 +2,8 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from student_app.models import Student, GroupPreference
-from project_app.models import Project, SuggestedGroup
 
 # GroupPreference Model Tests
-from django.test import TestCase
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from student_app.models import Student, GroupPreference
-
 class GroupPreferenceModelTests(TestCase):
     def setUp(self):
         self.student1 = Student.objects.create(
