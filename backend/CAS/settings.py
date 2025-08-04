@@ -54,14 +54,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'CAS.urls'
-LOGIN_REDIRECT_URL = '/dashboard/'          #If loggged in, redirect to url
-LOGOUT_REDIRECT_URL = '/accounts/login/'    #if logged out, redirect to url
-LOGIN_URL = '/accounts/login/'              #login url
+LOGIN_REDIRECT_URL = 'login_success'          #If loggged in, redirect to url
+#LOGOUT_REDIRECT_URL = '/login/'    #if logged out, redirect to url
+#LOGIN_URL = '/login/'              #login url
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], #Added templates folder, can store all html there
+        'DIRS': [BASE_DIR / 'CAS' / 'templates'], #Added templates folder, can store all html there
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

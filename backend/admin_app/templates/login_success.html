@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - CAS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        .user-greeting {
+            color: #667eea;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-link:hover {
+            background: #5a6fd8;
+        }
+        .welcome-message {
+            margin: 2rem 0;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to CAS</h1>
+        
+        {% if user.is_authenticated %}
+            <div class="user-greeting">
+                Hello, {{ user.username }}! 👋
+            </div>
+            <div class="welcome-message">
+                You are successfully logged in to the Campus Administration System.
+            </div>
+        {% else %}
+            <div class="user-greeting">
+                Welcome, Guest! 👋
+            </div>
+            <div class="welcome-message">
+                Please log in to access the Campus Administration System.
+            </div>
+        {% endif %}
+
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    <a href="/admin/" class="nav-link">Admin Panel</a>
+                {% endif %}
+                <a href="/logout/" class="nav-link">Logout</a>
+            {% else %}
+                <a href="/login/" class="nav-link">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
