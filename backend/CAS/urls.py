@@ -17,10 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
+from django.urls import path, include
 from django.conf.urls.static import static 
+from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/students/', include('student_app.urls')),
+    path('api/projects/', include('project_app.urls')),
+    path('api/admins/', include('admin_app.urls')),
+    # Root URL view
+    path('', lambda request: HttpResponse("Welcome to CAS API!")),
 ]
 
 # During development, add URL path to serve resume & CV files. 
