@@ -30,10 +30,17 @@ class Command(BaseCommand):
             help='Path to CSV file to import project data',
             default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_projects.csv')
         )
+        parser.add_argument(
+            '--memberpref-path',
+            type=str, 
+            help='Path to CSV file to import member preference data',
+            default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_group_pref.csv')
+        )
 
     def handle(self, *args, **options):
         student_file = options['path']
         project_file = options['project_path']
+        member_pref_file = options['memberpref_path']
 
         # --- Import Students --- 
         if not os.path.exists(student_file):
@@ -67,25 +74,73 @@ class Command(BaseCommand):
         # --- Import Projects --- 
         if not os.path.exists(project_file):
             self.stdout.write(self.style.ERROR(f"Project file not found: {project_file}"))
-        else: 
-            with open(project_file, newline='', encoding='utf-8') as csvfile: 
-                reader = csv.DictReader(csvfile)
-                count = 0
+            return 
+        
+        with open(project_file, newline='', encoding='utf-8') as csvfile: 
+            reader = csv.DictReader(csvfile)
+            count = 0
 
-                for row in reader: 
-                    title = row['title']
-                    capacity = int(row['capacity'])
-                    host_name = row['host_name']
-                    host_email = row['host_email']
-                    host_phone = row['host_phone']
+            for row in reader: 
+                title = row['title']
+                capacity = int(row['capacity'])
+                host_name = row['host_name']
+                host_email = row['host_email']
+                host_phone = row['host_phone']
 
-                    project = Project.objects.update_or_create(
-                        title=title,
-                        capacity=capacity, 
-                        host_name=host_name, 
-                        host_email=host_email,
-                        host_phone=host_phone
-                    )
+                project, created = Project.objects.update_or_create(
+                    title=title,
+                    capacity=capacity, 
+                    host_name=host_name, 
+                    host_email=host_email,
+                    host_phone=host_phone
+                )
+                if created: 
                     count += 1 
 
-                self.stdout.write(self.style.SUCCESS(f"Successfully created {count} projects."))
+            self.stdout.write(self.style.SUCCESS(f"Successfully created {count} projects."))
+
+        # -- Import Member Preferences --
+        if not os.path.exists(member_pref_file):
+            self.stdout.write(self.style.ERROR(f"Member preference file not found: {member_pref_file}"))
+            return 
+        
+        students = {s.student_id: s for s in Student.objects.all()}
+
+        with open(member_pref_file, newline='', encoding='utf-8') as csvfile: 
+            reader = csv.DictReader(csvfile)
+            count = 0
+
+            GroupPreference.objects.all().delete()
+
+            for row in reader: 
+                student_id = row['student_id']
+                target_student_id = row['target_student_id']
+                preference_type = row['preference_type']
+
+                # Get the actual student reference from the model, not string
+                student = students.get(student_id)
+                target_student = students.get(target_student_id)
+
+                # Skip student if they don't exist
+                if not student or not target_student:
+                    self.stdout.write(self.style.WARNING(
+                        f"Skipping preference with missing student: {student_id}, {target_student_id}"
+                    ))
+                    continue
+
+                member_pref, created = GroupPreference.objects.update_or_create(
+                    student=student, 
+                    target_student=target_student, 
+                    preference_type=preference_type
+                )
+                if created: 
+                    count += 1
+                
+            self.stdout.write(self.style.SUCCESS(f"Successfully added or updated {count} member preferences."))
+
+
+        
+
+        
+
+
