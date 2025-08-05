@@ -12,7 +12,7 @@ from project_app.models import (
     FinalGroupMember
 )
 
-# Generate test data from specified or default file 
+# Generate test data from specified or default files
 # - Stored in project_app/fixtues 
 class Command(BaseCommand):
     help = "Generate test data"
@@ -36,11 +36,18 @@ class Command(BaseCommand):
             help='Path to CSV file to import member preference data',
             default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_group_pref.csv')
         )
+        parser.add_argument(
+            '--projectpref-path',
+            type=str, 
+            help='Path to CSV file to import project preference data',
+            default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_project_pref.csv')
+        )
 
     def handle(self, *args, **options):
         student_file = options['path']
         project_file = options['project_path']
         member_pref_file = options['memberpref_path']
+        project_pref_file = options['projectpref_path']
 
         # --- Import Students --- 
         if not os.path.exists(student_file):
@@ -110,6 +117,7 @@ class Command(BaseCommand):
             reader = csv.DictReader(csvfile)
             count = 0
 
+            # Deleting all existing preferences due to FK constraints 
             GroupPreference.objects.all().delete()
 
             for row in reader: 
@@ -138,6 +146,41 @@ class Command(BaseCommand):
                 
             self.stdout.write(self.style.SUCCESS(f"Successfully added or updated {count} member preferences."))
 
+        # Import Project Preferences
+        if not os.path.exists(project_pref_file):
+            self.stdout.write(self.style.ERROR(f"Project preference file not found: {project_pref_file}"))
+            return 
+
+        with open(project_pref_file, newline='', encoding='utf-8') as csvfile: 
+            reader = csv.DictReader(csvfile)
+            count = 0
+
+            for row in reader:
+                student_id = row['student_id']
+                project_name = row['projectName']
+                rank = int(row['rank'])
+
+                try: 
+                    student = Student.objects.get(student_id=student_id)
+                except Student.DoesNotExist:
+                    self.stdout.write(self.style.WARNING(f"Stuent {student_id} not found. Skipping"))
+                    continue 
+
+                try: 
+                    project = Project.objects.get(title=project_name)
+                except Project.DoesNotExist:
+                    self.stdout.write(self.style.WARNING(f"Project '{project_name} not found. Skipping"))
+                    continue 
+
+                pref, created = ProjectPreference.objects.update_or_create(
+                    student=student, 
+                    rank=rank, 
+                    defaults={'project':project},
+                )
+                if created: 
+                    count += 1
+
+            self.stdout.write(self.style.SUCCESS(f"Successfully imported {count} project preferences."))
 
         
 
