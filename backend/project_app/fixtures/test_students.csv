@@ -1,0 +1,21 @@
+student_id,name,cwa,major,degree
+10000001,John Doe,85.32,Computer Science,Bachelor
+10000002,Jane Smith,91.47,Cybersecurity,Master
+10000003,Alice Johnson,78.05,Software Engineering,Bachelor
+10000004,Bob Williams,66.89,Information Technology,Bachelor
+10000005,Emily Davis,72.34,Computer Science,Master
+10000006,Michael Brown,88.76,Cybersecurity,Bachelor
+10000007,Sarah Wilson,94.15,Software Engineering,Master
+10000008,David Lee,59.48,Information Technology,Bachelor
+10000009,Linda Martinez,80.22,Computer Science,Master
+10000010,James Anderson,69.87,Cybersecurity,Bachelor
+20000011,Mary Thomas,77.90,Software Engineering,Bachelor
+20000012,Robert Jackson,83.45,Information Technology,Master
+20000013,Patricia White,65.12,Computer Science,Bachelor
+20000014,Charles Harris,90.67,Cybersecurity,Master
+20000015,Jennifer Martin,74.88,Software Engineering,Bachelor
+20000016,Thomas Thompson,82.33,Information Technology,Bachelor
+20000017,Karen Garcia,68.55,Computer Science,Master
+20000018,Daniel Martinez,79.99,Cybersecurity,Bachelor
+20000019,Nancy Robinson,85.44,Software Engineering,Master
+20000020,Paul Clark,70.11,Information Technology,Bachelor
