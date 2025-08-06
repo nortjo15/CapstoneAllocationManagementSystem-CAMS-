@@ -42,12 +42,27 @@ class Command(BaseCommand):
             help='Path to CSV file to import project preference data',
             default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_project_pref.csv')
         )
+        parser.add_argument(
+            '--reset',
+            action='store_true',
+            help='Clear tables' 
+        )
 
     def handle(self, *args, **options):
         student_file = options['path']
         project_file = options['project_path']
         member_pref_file = options['memberpref_path']
         project_pref_file = options['projectpref_path']
+
+        # --- Reset Flag Enabled --- 
+        if options['reset']:
+            self.stdout.write("Resetting database tables...")
+            ProjectPreference.objects.all().delete()
+            GroupPreference.objects.all().delete()
+            Project.objects.all().delete()
+            Student.objects.all().delete()
+            self.stdout.write(self.style.SUCCESS("Database tables cleared."))
+            return 
 
         # --- Import Students --- 
         if not os.path.exists(student_file):
