@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/students/', include('student_app.urls')),
     path('api/projects/', include('project_app.urls')),
     path('api/admins/', include('admin_app.urls')),
+    path('test/', admin_views.test_view, name='test'),
     # Root URL view
     path('', lambda request: HttpResponse("Welcome to CAS API!")),
 ]

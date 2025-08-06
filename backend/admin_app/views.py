@@ -33,4 +33,7 @@ def login_view(request):
 
 def login_success(request):
     return render(request, "login_success.html")
+
+def test_view(request):
+    return render(request, "test.html")
 # Create your views here.
