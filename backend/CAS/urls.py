@@ -15,14 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings 
 from django.urls import path, include
 from django.conf.urls.static import static 
 from django.http import HttpResponse
 
+from admin_app import views as admin_views
+
+
 urlpatterns = [
+    path('login/login_success.html/', admin_views.login_success, name='login_success'),
     path('admin/', admin.site.urls),
+    path('login/', admin_views.login_view, name='login'),
     path('api/students/', include('student_app.urls')),
     path('api/projects/', include('project_app.urls')),
     path('api/admins/', include('admin_app.urls')),
@@ -32,5 +37,5 @@ urlpatterns = [
 
 # During development, add URL path to serve resume & CV files. 
 # Map /media/ URL to the media/ folder on disk 
-if settings.DEBUG: 
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#if settings.DEBUG: 
+#    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
