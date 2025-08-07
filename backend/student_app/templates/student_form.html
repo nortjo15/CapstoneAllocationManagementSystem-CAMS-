@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+</head>
+
+<body>
+    <div>
+        <form name="student_form" action="/apiEnpointURL" method= "post">
+            <label for="fullname">Full name</label>
+            <input type="text" name="fullname"><br><br>
+            <label for="studentID">Student ID</label>
+            <input type="text" name="studentID"><br><br>
+
+            <select name = "major" id="major">
+                <option>Select a Major</option>
+                <option value="softwareEngineering">Software Engineering</option>
+                <option value="cybersecurity">Cybersecurity</option>
+                <option value="IT">IT</option>
+            </select><br><br>
+
+            <select name ="projectPreferences" id="projectPreferences">
+                <!-- dynamically populate the list options with the list of projects-->
+            </select><br><br>
+
+            <select name ="memberPreferences" id="memberPreferences">
+                <!-- dynamically populate the list options with the list of members-->
+            </select><br><br>
+
+            <select name ="memberAntiPreferences" id="memberAntiPreferences">
+                <!-- dynamically populate the list options with the list of members-->
+            </select><br><br>
+
+            <label for="resume">Upload Resume</label><Br>
+            <input type="file" id="resume" name="filename"><br><br>
+            <input type="checkbox" name="terms" id="terms">
+            <label for="terms">Agree to Terms</label><br><br>
+            <input type="submit" value="submit">
+        </form>
+    </div>
+    <!-- <script src="https://unpkg.com/petite-vue" defer init></script> -->
+</body>
+</html>

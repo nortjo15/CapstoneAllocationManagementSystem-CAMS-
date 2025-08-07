@@ -1,4 +1,5 @@
 from rest_framework import generics
+from django.shortcuts import render
 from .models import Student, GroupPreference
 from .serializers import StudentSerializer, GroupPreferenceSerializer
 
@@ -14,3 +15,6 @@ class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
 class GroupPreferenceListCreateView(generics.ListCreateAPIView):
     queryset = GroupPreference.objects.all()
     serializer_class = GroupPreferenceSerializer
+
+def student_form(request):
+    return render(request, "student_form.html")
