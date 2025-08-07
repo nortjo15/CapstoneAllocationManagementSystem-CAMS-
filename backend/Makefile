@@ -26,7 +26,7 @@ shell:
 
 .PHONY: db 
 db: 
-	docker exec -it $(CONTAINER_NAME_D) psql -U cas_db -d cas_db_user 
+	docker exec -it $(CONTAINER_NAME_D) psql -U cas_db_user -d cas_db
 
 .PHONY: rebuild 
 rebuild: 
