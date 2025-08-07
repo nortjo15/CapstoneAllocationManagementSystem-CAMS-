@@ -17,6 +17,7 @@ testdata:
 	docker exec -it $(CONTAINER_NAME_B) python manage.py generate_test_data $(ARGS)
 
 .PHONY: migrate
+migrate:
 	docker exec -it $(CONTAINER_NAME_B) python manage.py migrate 
 
 .PHONY: shell
@@ -24,11 +25,11 @@ shell:
 	docker exec -it $(CONTAINER_NAME_B) python manage.py shell
 
 .PHONY: db 
-migrate: 
+db: 
 	docker exec -it $(CONTAINER_NAME_D) psql -U cas_db -d cas_db_user 
 
 .PHONY: rebuild 
 rebuild: 
 	docker-compose down
 	docker-compose build --no-cache 
-	docker compose up -d 
+	docker-compose up -d 
