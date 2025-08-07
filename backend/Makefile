@@ -7,9 +7,9 @@ CONTAINER_NAME_F = i2a-project-allocation-frontend-1
 help: 
 	@echo "Common commands:"
 	@echo " make testdata	- Generate test data"
-	@echo " make migrate 	- Run Django migrations"
-	@echo " make shell 		- Open Django shell inside container"
-	@echo " make db			- Connect to psql inside container"
+	@echo " make migrate	- Run Django migrations"
+	@echo " make shell	- Open Django shell inside container"
+	@echo " make db	- Connect to psql inside container"
 	@echo " make rebuild	- Rebuild container"
 
 .PHONY: testdata 

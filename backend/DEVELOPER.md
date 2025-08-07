@@ -13,6 +13,7 @@ Optional:
     - '--memberpref-path' : CSV for GroupPreference Data
     - '--projectpref-path' : CSV for ProjectPreference Data  
 - Ensure files are in the **same structure** as default files 
+- To clear test data, add '--reset' flag
 
 ## All make commands: 
 `make help`
