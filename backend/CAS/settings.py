@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'project_app',
+    'admin_app',
+    'student_app',
 ]
 
 MIDDLEWARE = [
@@ -50,11 +54,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'CAS.urls'
+LOGIN_REDIRECT_URL = 'login_success'          #If loggged in, redirect to url
+#LOGOUT_REDIRECT_URL = '/login/'    #if logged out, redirect to url
+#LOGIN_URL = '/login/'              #login url
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'CAS' / 'templates'], #Added templates folder, can store all html there
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,3 +141,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Media files for storing Student attachments 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media' 
