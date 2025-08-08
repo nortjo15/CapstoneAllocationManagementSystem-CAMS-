@@ -11,8 +11,6 @@ services:
       - "8000:8000" # Expose Django port to your host machine
     # Remove 'depends_on' and 'environment' related to PostgreSQL
     # If you had environment variables for PostgreSQL, remove them.
-    depends_on:
-      - db # Ensure the 'db' service (PostgreSQL) starts before 'backend'
     networks:
       - cas_network # Connect to a custom network for inter-service communication
 
@@ -20,13 +18,11 @@ services:
       POSTGRES_DB: cas_db
       POSTGRES_USER: cas_db_user
       POSTGRES_PASSWORD: Bs0bCEPOoh7DIPRMdlOdKSsLbfvC3Rsh
-      POSTGRES_HOST: db # 'db' is the service name of your PostgreSQL container
+      POSTGRES_HOST: dpg-d25gs8be5dus73a36ncg-a.singapore-postgres.render.com
       POSTGRES_PORT: 5432
-      # Also include other Django settings that rely on env vars
-      SECRET_KEY: django-insecure-cwvx9hp!sdh*6p+_-i8rq!5cr2i771u*v(b_1*dcv*7v8*ympt # Use your actual secret key
-      DEBUG: "True" # Remember this is a string in YAML
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1" # Remember this is a string in YAML
-
+      SECRET_KEY: django-insecure-cwvx9hp!sdh*6p+_-i8rq!5cr2i771u*v(b_1*dcv*7v8*ympt
+      DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
 
   frontend:
     build: ./frontend # Build from the Dockerfile in the ./frontend directory
@@ -38,21 +34,6 @@ services:
       - backend
     networks:
       - cas_network # Connect to the same custom network
-
-  db: # New PostgreSQL database service
-    image: postgres:14-alpine # Use an official PostgreSQL image (e.g., version 14, alpine for smaller size)
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/ # IMPORTANT: Persist database data to a named volume
-    environment:
-      # These environment variables configure the PostgreSQL database
-      # Make sure these match the values in your Django settings.py and .env file
-      POSTGRES_DB: cas_db
-      POSTGRES_USER: cas_db_user
-      POSTGRES_PASSWORD: Bs0bCEPOoh7DIPRMdlOdKSsLbfvC3Rsh
-    networks:
-      - cas_network # Connect to the same custom network
-volumes:
-  postgres_data: # Define a named volume for PostgreSQL data persistence
 
 networks:
   cas_network: # Define the custom network for your services
