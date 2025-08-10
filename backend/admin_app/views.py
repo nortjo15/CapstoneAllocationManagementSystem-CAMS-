@@ -3,6 +3,7 @@ from .models import AdminLog
 from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
+from django.contrib.auth import login 
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -27,7 +28,9 @@ def login_view(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             # LOGIN 
-            return redirect("login_success.html")
+            user = form.get_user() # Get validated user 
+            login(request, user)   # Log the user in 
+            return redirect("login_success") # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
