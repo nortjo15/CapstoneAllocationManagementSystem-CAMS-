@@ -46,5 +46,11 @@ def test_view(request):
 # Ensures only authenticated users can access it 
 @login_required
 def student_view(request):
-    students = Student.objects.all()
+    sort_param = request.GET.get('sort')
+
+    if sort_param == 'cwa_desc':
+        students = Student.objects.order_by('-cwa')
+    else:
+        students = Student.objects.all()
+
     return render(request, 'student_view.html', {'students': students})
