@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Students Page - CAS</title>
+</head>
+<body>
+    <h1>Welcome to the Studnets Page, {{ user.username }}!</h1>
+    <p>This is your secure students view page.</p>
+    <a href="{% url 'login_success' %}">Back to Welcome</a>
+    <br>
+    <a href="/logout/">Logout</a>
+</body>
+</html>
