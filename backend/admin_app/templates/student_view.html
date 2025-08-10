@@ -1,3 +1,8 @@
+<!-- 
+ Student View Page 
+ Displays a table with all students and relevant fields 
+ Allows sorting by each field 
+ --> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +40,14 @@
             <tr> 
                 <th>Student ID</th>
                 <th>Name</th>
-                <th>CWA</th>
+                <th>
+                    <a href="?sort=cwa_desc" style="color: white; text-decoration: none;"> 
+                        CWA 
+                        {% if request.GET.sort == 'cwa_desc' %}
+                            &#x25BC; <!-- downward arrow next to the CWA option, only if requested -->
+                        {% endif %}
+                    </a>
+                </th>
                 <th>Major</th>
                 <th>Application Submitted</th>
             </tr>
@@ -43,6 +55,7 @@
         <tbody> 
             {% for student in students %}
                 <tr>
+                    <!-- Retrieving information from models -->
                     <td>{{ student.student_id }}</td>
                     <td>{{ student.name }}</td>
                     <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
