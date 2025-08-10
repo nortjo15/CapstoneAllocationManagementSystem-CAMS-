@@ -46,9 +46,5 @@ def test_view(request):
 # Ensures only authenticated users can access it 
 @login_required
 def student_view(request):
-    return render(request, "student_view.html")
-
-@login_required  
-def student_list_view(request): 
-    students = Student.objects.all() # fetch all students from DB 
-    return render(request, 'student_list.html', {'students': students})
+    students = Student.objects.all()
+    return render(request, 'student_view.html', {'students': students})

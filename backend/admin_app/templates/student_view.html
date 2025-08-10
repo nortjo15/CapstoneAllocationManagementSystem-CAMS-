@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Students Page - CAS</title>
+    <meta charset="UTF-8" />
+    <title>Student List</title>
 </head>
 <body>
-    <h1>Welcome to the Studnets Page, {{ user.username }}!</h1>
-    <p>This is your secure students view page.</p>
-    <a href="{% url 'login_success' %}">Back to Welcome</a>
-    <br>
-    <a href="/logout/">Logout</a>
+    <h1>Student List</h1>
+    <p>Total students: {{ students|length }}</p>
+    <ul>
+        {% for student in students %}
+            <li>{{ student.name }} - {{ student.email }}</li>
+        {% empty %}
+            <li>No students found.</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
