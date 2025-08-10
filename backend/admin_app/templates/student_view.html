@@ -3,16 +3,58 @@
 <head>
     <meta charset="UTF-8" />
     <title>Student List</title>
+    <style> 
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto; 
+        font-family: Arial, sans-serif; 
+    }
+    th, td {
+        border: 1px solid #ddd; 
+        padding: 8px 12px; 
+        text-align: left; 
+    }
+    th {
+        background-color: #667eea; 
+        color: white; 
+    }
+    tr:nth-child(even) {
+        background-color: f4f4f4;
+    }
+    tr:hover {
+        background-color: c7cdfd;
+    }
+    </style> 
 </head>
 <body>
-    <h1>Student List</h1>
-    <p>Total students: {{ students|length }}</p>
-    <ul>
-        {% for student in students %}
-            <li>{{ student.name }} - {{ student.email }}</li>
-        {% empty %}
-            <li>No students found.</li>
-        {% endfor %}
-    </ul>
+    <h1 style="text-align:center;">Student List</h1>
+    <table> 
+        <thead> 
+            <tr> 
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>CWA</th>
+                <th>Major</th>
+                <th>Application Submitted</th>
+            </tr>
+        </thead>
+        <tbody> 
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
+                    <td>{{ student.major }}</td>
+                    <td>{{ student.application_submitted|yesno:"Yes,No" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align:center;">No students found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
