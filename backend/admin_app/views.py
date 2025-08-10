@@ -4,6 +4,7 @@ from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
 from django.contrib.auth import login 
+from student_app.models import Student 
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -46,3 +47,8 @@ def test_view(request):
 @login_required
 def student_view(request):
     return render(request, "student_view.html")
+
+@login_required  
+def student_list_view(request): 
+    students = Student.objects.all() # fetch all students from DB 
+    return render(request, 'student_list.html', {'students': students})
