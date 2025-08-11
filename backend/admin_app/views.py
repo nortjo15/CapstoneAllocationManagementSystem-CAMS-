@@ -36,6 +36,7 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
 
+@login_required
 def login_success(request):
     return render(request, "login_success.html")
 
