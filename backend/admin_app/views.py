@@ -49,11 +49,25 @@ def test_view(request):
 def student_view(request):
     sort_param = request.GET.get('sort', '') # sort paramater or an empty string 
 
+    # Get CWA filter params. Default min=100, max=100 
+    try: 
+        cwa_min = float(request.GET.get('cwa_min', 0))
+    except ValueError: 
+        cwa_min = 0
+
+    cwa_max_raw = request.GET.get('cwa_max')
+    try: 
+        cwa_max = float(cwa_max_raw) if cwa_max_raw is not None and cwa_max_raw != '' else 100
+    except ValueError:
+        cwa_max = 100
+
+    students = Student.objects.filter(cwa__gte=cwa_min, cwa__lte=cwa_max)
+
     if sort_param == 'cwa_desc':
-        students = Student.objects.order_by('-cwa')
+        students = students.order_by('-cwa')
     elif sort_param == 'cwa:asc':
-        students = Student.objects.order_by('cwa')
+        students = students.order_by('cwa')
     else:
-        students = Student.objects.all()
+        students = students = students.order_by('name') #Default alphabetic order
 
     return render(request, 'student_view.html', {'students': students})
