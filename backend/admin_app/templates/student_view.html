@@ -164,14 +164,14 @@ function validateCWA()
     let max = parseFloat(cwaMaxInput.value);
 
     //Enforce min >= 0
-    if (!isNan(min) && min < 0)
+    if (!isNaN(min) && min < 0)
     {
         min = 0;
         cwaMinInput.value = min;
     }
 
     //Enforce max <= 100
-    if (!isNan(max) && max > 100)
+    if (!isNaN(max) && max > 100)
     {
         max = 100;
         cwaMaxInput.value = max;
