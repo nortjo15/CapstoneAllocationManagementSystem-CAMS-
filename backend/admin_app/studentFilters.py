@@ -58,12 +58,15 @@ class StudentFilter:
             'cwa_asc': 'cwa',
             'name_desc': '-name',
             'name_asc': 'name',
-            'major_desc': '-major',
-            'major_asc': 'major',
+            'major_desc': ('-degree', '-major'),
+            'major_asc': ('degree', 'major'),
         }
         order_by = sort_mapping.get(sort_param, 'name')
-        qs = qs.order_by(order_by)
-
+        if isinstance(order_by, (list, tuple)):
+            qs = qs.order_by(*order_by)
+        else:
+            qs = qs.order_by(order_by)
+            
         return qs; 
 
     # Get distinct degree, major pairs  from all students
