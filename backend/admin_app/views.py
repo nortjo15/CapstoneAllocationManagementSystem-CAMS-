@@ -58,4 +58,4 @@ def student_view(request):
         'selected_degree': request.GET.get('degree', ''),
         'selected_major': request.GET.get('major', ''),
     } 
-    return render(request, 'student_view.html', {'students': students})
+    return render(request, 'student_view.html', context)

@@ -36,11 +36,11 @@ class StudentFilter:
         # Degree and Major filtering 
         degree = self.params.get('degree', '').strip()
         if degree: 
-                queryset = queryset.filter(degree=degree)
+                qs = qs.filter(degree=degree)
 
         major = self.params.get('major', '')
         if major: 
-            queryset = queryset.filter(degree=degree)
+            qs = qs.filter(degree=degree)
 
         # Sorting 
         sort_param = self.params.get('sort', '')
@@ -62,8 +62,12 @@ class StudentFilter:
     # Useful for populating dropdown filter options 
     # Returns a list of dicts with keys 'degree' and 'major'
     def get_degree_major_pairs(self):
-        return (
-            Student.objects.order_by('degree', 'major')
-            .values('degree', 'major')
-            .distinct()
-        )
+        pairs = {}
+        for item in Student.objects.order_by('degree', 'major').values('degree', 'major').distinct():
+                degree = item.get('degree') or 'Unknown Degree'
+                major = item.get('major') or 'Unknown Major'
+                if degree not in pairs: 
+                     pairs[degree] = []
+                if major not in pairs[degree]:
+                    pairs[degree].append(major)
+        return pairs

@@ -62,6 +62,26 @@
             max="100"
             value="{{ request.GET.cwa_max|default_if_none:'100' }}"
         />
+        <br><br>
+
+        <!-- Degree-Major dropdown -->
+        <label for="degree_major">Degree & Major:</label> 
+        <select id="degree_major" name="degree_major">
+            <option value="">-- Select Degree & Major --</option>
+            {% for degree, majors in degree_major_pairs.items %}
+                <optgroup label="{{ degree }}">
+                    {% for major in majors %}
+                        <option value="{{ degree }}||{{ major }}"
+                            {% if selected_degree and selected_major %}
+                                {% if degree == selected_degree and major == selected_major %} selected {% endif %}
+                            {% endif %}
+                        >
+                            {{ major }}
+                        </option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+        </select>
 
         <button type="submit">Filter</button>
 
