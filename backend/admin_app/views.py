@@ -65,6 +65,8 @@ def student_view(request):
     # Persist CWA Min/Max Values in the selection
     cwa_min = request.GET.get('cwa_min', '')
     cwa_max = request.GET.get('cwa_max', '')
+
+    application_submitted = request.GET.get('application_submitted', '')
         
     context = {
         'students': students,
@@ -73,5 +75,6 @@ def student_view(request):
         'selected_major': selected_major,
         'cwa_min': cwa_min,
         'cwa_max': cwa_max,
+        'application_submitted': application_submitted,
     } 
     return render(request, 'student_view.html', context)

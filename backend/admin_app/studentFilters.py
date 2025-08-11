@@ -43,6 +43,13 @@ class StudentFilter:
                 except ValueError: 
                     pass #If it doesn't split correctly, skip it 
 
+        # Filtering by application_submitted option 
+        application_submitted = self.params.get('application_submitted', '').lower()
+        if application_submitted == 'yes':
+            qs = qs.filter(application_submitted=True)
+        elif application_submitted == 'no':
+            qs = qs.filter(application_submitted=False)
+
         # Sorting 
         sort_param = self.params.get('sort', '')
         # Ascending or descending based on filters

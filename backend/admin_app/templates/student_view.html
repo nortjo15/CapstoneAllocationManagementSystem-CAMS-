@@ -79,11 +79,26 @@ tr:hover {
             </optgroup>
             {% endfor %}
     </select>
+    <br><br>
 
+    <label for="application_submitted">Application Submitted</label>
+    <select id="application_submitted" name="application_submitted">
+        <option value="">-- Any --</option>
+        <option value="yes" {% if application_submitted == 'yes' %}selected{% endif %}>Yes</option>
+        <option value="no" {% if application_submitted == 'no' %}selected{% endif %}>No</option>
+    </select>
+
+    <br><br>
     <button type="submit">Filter</button>
 
     <!-- Reset button that clears all filters -->
-        <a href="{% url 'student_view' %}">Reset</a>
+    <button
+        type="button"
+        id="reset-btn"
+        data-url="{% url 'student_view' %}"
+        >
+        Reset
+    </button>
     <!-- Goes to the same page without any GET parameters -->
 </form>
 
@@ -101,7 +116,6 @@ tr:hover {
                 </a>
             </th>
             <th>Major</th>
-            <th>Application Submitted</th>
         </tr>
     </thead>
     <tbody> 
@@ -112,7 +126,6 @@ tr:hover {
                 <td>{{ student.name }}</td>
                 <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
                 <td>{{ student.major }}</td>
-                <td>{{ student.application_submitted|yesno:"Yes,No" }}</td>
             </tr>
         {% empty %}
             <tr>
@@ -121,4 +134,12 @@ tr:hover {
         {% endfor %}
     </tbody>
 </table>
+
+<!-- JS for the button function -->
+<script>
+  document.getElementById('reset-btn').addEventListener('click', function() {
+    window.location.href = this.dataset.url;
+  });
+</script>
+
 {% endblock content %}
