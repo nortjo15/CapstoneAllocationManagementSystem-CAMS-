@@ -27,5 +27,6 @@ urlpatterns = [
     path('register/', views.register_view, name="register"),
     path('login/', views.login_view, name="login"),
     path('login_success/', views.login_success, name="login_success"),
+    path('test/', views.test_view, name="test"),
     path('', AdminLogListCreateView.as_view()),
 ]

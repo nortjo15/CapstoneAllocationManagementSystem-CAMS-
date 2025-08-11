@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<Html> 
+    <script src="https://unpkg.com/petite-vue" defer init></script>
+<head>
+    <title>Hello this is the admin base page</title>
+</head>
+<body>
+    <div id="navigationBar">
+        {% block navigationBar %}
+            <ul>
+                <li><a href="/login"> Login </a></li> 
+                <li><a href="/"> Logout </a></li> 
+                <li><a href="endpoint for screen"> Students </a></li> 
+                <li><a href="endpoint for screen"> Groups </a></li> 
+                <li><a href="endpoint for screen"> Projects </a></li> 
+                <li><a href="endpoint for screen"> Round form </a></li> 
+            </ul>
+        {% endblock %}
+    </div>
+    <div v-scope id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>

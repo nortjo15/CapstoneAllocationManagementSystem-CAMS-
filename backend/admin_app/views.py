@@ -35,5 +35,5 @@ def login_success(request):
     return render(request, "login_success.html")
 
 def test_view(request):
-    return render(request, "test.html")
+    return render(request, "base.html")
 # Create your views here.
