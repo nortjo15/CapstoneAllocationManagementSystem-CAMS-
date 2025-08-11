@@ -3,126 +3,122 @@
  Displays a table with all students and relevant fields 
  Allows sorting by each field 
  --> 
-
+{% extends 'base.html' %}
 {% load query_tags %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Student List</title>
-    <style> 
-    table {
-        border-collapse: collapse;
-        width: 100%;
-        max-width: 800px;
-        margin: 20px auto; 
-        font-family: Arial, sans-serif; 
-    }
-    th, td {
-        border: 1px solid #ddd; 
-        padding: 8px 12px; 
-        text-align: left; 
-    }
-    th {
-        background-color: #667eea; 
-        color: white; 
-    }
-    tr:nth-child(even) {
-        background-color: f4f4f4;
-    }
-    tr:hover {
-        background-color: c7cdfd;
-    }
-    </style> 
-</head>
-<body>
-    <h1 style="text-align:center;">Student List</h1>
+{% block styles %}
+<style> 
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto; 
+    font-family: Arial, sans-serif; 
+}
+th, td {
+    border: 1px solid #ddd; 
+    padding: 8px 12px; 
+    text-align: left; 
+}
+th {
+    background-color: #667eea; 
+    color: white; 
+}
+tr:nth-child(even) {
+    background-color: f4f4f4;
+}
+tr:hover {
+    background-color: c7cdfd;
+}
+</style> 
+{% endblock styles %}
 
-    <!-- Filter Bar for admin to select from -->
-    <form method="get"> 
-        <label for="cwa_min">CWA Min:</label> 
-        <input 
-            type="number"
-            id="cwa_min"
-            name="cwa_min" 
-            step="0.01"
-            min="0"
-            max="100"
-            value="{{ request.GET.cwa_min|default_if_none:'0' }}"  
-        />
+{% block content %}
+<h1 style="text-align:center;">Student List</h1>
 
-        <label for="cwa_max">CWA Max:</label>
-        <input
-            type="number"
-            id="cwa_max"
-            name="cwa_max"
-            step="0.01"
-            min="0"
-            max="100"
-            value="{{ request.GET.cwa_max|default_if_none:'100' }}"
-        />
-        <br><br>
+<!-- Filter Bar for admin to select from -->
+<form method="get"> 
+    <label for="cwa_min">CWA Min:</label> 
+    <input 
+        type="number"
+        id="cwa_min"
+        name="cwa_min" 
+        step="0.01"
+        min="0"
+        max="100"
+        value="{{ request.GET.cwa_min|default_if_none:'0' }}"  
+    />
 
-        <!-- Degree-Major dropdown -->
-        <label for="degree_major">Degree & Major:</label> 
-        <select id="degree_major" name="degree_major">
-            <option value="">-- Select Degree & Major --</option>
-            {% for degree, majors in degree_major_pairs.items %}
-                <optgroup label="{{ degree }}">
-                    {% for major in majors %}
-                        <option value="{{ degree }}||{{ major }}"
-                            {% if selected_degree and selected_major %}
-                                {% if degree == selected_degree and major == selected_major %} selected {% endif %}
-                            {% endif %}
-                        >
-                            {{ major }}
-                        </option>
-                    {% endfor %}
-                </optgroup>
-                {% endfor %}
-        </select>
+    <label for="cwa_max">CWA Max:</label>
+    <input
+        type="number"
+        id="cwa_max"
+        name="cwa_max"
+        step="0.01"
+        min="0"
+        max="100"
+        value="{{ request.GET.cwa_max|default_if_none:'100' }}"
+    />
+    <br><br>
 
-        <button type="submit">Filter</button>
-
-        <!-- Reset button that clears all filters -->
-         <a href="{% url 'student_view' %}">Reset</a>
-        <!-- Goes to the same page without any GET parameters -->
-    </form>
-
-    <table> 
-        <thead> 
-            <tr> 
-                <th>Student ID</th>
-                <th>Name</th>
-                <th>
-                    <a href="?{% update_query sort='cwa_desc' %}" style="color: white; text-decoration: none;"> 
-                        CWA 
-                        {% if request.GET.sort == 'cwa_desc' %}
-                            &#x25BC; <!-- downward arrow next to the CWA option, only if requested -->
+    <!-- Degree-Major dropdown -->
+    <label for="degree_major">Degree & Major:</label> 
+    <select id="degree_major" name="degree_major">
+        <option value="">-- Select Degree & Major --</option>
+        {% for degree, majors in degree_major_pairs.items %}
+            <optgroup label="{{ degree }}">
+                {% for major in majors %}
+                    <option value="{{ degree }}||{{ major }}"
+                        {% if selected_degree and selected_major %}
+                            {% if degree == selected_degree and major == selected_major %} selected {% endif %}
                         {% endif %}
-                    </a>
-                </th>
-                <th>Major</th>
-                <th>Application Submitted</th>
-            </tr>
-        </thead>
-        <tbody> 
-            {% for student in students %}
-                <tr>
-                    <!-- Retrieving information from models -->
-                    <td>{{ student.student_id }}</td>
-                    <td>{{ student.name }}</td>
-                    <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
-                    <td>{{ student.major }}</td>
-                    <td>{{ student.application_submitted|yesno:"Yes,No" }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5" style="text-align:center;">No students found.</td>
-                </tr>
+                    >
+                        {{ major }}
+                    </option>
+                {% endfor %}
+            </optgroup>
             {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+    </select>
+
+    <button type="submit">Filter</button>
+
+    <!-- Reset button that clears all filters -->
+        <a href="{% url 'student_view' %}">Reset</a>
+    <!-- Goes to the same page without any GET parameters -->
+</form>
+
+<table> 
+    <thead> 
+        <tr> 
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>
+                <a href="?{% update_query sort='cwa_desc' %}" style="color: white; text-decoration: none;"> 
+                    CWA 
+                    {% if request.GET.sort == 'cwa_desc' %}
+                        &#x25BC; <!-- downward arrow next to the CWA option, only if requested -->
+                    {% endif %}
+                </a>
+            </th>
+            <th>Major</th>
+            <th>Application Submitted</th>
+        </tr>
+    </thead>
+    <tbody> 
+        {% for student in students %}
+            <tr>
+                <!-- Retrieving information from models -->
+                <td>{{ student.student_id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
+                <td>{{ student.major }}</td>
+                <td>{{ student.application_submitted|yesno:"Yes,No" }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center;">No students found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
