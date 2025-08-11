@@ -34,13 +34,14 @@ class StudentFilter:
         qs = qs.filter(cwa__gte=cwa_min, cwa__lte=cwa_max)
 
         # Degree and Major filtering 
-        degree = self.params.get('degree', '').strip()
-        if degree: 
-                qs = qs.filter(degree=degree)
-
-        major = self.params.get('major', '')
-        if major: 
-            qs = qs.filter(degree=degree)
+        # Recieve pair and split it 
+        degree_major = self.params.get('degree_major', '').strip()
+        if degree_major: 
+                try: 
+                    degree, major = degree_major.split('||', 1)
+                    qs = qs.filter(degree=degree, major=major)
+                except ValueError: 
+                    pass #If it doesn't split correctly, skip it 
 
         # Sorting 
         sort_param = self.params.get('sort', '')
