@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
 from django.contrib.auth import login 
 from student_app.models import Student 
+from .studentFilters import StudentFilter
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -47,27 +48,14 @@ def test_view(request):
 # Ensures only authenticated users can access it 
 @login_required
 def student_view(request):
-    sort_param = request.GET.get('sort', '') # sort paramater or an empty string 
+    filter_object = StudentFilter(request.GET) #Initialise Filter with GET params
+    students = filter_object.get_filtered_queryset() # Apply filters to queryset
+    degree_major_pairs = filter_object.get_degree_major_pairs()
 
-    # Get CWA filter params. Default min=100, max=100 
-    try: 
-        cwa_min = float(request.GET.get('cwa_min', 0))
-    except ValueError: 
-        cwa_min = 0
-
-    cwa_max_raw = request.GET.get('cwa_max')
-    try: 
-        cwa_max = float(cwa_max_raw) if cwa_max_raw is not None and cwa_max_raw != '' else 100
-    except ValueError:
-        cwa_max = 100
-
-    students = Student.objects.filter(cwa__gte=cwa_min, cwa__lte=cwa_max)
-
-    if sort_param == 'cwa_desc':
-        students = students.order_by('-cwa')
-    elif sort_param == 'cwa:asc':
-        students = students.order_by('cwa')
-    else:
-        students = students.order_by('name') #Default alphabetic order
-
+    context = {
+        'students': students,
+        'degree_major_pairs': degree_major_pairs,
+        'selected_degree': request.GET.get('degree', ''),
+        'selected_major': request.GET.get('major', ''),
+    } 
     return render(request, 'student_view.html', {'students': students})
