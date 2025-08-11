@@ -59,6 +59,9 @@ tr:hover {
         max="100"
         value="{{ request.GET.cwa_max|default_if_none:'100' }}"
     />
+
+    <!-- Display error message for CWA if invalid values -->
+    <div id="cwa_error" style="color:red; margin-top:5px; display:none;"></div>
     <br><br>
 
     <!-- Degree-Major dropdown -->
@@ -115,7 +118,7 @@ tr:hover {
                     {% endif %}
                 </a>
             </th>
-            <th>Major</th>
+            <th>Course</th>
         </tr>
     </thead>
     <tbody> 
@@ -125,7 +128,7 @@ tr:hover {
                 <td>{{ student.student_id }}</td>
                 <td>{{ student.name }}</td>
                 <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
-                <td>{{ student.major }}</td>
+                <td>{{ student.major }} ({{ student.degree }})</td> <!-- Displays combined Major, Degree -->
             </tr>
         {% empty %}
             <tr>
@@ -141,5 +144,60 @@ tr:hover {
     window.location.href = this.dataset.url;
   });
 </script>
+
+<!-- 
+Validation for the CWA inputs
+- Enforce min < max
+- Enforce max > min 
+- Should be between 0 & 100  
+-->
+<script> 
+const cwaMinInput = document.getElementById('cwa_min');
+const cwaMaxInput = document.getElementById('cwa_max');
+const cwaErrorDiv = document.getElementById('cwa_error');
+const form = cwaMinInput.closest('form'); //find parent form
+const submitButton = form.querySelector('button[type="submit"]'); //find submit button
+
+function validateCWA()
+{
+    let min = parseFloat(cwaMinInput.value);
+    let max = parseFloat(cwaMaxInput.value);
+
+    //Enforce min >= 0
+    if (!isNan(min) && min < 0)
+    {
+        min = 0;
+        cwaMinInput.value = min;
+    }
+
+    //Enforce max <= 100
+    if (!isNan(max) && max > 100)
+    {
+        max = 100;
+        cwaMaxInput.value = max;
+    }
+
+    //Check min <= max
+    if (!isNaN(min) && !isNaN(max) && min > max)
+    {
+        cwaErrorDiv.textContent = 'CWA Min cannot be greater than CWA Max.'; //display error
+        cwaErrorDiv.style.display = 'block';
+        submitButton.disabled = true; //disable submit button while invalid inputs 
+    }
+    else 
+    {
+        cwaErrorDiv.textContent = ''; //clear error
+        cwaErrorDiv.style.display = 'none';
+        submitButton.disabled = false;
+    }
+}
+//Run validation on input changes
+cwaMinInput.addEventListener('input', validateCWA);
+cwaMaxInput.addEventListener('input', validateCWA);
+
+//Validate when page loads
+validateCWA()
+
+</script> 
 
 {% endblock content %}
