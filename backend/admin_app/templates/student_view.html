@@ -4,6 +4,8 @@
  Allows sorting by each field 
  --> 
 
+{% load query_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,8 +40,6 @@
     <h1 style="text-align:center;">Student List</h1>
 
     <!-- Filter Bar for admin to select from -->
-     
-    {% load query_tags %}
     <form method="get"> 
         <label for="cwa_min">CWA Min:</label> 
         <input 
@@ -64,6 +64,10 @@
         />
 
         <button type="submit">Filter</button>
+
+        <!-- Reset button that clears all filters -->
+         <a href="{% url 'student_view' %}">Reset</a>
+        <!-- Goes to the same page without any GET parameters -->
     </form>
 
     <table> 
