@@ -110,13 +110,13 @@ tr:hover {
         <tr> 
             <th>Student ID</th>
             <th>Name</th>
+            <!-- CWA column with two arrow links (ascending or descending )-->
             <th>
-                <a href="?{% update_query sort='cwa_desc' %}" style="color: white; text-decoration: none;"> 
-                    CWA 
-                    {% if request.GET.sort == 'cwa_desc' %}
-                        &#x25BC; <!-- downward arrow next to the CWA option, only if requested -->
-                    {% endif %}
-                </a>
+                CWA 
+                <!-- ascending -->
+                <a href="?{% update_query sort='cwa_asc' %}" title="Sort CWA ascending" style="margin-left: 8px; text-decoration:none;">▲</a>
+                <!-- descending -->
+                <a href="?{% update_query sort='cwa_desc' %}" title="Sort CWA descending" style="margin-left: 4px; text-decoration:none;">▼</a>
             </th>
             <th>Course</th>
         </tr>
@@ -207,7 +207,6 @@ cwaMaxInput.addEventListener('input', validateCWA);
 
 //Validate when page loads
 validateCWA()
-
 </script> 
 
 {% endblock content %}
