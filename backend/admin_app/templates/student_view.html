@@ -43,7 +43,7 @@ tr:hover {
         type="number"
         id="cwa_min"
         name="cwa_min" 
-        step="0.01"
+        step="1"
         min="0"
         max="100"
         value="{{ request.GET.cwa_min|default_if_none:'0' }}"  
@@ -54,7 +54,7 @@ tr:hover {
         type="number"
         id="cwa_max"
         name="cwa_max"
-        step="0.01"
+        step="1"
         min="0"
         max="100"
         value="{{ request.GET.cwa_max|default_if_none:'100' }}"
@@ -163,18 +163,28 @@ function validateCWA()
     let min = parseFloat(cwaMinInput.value);
     let max = parseFloat(cwaMaxInput.value);
 
-    //Enforce min >= 0
+    //Enforce min & max >= 0
     if (!isNaN(min) && min < 0)
     {
         min = 0;
         cwaMinInput.value = min;
     }
+    if (!isNaN(max) && max < 0)
+    {
+        max = 0;
+        cwaMaxInput.value = max;
+    }
 
-    //Enforce max <= 100
+    //Enforce min & max <= 100
     if (!isNaN(max) && max > 100)
     {
         max = 100;
         cwaMaxInput.value = max;
+    }
+    if (!isNaN(min) && min > 100)
+    {
+        min = 100;
+        cwaMinInput.value = min;
     }
 
     //Check min <= max
