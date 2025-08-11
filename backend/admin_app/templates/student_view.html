@@ -118,7 +118,10 @@ tr:hover {
                 <!-- descending -->
                 <a href="?{% update_query sort='cwa_desc' %}" title="Sort CWA descending" style="margin-left: 4px; text-decoration:none;">▼</a>
             </th>
-            <th>Course</th>
+            <th>
+                Course
+                <a href="?{% update_query sort='major_asc' %}" title="Group by Major">▼</a>
+            </th>
         </tr>
     </thead>
     <tbody> 
