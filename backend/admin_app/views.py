@@ -41,7 +41,7 @@ def login_success(request):
     return render(request, "login_success.html")
 
 def test_view(request):
-    return render(request, "test.html")
+    return render(request, "base.html")
 
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
@@ -52,7 +52,7 @@ def student_view(request):
     if sort_param == 'cwa_desc':
         students = Student.objects.order_by('-cwa')
     elif sort_param == 'cwa:asc':
-        Students = Student.objects.order_by('cwa')
+        students = Student.objects.order_by('cwa')
     else:
         students = Student.objects.all()
 
