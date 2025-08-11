@@ -14,6 +14,7 @@ help:
 	@echo " make shell	- Open Django shell inside container"
 	@echo " make db	- Connect to psql inside container"
 	@echo " make rebuild	- Rebuild container"
+	@echo " make bash	- Connect to bash inside container"
 
 .PHONY: testdata 
 testdata:
@@ -39,3 +40,7 @@ rebuild:
 	docker-compose down
 	docker-compose build --no-cache 
 	docker-compose up -d 
+
+.PHONY: bash 
+bash: 
+	docker exec -it $(CONTAINER_NAME_B) bash 

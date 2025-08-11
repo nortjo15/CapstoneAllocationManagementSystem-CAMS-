@@ -5,7 +5,7 @@ from .import views
 from student_app.views import ProjectListCreateView, StudentListCreateView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
     #path('<str:student_id>/', StudentDetailView.as_view()),
     #path('preferences/', GroupPreferenceListCreateView.as_view()),
     path('studentApplication/', views.student_form, name="student_form"),

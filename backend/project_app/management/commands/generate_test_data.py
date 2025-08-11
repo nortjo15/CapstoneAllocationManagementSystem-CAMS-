@@ -78,6 +78,7 @@ class Command(BaseCommand):
                 name = row['name']
                 cwa = row['cwa']
                 major = row['major']
+                degree = row['degree']
 
                 student, created = Student.objects.update_or_create(
                     student_id=student_id,
@@ -85,7 +86,8 @@ class Command(BaseCommand):
                         'name': name,
                         'cwa': cwa if cwa else None, 
                         'major': major, 
-                        'application_submitted': False
+                        'application_submitted': False,
+                        'degree': degree
                     }
                 )
                 if created: 

@@ -1,0 +1,73 @@
+<!-- 
+ Student View Page 
+ Displays a table with all students and relevant fields 
+ Allows sorting by each field 
+ --> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Student List</title>
+    <style> 
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto; 
+        font-family: Arial, sans-serif; 
+    }
+    th, td {
+        border: 1px solid #ddd; 
+        padding: 8px 12px; 
+        text-align: left; 
+    }
+    th {
+        background-color: #667eea; 
+        color: white; 
+    }
+    tr:nth-child(even) {
+        background-color: f4f4f4;
+    }
+    tr:hover {
+        background-color: c7cdfd;
+    }
+    </style> 
+</head>
+<body>
+    <h1 style="text-align:center;">Student List</h1>
+    <table> 
+        <thead> 
+            <tr> 
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>
+                    <a href="?sort=cwa_desc" style="color: white; text-decoration: none;"> 
+                        CWA 
+                        {% if request.GET.sort == 'cwa_desc' %}
+                            &#x25BC; <!-- downward arrow next to the CWA option, only if requested -->
+                        {% endif %}
+                    </a>
+                </th>
+                <th>Major</th>
+                <th>Application Submitted</th>
+            </tr>
+        </thead>
+        <tbody> 
+            {% for student in students %}
+                <tr>
+                    <!-- Retrieving information from models -->
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
+                    <td>{{ student.major }}</td>
+                    <td>{{ student.application_submitted|yesno:"Yes,No" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align:center;">No students found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

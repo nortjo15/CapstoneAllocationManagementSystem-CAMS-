@@ -3,12 +3,15 @@ from .models import AdminLog
 from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
+from django.contrib.auth import login 
+from student_app.models import Student 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render 
 
 class AdminLogListCreateView(generics.ListCreateAPIView):
     queryset = AdminLog.objects.all()
     serializer_class = AdminLogSerializer
-
 
 #View for registering a user, may not need this
 def register_view(request):
@@ -26,14 +29,31 @@ def login_view(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             # LOGIN 
-            return redirect("login_success.html")
+            user = form.get_user() # Get validated user 
+            login(request, user)   # Log the user in 
+            return redirect("login_success") # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
 
+@login_required
 def login_success(request):
     return render(request, "login_success.html")
 
 def test_view(request):
     return render(request, "base.html")
-# Create your views here.
+
+# Adding a basic students view page 
+# Ensures only authenticated users can access it 
+@login_required
+def student_view(request):
+    sort_param = request.GET.get('sort', '') # sort paramater or an empty string 
+
+    if sort_param == 'cwa_desc':
+        students = Student.objects.order_by('-cwa')
+    elif sort_param == 'cwa:asc':
+        students = Student.objects.order_by('cwa')
+    else:
+        students = Student.objects.all()
+
+    return render(request, 'student_view.html', {'students': students})

@@ -29,4 +29,5 @@ urlpatterns = [
     path('login_success/', views.login_success, name="login_success"),
     path('test/', views.test_view, name="test"),
     path('', AdminLogListCreateView.as_view()),
+    path('student_view/', views.student_view, name='student_view'),
 ]

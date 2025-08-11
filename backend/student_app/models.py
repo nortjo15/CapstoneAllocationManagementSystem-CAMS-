@@ -16,6 +16,7 @@ class Student(models.Model):
         null=True,
         blank=True
     )
+    degree = models.CharField(max_length=100, null=False)
     major = models.CharField(max_length=100, null=False)
     application_submitted = models.BooleanField(default=False)
     email = models.EmailField(unique=True, null=True)

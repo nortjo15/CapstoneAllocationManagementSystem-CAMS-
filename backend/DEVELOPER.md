@@ -22,3 +22,4 @@ Optional:
 `make shell` (Opens Django shell inside container)
 `make db` (Connects to psql database inside container)
 `make rebuild` (Rebuilds & starts docker container)
+`make bash` (Bash inside container)
