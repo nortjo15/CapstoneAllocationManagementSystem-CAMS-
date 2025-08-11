@@ -3,6 +3,7 @@
  Displays a table with all students and relevant fields 
  Allows sorting by each field 
  --> 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,11 +38,14 @@
     <h1 style="text-align:center;">Student List</h1>
 
     <!-- Filter Bar for admin to select from -->
+     
+    {% load query_tags %}
     <form method="get"> 
         <label for="cwa_min">CWA Min:</label> 
         <input 
             type="number"
             id="cwa_min"
+            name="cwa_min" 
             step="0.01"
             min="0"
             max="100"
@@ -68,7 +72,7 @@
                 <th>Student ID</th>
                 <th>Name</th>
                 <th>
-                    <a href="?sort=cwa_desc" style="color: white; text-decoration: none;"> 
+                    <a href="?{% update_query request sort='cwa_desc' %}" style="color: white; text-decoration: none;"> 
                         CWA 
                         {% if request.GET.sort == 'cwa_desc' %}
                             &#x25BC; <!-- downward arrow next to the CWA option, only if requested -->

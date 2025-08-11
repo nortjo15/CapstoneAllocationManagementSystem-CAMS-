@@ -68,6 +68,6 @@ def student_view(request):
     elif sort_param == 'cwa:asc':
         students = students.order_by('cwa')
     else:
-        students = students = students.order_by('name') #Default alphabetic order
+        students = students.order_by('name') #Default alphabetic order
 
     return render(request, 'student_view.html', {'students': students})
