@@ -67,7 +67,7 @@ tr:hover {
     <!-- 
     Degree-Major CheckBox
     - Allows for selection of multiple majors for filtering the view
-    -->
+   
     <fieldset> 
         <legend>Degree & Major</legend>
         {% for degree, majors in degree_major_pairs.items %}
@@ -85,6 +85,7 @@ tr:hover {
             <br>
         {% endfor %}
     </fieldset>
+    -->
 
     <!-- Degree-Major dropdown - ->
     <label for="degree_major">Degree & Major:</label> 
@@ -120,6 +121,7 @@ tr:hover {
         Show students already allocated to a group 
         <input type="checkbox" name="show_allocated" value="true" {% if show_allocated == 'true' %}checked{% endif %}>
     </label>
+    
     <br><br>
 
     <!-- Submit filters button -->
@@ -157,6 +159,7 @@ tr:hover {
             {% if show_allocated == 'true' %}
                 <th>Allocated</th>
             {% endif %}
+
         </tr>
     </thead>
     <tbody> 
@@ -167,6 +170,7 @@ tr:hover {
                 <td>{{ student.name }}</td>
                 <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
                 <td>{{ student.major }} ({{ student.degree }})</td> <!-- Displays combined Major, Degree -->
+                <!-- -->
                 {% if show_allocated == 'true' %}
                     <td>{% if student.group_allocated %}Yes{% else %}No{% endif %}</td>
                 {% endif %}
