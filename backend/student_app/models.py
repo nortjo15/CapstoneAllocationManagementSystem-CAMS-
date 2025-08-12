@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError 
 
 # Student Information 
 # StudentID is the primary key 
@@ -16,8 +16,7 @@ class Student(models.Model):
         null=True,
         blank=True
     )
-    degree = models.CharField(max_length=100, null=False)
-    major = models.CharField(max_length=100, null=False)
+    major = models.ForeignKey('project_app.Major', on_delete=models.PROTECT, null=True, related_name='students')
     application_submitted = models.BooleanField(default=False)
     email = models.EmailField(unique=True, null=True)
     notes = models.TextField(null=True, blank=True)

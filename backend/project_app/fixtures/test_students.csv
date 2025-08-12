@@ -1,41 +1,41 @@
-student_id,name,cwa,major,degree
-10000001,John Doe,85.32,Computer Science,Computing
-10000002,Jane Smith,91.47,Cybersecurity,Computing
-10000003,Alice Johnson,78.05,Software Engineering,Computing
-10000004,Bob Williams,66.89,Information Technology,Computing
-10000005,Emily Davis,72.34,Computer Science,Computing
-10000006,Michael Brown,88.76,Cybersecurity,Computing
-10000007,Sarah Wilson,94.15,Software Engineering,Computing
-10000008,David Lee,59.48,Information Technology,Computing
-10000009,Linda Martinez,80.22,Computer Science,Computing
-10000010,James Anderson,69.87,Cybersecurity,Computing
-20000011,Mary Thomas,77.90,Software Engineering,Computing
-20000012,Robert Jackson,83.45,Information Technology,Computing
-20000013,Patricia White,65.12,Computer Science,Computing
-20000014,Charles Harris,90.67,Cybersecurity,Computing
-20000015,Jennifer Martin,74.88,Software Engineering,Computing
-20000016,Thomas Thompson,82.33,Information Technology,Computing
-20000017,Karen Garcia,68.55,Computer Science,Computing
-20000018,Daniel Martinez,79.99,Cybersecurity,Computing
-20000019,Nancy Robinson,85.44,Software Engineering,Computing
-20000020,Paul Clark,70.11,Information Technology,Computing
-20000021,Laura Lewis,88.72,Computer Science,Computing
-20000022,Steven Hall,91.15,Cybersecurity,Computing
-20000023,Donna Allen,76.43,Software Engineering,Computing
-20000024,Kevin Young,69.32,Information Technology,Computing
-20000025,Barbara Hernandez,82.16,Computer Science,Computing
-20000026,Jason King,73.89,Cybersecurity,Computing
-20000027,Betty Wright,86.71,Software Engineering,Computing
-20000028,Brian Scott,63.58,Information Technology,Computing
-20000029,Dorothy Green,78.94,Computer Science,Computing
-20000030,Matthew Adams,87.25,Cybersecurity,Computing
-20000031,Ashley Baker,81.66,Software Engineering,Computing
-20000032,Edward Gonzalez,66.77,Information Technology,Computing
-20000033,Kimberly Nelson,90.33,Computer Science,Computing
-20000034,Jeffrey Carter,75.29,Cybersecurity,Computing
-20000035,Susan Mitchell,83.84,Software Engineering,Computing
-20000036,Anthony Perez,70.52,Information Technology,Computing
-20000037,Carol Roberts,88.06,Computer Science,Computing
-20000038,Mark Turner,79.63,Cybersecurity,Computing
-20000039,Lisa Phillips,74.44,Software Engineering,Computing
-20000040,George Campbell,67.98,Information Technology,Computing
+student_id,name,cwa,major
+10000001,John Doe,85.32,Computer Science
+10000002,Jane Smith,91.47,Cybersecurity
+10000003,Alice Johnson,78.05,Software Engineering
+10000004,Bob Williams,66.89,Information Technology
+10000005,Emily Davis,72.34,Computer Science
+10000006,Michael Brown,88.76,Cybersecurity
+10000007,Sarah Wilson,94.15,Software Engineering
+10000008,David Lee,59.48,Information Technology
+10000009,Linda Martinez,80.22,Computer Science
+10000010,James Anderson,69.87,Cybersecurity
+20000011,Mary Thomas,77.90,Software Engineering
+20000012,Robert Jackson,83.45,Information Technology
+20000013,Patricia White,65.12,Computer Science
+20000014,Charles Harris,90.67,Cybersecurity
+20000015,Jennifer Martin,74.88,Software Engineering
+20000016,Thomas Thompson,82.33,Information Technology
+20000017,Karen Garcia,68.55,Computer Science
+20000018,Daniel Martinez,79.99,Cybersecurity
+20000019,Nancy Robinson,85.44,Software Engineering
+20000020,Paul Clark,70.11,Information Technology
+20000021,Laura Lewis,88.72,Computer Science
+20000022,Steven Hall,91.15,Cybersecurity
+20000023,Donna Allen,76.43,Software Engineering
+20000024,Kevin Young,69.32,Information Technology
+20000025,Barbara Hernandez,82.16,Computer Science
+20000026,Jason King,73.89,Cybersecurity
+20000027,Betty Wright,86.71,Software Engineering
+20000028,Brian Scott,63.58,Information Technology
+20000029,Dorothy Green,78.94,Computer Science
+20000030,Matthew Adams,87.25,Cybersecurity
+20000031,Ashley Baker,81.66,Software Engineering
+20000032,Edward Gonzalez,66.77,Information Technology
+20000033,Kimberly Nelson,90.33,Computer Science
+20000034,Jeffrey Carter,75.29,Cybersecurity
+20000035,Susan Mitchell,83.84,Software Engineering
+20000036,Anthony Perez,70.52,Information Technology
+20000037,Carol Roberts,88.06,Computer Science
+20000038,Mark Turner,79.63,Cybersecurity
+20000039,Lisa Phillips,74.44,Software Engineering
+20000040,George Campbell,67.98,Information Technology
