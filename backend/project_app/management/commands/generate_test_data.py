@@ -9,7 +9,8 @@ from project_app.models import (
     SuggestedGroup, 
     SuggestedGroupMember,
     FinalGroup,
-    FinalGroupMember
+    FinalGroupMember,
+    Major
 )
 
 # Generate test data from specified or default files
@@ -79,12 +80,18 @@ class Command(BaseCommand):
                 cwa = row['cwa']
                 major = row['major']
 
+                try:
+                    major_instance = Major.objects.get(name=major)
+                except Major.DoesNotExist:
+                    self.stdout.write(self.style.WARNING(f"Major '{major}' not found, skipping student {student_id}"))
+                    continue 
+
                 student, created = Student.objects.update_or_create(
                     student_id=student_id,
                     defaults={
                         'name': name,
                         'cwa': cwa if cwa else None, 
-                        'major': major, 
+                        'major': major_instance, 
                         'application_submitted': False,
                     }
                 )
