@@ -1,81 +1,41 @@
-student_id,name,cwa,major,degree
-10000001,John Doe,85.32,Computer Science,Computing
-10000002,Jane Smith,91.47,Cybersecurity,Computing
-10000003,Alice Johnson,78.05,Software Engineering,Computing
-10000004,Bob Williams,66.89,Information Technology,Computing
-10000005,Emily Davis,72.34,Computer Science,Computing
-10000006,Michael Brown,88.76,Cybersecurity,Computing
-10000007,Sarah Wilson,94.15,Software Engineering,Computing
-10000008,David Lee,59.48,Information Technology,Computing
-10000009,Linda Martinez,80.22,Computer Science,Computing
-10000010,James Anderson,69.87,Cybersecurity,Computing
-20000011,Mary Thomas,77.90,Software Engineering,Computing
-20000012,Robert Jackson,83.45,Information Technology,Computing
-20000013,Patricia White,65.12,Computer Science,Computing
-20000014,Charles Harris,90.67,Cybersecurity,Computing
-20000015,Jennifer Martin,74.88,Software Engineering,Computing
-20000016,Thomas Thompson,82.33,Information Technology,Computing
-20000017,Karen Garcia,68.55,Computer Science,Computing
-20000018,Daniel Martinez,79.99,Cybersecurity,Computing
-20000019,Nancy Robinson,85.44,Software Engineering,Computing
-20000020,Paul Clark,70.11,Information Technology,Computing
-20000021,Laura Lewis,88.72,Computer Science,Computing
-20000022,Steven Hall,91.15,Cybersecurity,Computing
-20000023,Donna Allen,76.43,Software Engineering,Computing
-20000024,Kevin Young,69.32,Information Technology,Computing
-20000025,Barbara Hernandez,82.16,Computer Science,Computing
-20000026,Jason King,73.89,Cybersecurity,Computing
-20000027,Betty Wright,86.71,Software Engineering,Computing
-20000028,Brian Scott,63.58,Information Technology,Computing
-20000029,Dorothy Green,78.94,Computer Science,Computing
-20000030,Matthew Adams,87.25,Cybersecurity,Computing
-20000031,Ashley Baker,81.66,Software Engineering,Computing
-20000032,Edward Gonzalez,66.77,Information Technology,Computing
-20000033,Kimberly Nelson,90.33,Computer Science,Computing
-20000034,Jeffrey Carter,75.29,Cybersecurity,Computing
-20000035,Susan Mitchell,83.84,Software Engineering,Computing
-20000036,Anthony Perez,70.52,Information Technology,Computing
-20000037,Carol Roberts,88.06,Computer Science,Computing
-20000038,Mark Turner,79.63,Cybersecurity,Computing
-20000039,Lisa Phillips,74.44,Software Engineering,Computing
-20000040,George Campbell,67.98,Information Technology,Computing
-30000001,Alex Morgan,73.52,Visual,Arts
-30000002,Bella Carter,45.27,Digital,Arts
-30000003,Chris Evans,89.34,Creative,Arts
-30000004,Diana Ross,55.12,Visual,Arts
-30000005,Eric Johnson,67.89,Creative,Arts
-30000006,Fiona White,38.94,Digital,Arts
-30000007,George Martin,91.27,Visual,Arts
-30000008,Hannah Lee,12.43,Creative,Arts
-30000009,Ian Thompson,77.01,Digital,Arts
-30000010,Julia Roberts,64.58,Visual,Arts
-30000011,Kyle Brown,82.19,Creative,Arts
-30000012,Linda Scott,24.36,Digital,Arts
-30000013,Mike Davis,49.88,Visual,Arts
-30000014,Nina Lopez,93.75,Creative,Arts
-30000015,Owen Clark,58.44,Digital,Arts
-30000016,Paula Green,30.22,Visual,Arts
-30000017,Quinn Harris,86.91,Creative,Arts
-30000018,Rachel Adams,41.37,Digital,Arts
-30000019,Sam Walker,69.55,Visual,Arts
-30000020,Tina Edwards,52.09,Creative,Arts
-30000021,Umar Ali,15.98,Digital,Arts
-30000022,Victoria Hall,75.34,Visual,Arts
-30000023,Will Young,83.67,Creative,Arts
-30000024,Xena King,61.23,Digital,Arts
-30000025,Yara Nelson,47.78,Visual,Arts
-30000026,Zack Moore,90.12,Creative,Arts
-30000027,Amber Fox,34.56,Digital,Arts
-30000028,Brian Cole,56.89,Visual,Arts
-30000029,Cara Hill,71.04,Creative,Arts
-30000030,Derek Stone,44.22,Digital,Arts
-30000031,Elle Simmons,79.85,Visual,Arts
-30000032,Frank Wright,66.31,Creative,Arts
-30000033,Gina Price,29.47,Digital,Arts
-30000034,Hugo Black,88.73,Visual,Arts
-30000035,Isla Reed,54.11,Creative,Arts
-30000036,Jackie Morris,60.02,Digital,Arts
-30000037,Karen Palmer,49.15,Visual,Arts
-30000038,Luke Sanders,70.66,Creative,Arts
-30000039,Maya Turner,37.82,Digital,Arts
-30000040,Nolan Webb,85.29,Visual,Arts
+student_id,name,cwa,major
+10000001,John Doe,85.32,Computer Science
+10000002,Jane Smith,91.47,Cybersecurity
+10000003,Alice Johnson,78.05,Software Engineering
+10000004,Bob Williams,66.89,Information Technology
+10000005,Emily Davis,72.34,Computer Science
+10000006,Michael Brown,88.76,Cybersecurity
+10000007,Sarah Wilson,94.15,Software Engineering
+10000008,David Lee,59.48,Information Technology
+10000009,Linda Martinez,80.22,Computer Science
+10000010,James Anderson,69.87,Cybersecurity
+20000011,Mary Thomas,77.90,Software Engineering
+20000012,Robert Jackson,83.45,Information Technology
+20000013,Patricia White,65.12,Computer Science
+20000014,Charles Harris,90.67,Cybersecurity
+20000015,Jennifer Martin,74.88,Software Engineering
+20000016,Thomas Thompson,82.33,Information Technology
+20000017,Karen Garcia,68.55,Computer Science
+20000018,Daniel Martinez,79.99,Cybersecurity
+20000019,Nancy Robinson,85.44,Software Engineering
+20000020,Paul Clark,70.11,Information Technology
+20000021,Laura Lewis,88.72,Computer Science
+20000022,Steven Hall,91.15,Cybersecurity
+20000023,Donna Allen,76.43,Software Engineering
+20000024,Kevin Young,69.32,Information Technology
+20000025,Barbara Hernandez,82.16,Computer Science
+20000026,Jason King,73.89,Cybersecurity
+20000027,Betty Wright,86.71,Software Engineering
+20000028,Brian Scott,63.58,Information Technology
+20000029,Dorothy Green,78.94,Computer Science
+20000030,Matthew Adams,87.25,Cybersecurity
+20000031,Ashley Baker,81.66,Software Engineering
+20000032,Edward Gonzalez,66.77,Information Technology
+20000033,Kimberly Nelson,90.33,Computer Science
+20000034,Jeffrey Carter,75.29,Cybersecurity
+20000035,Susan Mitchell,83.84,Software Engineering
+20000036,Anthony Perez,70.52,Information Technology
+20000037,Carol Roberts,88.06,Computer Science
+20000038,Mark Turner,79.63,Cybersecurity
+20000039,Lisa Phillips,74.44,Software Engineering
+20000040,George Campbell,67.98,Information Technology
