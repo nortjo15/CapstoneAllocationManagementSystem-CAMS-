@@ -56,6 +56,13 @@ class StudentFilter:
         elif application_submitted == 'no':
             qs = qs.filter(application_submitted=False)
 
+        # Only show students not in a group by default
+        # Show them if the option is enabled 
+        show_allocated = self.params.get('show_allocated', '').lower()
+        if show_allocated != 'true':
+            # Default: only show students NOT in a group
+            qs = qs.filter(group_allocated=False)
+             
         # Sorting 
         sort_param = self.params.get('sort', '')
         # Ascending or descending based on filters

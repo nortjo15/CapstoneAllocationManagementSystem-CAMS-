@@ -113,8 +113,16 @@ tr:hover {
         <option value="yes" {% if application_submitted == 'yes' %}selected{% endif %}>Yes</option>
         <option value="no" {% if application_submitted == 'no' %}selected{% endif %}>No</option>
     </select>
-
     <br><br>
+
+    <!-- Checkbox to show students who are already in a group -->
+    <label> 
+        Show students already allocated to a group 
+        <input type="checkbox" name="show_allocated" value="true" {% if show_allocated == 'true' %}checked{% endif %}>
+    </label>
+    <br><br>
+
+    <!-- Submit filters button -->
     <button type="submit">Filter</button>
 
     <!-- Reset button that clears all filters -->
