@@ -42,8 +42,8 @@ class StudentFilter:
                 filters = Q()
                 for val in degree_major_vals:
                     try: 
-                        degree, major = val.split('||', 1)
-                        filters |= Q(degree=degree, major=major) #Build an OR of selected pairs
+                        degree_name, major_name = val.split('||', 1)
+                        filters |= Q(major__degree__name=degree_name, major__name=major_name) #Build an OR of selected pairs
                     except ValueError: 
                         continue 
                            
@@ -87,11 +87,12 @@ class StudentFilter:
     # Returns a list of dicts with keys 'degree' and 'major'
     def get_degree_major_pairs(self):
         pairs = {}
-        for item in Student.objects.order_by('degree', 'major').values('degree', 'major').distinct():
-                degree = item.get('degree') or 'Unknown Degree'
-                major = item.get('major') or 'Unknown Major'
-                if degree not in pairs: 
-                     pairs[degree] = []
-                if major not in pairs[degree]:
-                    pairs[degree].append(major)
+
+        from project_app.models import Degree 
+
+        for degree in Degree.objects.prefetch_related('majors').order_by('name'):
+            degree_name = degree.name or 'Unknown Degree'
+            majors = degree.majors.order_by('name').values_list('name', flat=True)
+            pairs[degree_name] = list(majors) or ['Unknown Major']
+            
         return pairs

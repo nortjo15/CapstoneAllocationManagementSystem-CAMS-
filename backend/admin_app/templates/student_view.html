@@ -48,7 +48,6 @@ tr:hover {
         max="100"
         value="{{ request.GET.cwa_min|default_if_none:'0' }}"  
     />
-
     <label for="cwa_max">CWA Max:</label>
     <input
         type="number"
@@ -67,7 +66,7 @@ tr:hover {
     <!-- 
     Degree-Major CheckBox
     - Allows for selection of multiple majors for filtering the view
-   
+    -->
     <fieldset> 
         <legend>Degree & Major</legend>
         {% for degree, majors in degree_major_pairs.items %}
@@ -85,7 +84,6 @@ tr:hover {
             <br>
         {% endfor %}
     </fieldset>
-    -->
 
     <!-- Degree-Major dropdown - ->
     <label for="degree_major">Degree & Major:</label> 
@@ -169,7 +167,7 @@ tr:hover {
                 <td>{{ student.student_id }}</td>
                 <td>{{ student.name }}</td>
                 <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
-                <td>{{ student.major }} ({{ student.degree }})</td> <!-- Displays combined Major, Degree -->
+                <td>{{ student.major }} ({{ student.major.degree.name }})</td> <!-- Displays combined Major, Degree -->
                 <!-- -->
                 {% if show_allocated == 'true' %}
                     <td>{% if student.group_allocated %}Yes{% else %}No{% endif %}</td>

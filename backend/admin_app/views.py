@@ -52,7 +52,7 @@ def student_view(request):
     students = filter_object.get_filtered_queryset() # Apply filters to queryset
     degree_major_pairs = filter_object.get_degree_major_pairs()
 
-    # Multiple options can be selected, so using a list of pairs
+    # List of string representing current filter selections
     selected_pairs = request.GET.getlist('degree_major')
     
     # Persist CWA Min/Max Values in the selection
