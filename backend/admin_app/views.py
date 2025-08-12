@@ -61,7 +61,7 @@ def student_view(request):
 
     # Booleans 
     application_submitted = request.GET.get('application_submitted', '')
-    show_allocated  = request.GET.get('show_allocated', '') 
+    group_status  = request.GET.get('group_status', 'all').lower()
         
     context = {
         'students': students,
@@ -70,6 +70,6 @@ def student_view(request):
         'cwa_min': cwa_min,
         'cwa_max': cwa_max,
         'application_submitted': application_submitted,
-        'show_allocated': show_allocated,
+        'group_status': group_status,
     } 
     return render(request, 'student_view.html', context)
