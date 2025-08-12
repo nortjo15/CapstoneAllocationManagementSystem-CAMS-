@@ -52,15 +52,8 @@ def student_view(request):
     students = filter_object.get_filtered_queryset() # Apply filters to queryset
     degree_major_pairs = filter_object.get_degree_major_pairs()
 
-    # Parse degree_major from request for preselection
-    selected_degree = ''
-    selected_major = ''
-    degree_major_val = request.GET.get('degree_major', '').strip()
-    if degree_major_val:
-        try:
-            selected_degree, selected_major = degree_major_val.split('||', 1)
-        except ValueError:
-            pass
+    # Multiple options can be selected, so using a list of pairs
+    selected_pairs = request.GET.getlist('degree_major')
     
     # Persist CWA Min/Max Values in the selection
     cwa_min = request.GET.get('cwa_min', '')
@@ -71,8 +64,7 @@ def student_view(request):
     context = {
         'students': students,
         'degree_major_pairs': degree_major_pairs,
-        'selected_degree': selected_degree,
-        'selected_major': selected_major,
+        'selected_pairs': selected_pairs,
         'cwa_min': cwa_min,
         'cwa_max': cwa_max,
         'application_submitted': application_submitted,

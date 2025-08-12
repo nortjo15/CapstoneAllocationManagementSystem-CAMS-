@@ -66,14 +66,14 @@ tr:hover {
 
     <!-- Degree-Major dropdown -->
     <label for="degree_major">Degree & Major:</label> 
-    <select id="degree_major" name="degree_major">
-        <option value="">-- Select Degree & Major --</option>
+    <select id="degree_major" name="degree_major" multiple size="8"> <!-- Enable multiple options to be selected -->
+        <option disabled>-- Select Degree & Major --</option>
         {% for degree, majors in degree_major_pairs.items %}
             <optgroup label="{{ degree }}">
                 {% for major in majors %}
                     <option value="{{ degree }}||{{ major }}"
-                        {% if selected_degree and selected_major %}
-                            {% if degree == selected_degree and major == selected_major %} selected {% endif %}
+                        {% if degree|add:"||"|add:major in selected_pairs %}
+                            selected
                         {% endif %}
                     >
                         {{ major }}

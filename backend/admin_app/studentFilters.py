@@ -1,4 +1,5 @@
 from student_app.models import Student 
+from django.db.models import Q
 
 class StudentFilter:
     """
@@ -35,13 +36,18 @@ class StudentFilter:
 
         # Degree and Major filtering 
         # Recieve pair and split it 
-        degree_major = self.params.get('degree_major', '').strip()
-        if degree_major: 
-                try: 
-                    degree, major = degree_major.split('||', 1)
-                    qs = qs.filter(degree=degree, major=major)
-                except ValueError: 
-                    pass #If it doesn't split correctly, skip it 
+        degree_major_vals = self.params.getlist('degree_major')
+        if degree_major_vals:
+                # Container for query criteria and combining queries
+                filters = Q()
+                for val in degree_major_vals:
+                    try: 
+                        degree, major = val.split('||', 1)
+                        filters |= Q(degree=degree, major=major) #Build an OR of selected pairs
+                    except ValueError: 
+                        continue 
+                           
+                qs = qs.filter(filters)
 
         # Filtering by application_submitted option 
         application_submitted = self.params.get('application_submitted', '').lower()
