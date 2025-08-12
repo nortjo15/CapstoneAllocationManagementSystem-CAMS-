@@ -86,3 +86,20 @@ class FinalGroupMember(models.Model):
 
     def __str__(self):
         return f"{self.student} in {self.final_group}"
+
+# Allow Django to handle the primary key, just use foreign keys when necessary
+class Degree(models.model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+class Major(models.model):
+    degree = models.ForeignKey(Degree, on_delete=models.CASCADE, related_name='majors')
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ('degree', 'name') #Same major name can exist under different degrees
+
+    def __str__(self):
+        return f"{self.name} ({self.degree.name})"
