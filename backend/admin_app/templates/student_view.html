@@ -64,9 +64,31 @@ tr:hover {
     <div id="cwa_error" style="color:red; margin-top:5px; display:none;"></div>
     <br><br>
 
-    <!-- Degree-Major dropdown -->
+    <!-- 
+    Degree-Major CheckBox
+    - Allows for selection of multiple majors for filtering the view
+    -->
+    <fieldset> 
+        <legend>Degree & Major</legend>
+        {% for degree, majors in degree_major_pairs.items %}
+            <strong>{{ degree }}</strong><br>
+            {% for major in majors %}
+                <label> 
+                    <input type="checkbox" name="degree_major" value="{{ degree }}||{{ major }}"
+                        {% if degree|add:"||"|add:major in selected_pairs %}
+                            checked 
+                        {% endif %}
+                    >
+                    {{ major }}
+                </label><br>
+            {% endfor %}
+            <br>
+        {% endfor %}
+    </fieldset>
+
+    <!-- Degree-Major dropdown - ->
     <label for="degree_major">Degree & Major:</label> 
-    <select id="degree_major" name="degree_major" multiple size="8"> <!-- Enable multiple options to be selected -->
+    <select id="degree_major" name="degree_major" multiple size="8"> <!-- Enable multiple options to be selected - ->
         <option disabled>-- Select Degree & Major --</option>
         {% for degree, majors in degree_major_pairs.items %}
             <optgroup label="{{ degree }}">
@@ -82,6 +104,7 @@ tr:hover {
             </optgroup>
             {% endfor %}
     </select>
+    -->
     <br><br>
 
     <label for="application_submitted">Application Submitted</label>
