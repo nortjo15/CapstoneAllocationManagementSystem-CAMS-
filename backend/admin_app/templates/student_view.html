@@ -114,7 +114,7 @@ tr:hover {
     </select>
     <br><br>
 
-    <!-- Checkbox to show students who are already in a group -->
+    <!-- Dropdown to show students who are allocated a group, or  -->
     <label> 
         Show students already allocated to a group 
         <input type="checkbox" name="show_allocated" value="true" {% if show_allocated == 'true' %}checked{% endif %}>
@@ -141,6 +141,7 @@ tr:hover {
         <tr> 
             <th>Student ID</th>
             <th>Name</th>
+            <th>Group</th>
             <!-- CWA column with two arrow links (ascending or descending )-->
             <th>
                 CWA 
@@ -166,6 +167,13 @@ tr:hover {
                 <!-- Retrieving information from models -->
                 <td>{{ student.student_id }}</td>
                 <td>{{ student.name }}</td>
+                <td> 
+                    {% if student.final_group_member %}
+                        {{ student.final_group_member.final_group.finalgroup_id }}
+                    {% else %}
+                        <span style="color: gray;">Unassigned</span>
+                    {% endif %}
+                </td>
                 <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
                 <td>{{ student.major }}</td> <!-- Displays combined Major, Degree -->
                 <!-- -->
