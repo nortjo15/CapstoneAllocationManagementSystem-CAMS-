@@ -15,7 +15,8 @@ class StudentFilter:
 
     def get_filtered_queryset(self):
         # All Students
-        qs = Student.objects.all()
+        qs = Student.objects.select_related('major__degree')
+        # Join table on initial query so that doesn't need to do it again
 
         # Filtering for CWA 
         # Get 'cwa_min' param, default to 0 if it's missing or invalid
@@ -73,8 +74,8 @@ class StudentFilter:
             'cwa_asc': 'cwa',
             'name_desc': '-name',
             'name_asc': 'name',
-            'major_desc': ('-degree', '-major'),
-            'major_asc': ('degree', 'major'),
+            'major_desc': ('-major__degree__name', '-major__name'),
+            'major_asc': ('major__degree__name', 'major__name'),
         }
         order_by = sort_mapping.get(sort_param, 'name')
         if isinstance(order_by, (list, tuple)):
