@@ -167,10 +167,10 @@ tr:hover {
                 <td>{{ student.student_id }}</td>
                 <td>{{ student.name }}</td>
                 <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
-                <td>{{ student.major }} ({{ student.major.degree.name }})</td> <!-- Displays combined Major, Degree -->
+                <td>{{ student.major }}</td> <!-- Displays combined Major, Degree -->
                 <!-- -->
                 {% if show_allocated == 'true' %}
-                    <td>{% if student.group_allocated %}Yes{% else %}No{% endif %}</td>
+                    <td>{% if student.allocated_group %}Yes{% else %}No{% endif %}</td>
                 {% endif %}
             </tr>
         {% empty %}

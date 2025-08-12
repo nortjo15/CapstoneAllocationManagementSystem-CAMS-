@@ -61,7 +61,7 @@ class StudentFilter:
         show_allocated = self.params.get('show_allocated', '').lower()
         if show_allocated != 'true':
             # Default: only show students NOT in a group
-            qs = qs.filter(group_allocated=False)
+            qs = qs.filter(allocated_group=False)
              
         # Sorting 
         sort_param = self.params.get('sort', '')
@@ -94,5 +94,5 @@ class StudentFilter:
             degree_name = degree.name or 'Unknown Degree'
             majors = degree.majors.order_by('name').values_list('name', flat=True)
             pairs[degree_name] = list(majors) or ['Unknown Major']
-            
+
         return pairs
