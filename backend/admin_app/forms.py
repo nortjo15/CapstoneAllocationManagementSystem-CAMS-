@@ -5,7 +5,7 @@ class addStudentForm(forms.ModelForm):
     class Meta: 
         model = Student 
         fields = [
-            'student_id', 'name', 'cwa', 'major', 'email'
+            'student_id', 'name', 'cwa', 'major', 'email', 'notes'
         ]
         widgets = {
             'cwa': forms.NumberInput(attrs={'step':'1', 'min':'0', 'max':'100'})
@@ -19,5 +19,5 @@ class addStudentForm(forms.ModelForm):
         self.fields['student_id'].required = True
         self.fields['name'].required = True
         
-        for field_name in ['cwa', 'major', 'email', 'notes', 'resume', 'cv']:
+        for field_name in ['cwa', 'major', 'email', 'notes']:
             self.fields[field_name].required = False

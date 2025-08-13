@@ -8,6 +8,7 @@ from student_app.models import Student
 from .studentFilters import StudentFilter
 from django.views.decorators.http import require_http_methods
 from .forms import addStudentForm
+from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -88,5 +89,19 @@ def student_create(request):
             student.allocated_group = False
             student.save() 
 
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            
+            # Handle AJAX request 
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"success":True})
+            # Normal form submission redirect
+            return redirect('admin_student_list')
+    
+        else: 
+            # Return errors if form is invalid
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"success": False, "errors": form.errors}, status=400)
+
+    else: 
+        # GET request -> show the empty form
+        form = addStudentForm()
+
+    return render(request, 'admin_app/student_create_modal.html', {'form': form})
