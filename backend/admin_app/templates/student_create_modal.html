@@ -37,40 +37,49 @@
 
     // Client side validation for required fields 
     // If user leaves field empty and clicks away, shows red message under that field 
-    function addImmediateValidation(input)
+    function addImmediateValidation(input, options = {})
     {
         const errorSpan = document.createElement('div');
         errorSpan.style.color = 'red';
         input.insertAdjacentElement('afterend', errorSpan)
 
-        input.addEventListener('blur', () => 
-        {
-            if (input.value.trim() === '') 
-            {
-                //If it's empty, show error message
-                errorSpan.textContent = `${input.name.replace('_', ' ')} is required.`;
-            } 
-            else 
-            {   
-                //If it's filled, remove existing message
-                errorSpan.textContent = '';
-            }
-        });
+        const validate = () => {
+            const value = input.value.trim();
 
-        //As user is typing, clear the error
-        input.addEventListener('input', () => 
-        {
-            if (input.value.trim() !== '') 
+            //Required  field check
+            if (value === '') {
+                errorSpan.textContent = `${input.name.replace('_', ' ')} is required.`;
+                return false;
+            }
+
+            //Custom check (enforce 8 digits for studentID)
+            if (options.customCheck && !options.customCheck(value))
             {
-                errorSpan.textContent ='';
-            }  
-        });
+                errorSpan.textContent = options.customMessage || 'Invalid Value.';
+                return false;
+            }
+
+            //Clear error message if everything is fine 
+            errorSpan.textContent = '';
+            return true;
+        }
+
+        input.addEventListener('blur', validate);
+        input.addEventListener('input', validate);
     }
 
     //Enable validation
     const idField = form.querySelector('input[name="student_id"]');
     const nameField = form.querySelector('input[name="name"]');
-    if (idField) addImmediateValidation(idField);
+
+    if (idField) 
+    {
+        addImmediateValidation(idField, {
+            customCheck: value =>/^\d{8}$/.test(value), //must be exactly 8 digits
+            customMessage: 'Student ID must be exactly 8 digits.'
+        });
+    }
+
     if (nameField) addImmediateValidation(nameField)
 
     //Event Listener
