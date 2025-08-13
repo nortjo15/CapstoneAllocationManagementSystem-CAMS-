@@ -35,6 +35,44 @@
     // Get form element inside modal
     const form = document.getElementById('createStudentForm');
 
+    // Client side validation for required fields 
+    // If user leaves field empty and clicks away, shows red message under that field 
+    function addImmediateValidation(input)
+    {
+        const errorSpan = document.createElement('div');
+        errorSpan.style.color = 'red';
+        input.insertAdjacentElement('afterend', errorSpan)
+
+        input.addEventListener('blur', () => 
+        {
+            if (input.value.trim() === '') 
+            {
+                //If it's empty, show error message
+                errorSpan.textContent = `${input.name.replace('_', ' ')} is required.`;
+            } 
+            else 
+            {   
+                //If it's filled, remove existing message
+                errorSpan.textContent = '';
+            }
+        });
+
+        //As user is typing, clear the error
+        input.addEventListener('input', () => 
+        {
+            if (input.value.trim() !== '') 
+            {
+                errorSpan.textContent ='';
+            }  
+        });
+    }
+
+    //Enable validation
+    const idField = form.querySelector('input[name="student_id"]');
+    const nameField = form.querySelector('input[name="name"]');
+    if (idField) addImmediateValidation(idField);
+    if (nameField) addImmediateValidation(nameField)
+
     //Event Listener
     form.addEventListener('submit', function(e) 
     {
