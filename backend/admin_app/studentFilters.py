@@ -33,7 +33,10 @@ class StudentFilter:
             cwa_max = 100
 
         # Filter queryset to students with cwa between the min & max
-        qs = qs.filter(cwa__gte=cwa_min, cwa__lte=cwa_max)
+        qs = qs.filter(
+            Q(cwa__gte=cwa_min, cwa__lte=cwa_max) |
+            Q(cwa__isnull=True)
+        )
 
         # Degree and Major filtering 
         # Recieve pair and split it 

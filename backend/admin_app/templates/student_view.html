@@ -157,16 +157,19 @@ tr:hover {
                     {% if student.final_group_member %}
                         {{ student.final_group_member.final_group.finalgroup_id }}
                     {% else %}
-                        <span style="color: gray;">Unassigned</span>
+                        <span style="color: gray;">--</span>
                     {% endif %}
                 </td>
-                <td>{% if student.cwa %}
-                        {{ student.cwa }}
+                <td>{% if student.cwa is not None %}{{ student.cwa }}
                     {% else %}
                         <span style="color: grey;">--</span>
                     {% endif %}
                     </td>
-                <td>{{ student.major }}</td> <!-- Displays combined Major, Degree -->
+                <td>{% if student.major %}{{ student.major }}
+                    {% else %}
+                        <span style="color: grey;">--</span>
+                    {% endif %}
+                </td> <!-- Displays combined Major, Degree -->
             </tr>
         {% empty %}
         <tr>
