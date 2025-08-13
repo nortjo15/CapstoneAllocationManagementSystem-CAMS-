@@ -84,26 +84,6 @@ tr:hover {
             <br>
         {% endfor %}
     </fieldset>
-
-    <!-- Degree-Major dropdown - ->
-    <label for="degree_major">Degree & Major:</label> 
-    <select id="degree_major" name="degree_major" multiple size="8"> <!-- Enable multiple options to be selected - ->
-        <option disabled>-- Select Degree & Major --</option>
-        {% for degree, majors in degree_major_pairs.items %}
-            <optgroup label="{{ degree }}">
-                {% for major in majors %}
-                    <option value="{{ degree }}||{{ major }}"
-                        {% if degree|add:"||"|add:major in selected_pairs %}
-                            selected
-                        {% endif %}
-                    >
-                        {{ major }}
-                    </option>
-                {% endfor %}
-            </optgroup>
-            {% endfor %}
-    </select>
-    -->
     <br><br>
 
     <label for="application_submitted">Application Submitted</label>
@@ -125,6 +105,13 @@ tr:hover {
 
     <!-- Submit filters button -->
     <button type="submit">Filter</button>
+
+    <!-- Add Student Button -->
+    <button
+        type="button"
+        id="add-student"
+        style="margin: 10px 0;">+ Add Student
+    </button>
 
     <!-- Reset button that clears all filters -->
     <button
