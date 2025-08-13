@@ -82,6 +82,28 @@
 
     if (nameField) addImmediateValidation(nameField)
 
+    const cwaInput = document.getElementById('cwa');
+    const cwaErrorDiv = document.getElementById('cwa_error');
+    const modalSubmit = form.querySelector('button[type="submit"]');
+
+    function validateCWA()
+    {
+        let value = parseFloat(cwaInput.value);
+
+        //Enforce 0-100
+        if (!isNaN(value) && value < 0) {
+            value = 0;
+            cwaInput.value = value;
+        }
+        if (!isNaN(value) && value > 100) {
+            value = 100;
+            cwaInput.value = value;
+        }
+    }
+
+    cwaInput.addEventListener('input', validateCWA);
+    validateCWA();
+    
     //Event Listener
     form.addEventListener('submit', function(e) 
     {
