@@ -2,7 +2,7 @@
  Modal Container for student creation
  - Hidden by default, pops up when option is triggered
  -->
- <div id="studentModal" class="modal" style="display:None">
+ <div id="studentModal" class="modal" style="display:none">
     <div class="modal-content">
         <span class="close-btn">&times;</span> <!-- Close -->
         <h2>Add Student</h2>
@@ -16,6 +16,7 @@
 
         <!-- Validation Errors display -->
         <div id="formErrors" style="color:red"></div>
+     </div>
  </div>
 
  <!-- JS for open/close modal logic -->
@@ -40,7 +41,7 @@
         e.preventDefault(); //Prevent default full-page form submission
         
         const formData = new FormData(form);
-        fetch(from.action, { //Send form using Fetch API
+        fetch(form.action, { //Send form using Fetch API
             method: 'POST', 
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
