@@ -128,7 +128,6 @@ tr:hover {
         onclick="openModal()"
         style="margin: 10px 0;">+ Add Student
     </button> 
-
 </form>
 
 <table> 
@@ -201,9 +200,9 @@ Validation for the CWA inputs
 <script> 
 const cwaMinInput = document.getElementById('cwa_min');
 const cwaMaxInput = document.getElementById('cwa_max');
-const cwaErrorDivLocalLocal = document.getElementById('cwa_error');
-const form = cwaMinInput.closest('form'); //find parent form
-const submitButton = form.querySelector('button[type="submit"]'); //find submit button
+let cwaErrorDivLocal = document.getElementById('cwa_error');
+let formLocal = cwaMinInput.closest('form'); //find parent form
+const submitButton = formLocal.querySelector('button[type="submit"]'); //find submit button
 
 function validateCWA()
 {
