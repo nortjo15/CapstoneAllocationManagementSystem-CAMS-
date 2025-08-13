@@ -118,13 +118,12 @@ tr:hover {
         Reset
     </button>
 
-    <!-- Add Student Button -->
     <br><br>
     <button
         type="button"
-        id="add-student"
+        onclick="openModal()"
         style="margin: 10px 0;">+ Add Student
-    </button>
+    </button> 
 
 </form>
 
@@ -171,6 +170,8 @@ tr:hover {
         {% endfor %}
     </tbody>
 </table>
+
+{% include 'student_create_modal.html' %}
 
 <!-- JS for the button function -->
 <script>
