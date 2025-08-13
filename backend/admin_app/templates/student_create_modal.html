@@ -8,6 +8,66 @@
         <h2>Add Student</h2>
 
         <!-- Form posts to view -->
-        <form id="createStudentForm" method="post"
+        <form id="createStudentForm" method="post" action="{% url 'admin_student_create' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }} <!-- Render fields -->
+            <button type="submit">Save</button>
+        </form>
 
+        <!-- Validation Errors display -->
+        <div id="formErrors" style="color:red"></div>
  </div>
+
+ <!-- JS for open/close modal logic -->
+<script> 
+    const modal = document.getElementById('studentModal')
+    const closeBtn = modal.querySelector('.close-btn')
+
+    function openModal() {
+        modal.style.display = 'block'; 
+    }
+    closeBtn.onclick = () => modal.style.display = 'none'; //Hide if close button is clicked
+    window.onclick = (e) => {
+        if (e.target == modal) modal.style.display = 'none'; //Hide if click outside of it 
+    }
+
+    // Get form element inside modal
+    const form = document.getElementById('createStudentForm');
+
+    //Event Listener
+    form.addEventListener('submit', function(e) 
+    {
+        e.preventDefault(); //Prevent default full-page form submission
+        
+        const formData = new FormData(form);
+        fetch(from.action, { //Send form using Fetch API
+            method: 'POST', 
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) 
+            {
+                //Form submitted successfully 
+                alert('Student added successfully!');
+                modal.style.display = 'none'; //close modal
+            }
+            else 
+            {
+                //Validation Failed
+                const errorsDiv = document.getElementById('formErrors');
+                errorsDiv.innerHTML = ''; //clear previous errors
+
+                //Loop through each error and display:
+                for (const field in data.errors)
+                {
+                    errorsDiv.innerHTML += `${field}: ${data.errors[field].join(', ')}<br>`; 
+                }
+            }
+        })
+        .catch(err => console.error(err)); //Log unexpected errors
+    })
+</script> 
