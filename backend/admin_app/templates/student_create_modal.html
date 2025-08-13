@@ -26,6 +26,7 @@
 
     function openModal() {
         modal.style.display = 'block'; 
+        modalSubmit.disabled = true;
     }
     closeBtn.onclick = () => modal.style.display = 'none'; //Hide if close button is clicked
     window.onclick = (e) => {
@@ -45,27 +46,48 @@
 
         const validate = () => {
             const value = input.value.trim();
+            let valid = true;
 
             //Required  field check
             if (value === '') {
                 errorSpan.textContent = `${input.name.replace('_', ' ')} is required.`;
-                return false;
+                valid = false;
             }
 
             //Custom check (enforce 8 digits for studentID)
             if (options.customCheck && !options.customCheck(value))
             {
                 errorSpan.textContent = options.customMessage || 'Invalid Value.';
-                return false;
+                valid = false;
             }
 
             //Clear error message if everything is fine 
-            errorSpan.textContent = '';
-            return true;
+            if (valid) {
+                errorSpan.textContent = '';
+            }
+
+            //Disable the Save button if all fields aren't valid 
+            modalSubmit.disabled = !allFieldsValid()
+
+            return valid;
         }
 
         input.addEventListener('blur', validate);
         input.addEventListener('input', validate);
+    }
+
+    //Checks to see if input fields are valid
+    function allFieldsValid()
+    {
+        //List of required inputs
+        const requiredFields = [idField, nameField];
+
+        //Return true only when every field is non-emtpy and there are no error messages
+        return requiredFields.every(input => {
+            const valueFilled = input.value.trim() !== '';
+            const noError = !input.nextElementSibling.textContent;
+            return valueFilled && noError;
+        })
     }
 
     //Enable validation
@@ -103,7 +125,7 @@
 
     cwaInput.addEventListener('input', validateCWA);
     validateCWA();
-    
+
     //Event Listener
     form.addEventListener('submit', function(e) 
     {
@@ -140,4 +162,6 @@
         })
         .catch(err => console.error(err)); //Log unexpected errors
     })
+
+    //Disable "Save" button if there is an error 
 </script> 
