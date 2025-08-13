@@ -18,6 +18,6 @@ class addStudentForm(forms.ModelForm):
         # the others can be left blank - filled in by students 
         self.fields['student_id'].required = True
         self.fields['name'].required = True
-        self.fields['cwa'].required = False
-        self.fields['major'].required = False
-        self.fields['email'].required = False
+        
+        for field_name in ['cwa', 'major', 'email', 'notes', 'resume', 'cv']:
+            self.fields[field_name].required = False

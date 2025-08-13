@@ -6,6 +6,8 @@ from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeFor
 from django.contrib.auth import login 
 from student_app.models import Student 
 from .studentFilters import StudentFilter
+from django.views.decorators.http import require_http_methods
+from .forms import addStudentForm
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -73,3 +75,18 @@ def student_view(request):
         'group_status': group_status,
     } 
     return render(request, 'student_view.html', context)
+
+@require_http_methods(["GET", "POST"])
+@login_required
+def student_create(request):
+    if request.method == "POST":
+        form = addStudentForm(request.POST)
+        if form.is_valid():
+            # Set Default values
+            student = form.save(commit=False) # Don't add yet 
+            student.application_submitted = False 
+            student.allocated_group = False
+            student.save() 
+
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            
