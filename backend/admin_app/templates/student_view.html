@@ -160,7 +160,12 @@ tr:hover {
                         <span style="color: gray;">Unassigned</span>
                     {% endif %}
                 </td>
-                <td>{% if student.cwa %}{{ student.cwa }}{% else %}N/A{% endif %}</td>
+                <td>{% if student.cwa %}
+                        {{ student.cwa }}
+                    {% else %}
+                        <span style="color: grey;">--</span>
+                    {% endif %}
+                    </td>
                 <td>{{ student.major }}</td> <!-- Displays combined Major, Degree -->
             </tr>
         {% empty %}
