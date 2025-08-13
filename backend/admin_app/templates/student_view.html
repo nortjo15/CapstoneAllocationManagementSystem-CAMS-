@@ -201,7 +201,7 @@ Validation for the CWA inputs
 <script> 
 const cwaMinInput = document.getElementById('cwa_min');
 const cwaMaxInput = document.getElementById('cwa_max');
-const cwaErrorDiv = document.getElementById('cwa_error');
+const cwaErrorDivLocalLocal = document.getElementById('cwa_error');
 const form = cwaMinInput.closest('form'); //find parent form
 const submitButton = form.querySelector('button[type="submit"]'); //find submit button
 
@@ -237,14 +237,14 @@ function validateCWA()
     //Check min <= max
     if (!isNaN(min) && !isNaN(max) && min > max)
     {
-        cwaErrorDiv.textContent = 'CWA Min cannot be greater than CWA Max.'; //display error
-        cwaErrorDiv.style.display = 'block';
+        cwaErrorDivLocal.textContent = 'CWA Min cannot be greater than CWA Max.'; //display error
+        cwaErrorDivLocal.style.display = 'block';
         submitButton.disabled = true; //disable submit button while invalid inputs 
     }
     else 
     {
-        cwaErrorDiv.textContent = ''; //clear error
-        cwaErrorDiv.style.display = 'none';
+        cwaErrorDivLocal.textContent = ''; //clear error
+        cwaErrorDivLocal.style.display = 'none';
         submitButton.disabled = false;
     }
 }
