@@ -8,7 +8,7 @@ class addStudentForm(forms.ModelForm):
             'student_id', 'name', 'cwa', 'major', 'email', 'notes'
         ]
         widgets = {
-            'cwa': forms.NumberInput(attrs={'step':'1', 'min':'0', 'max':'100'})
+            'cwa': forms.NumberInput(attrs={'step':'1', 'min':'0', 'max':'100', 'id':'cwa'})
         }
 
     def __init__(self, *args, **kwargs):
