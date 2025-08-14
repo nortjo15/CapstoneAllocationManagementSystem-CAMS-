@@ -21,3 +21,10 @@ class addStudentForm(forms.ModelForm):
         
         for field_name in ['cwa', 'major', 'email', 'notes']:
             self.fields[field_name].required = False
+
+class importStudentForm(forms.Form):
+    csv_file = forms.FileField(
+        label='Select CSV file',
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'accept': '.csv'})
+    )

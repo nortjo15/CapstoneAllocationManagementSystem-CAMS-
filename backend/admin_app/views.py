@@ -1,14 +1,17 @@
+import csv
 from rest_framework import generics
 from .models import AdminLog
 from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
 from django.contrib.auth import login 
+from django.contrib import messages
 from student_app.models import Student 
 from .studentFilters import StudentFilter
 from django.views.decorators.http import require_http_methods
-from .forms import addStudentForm
+from .forms import addStudentForm, importStudentForm
 from django.http import JsonResponse
+from io import TextIOWrapper
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -109,3 +112,65 @@ def student_create(request):
         form = addStudentForm()
 
     return render(request, 'admin_app/student_create_modal.html', {'form': form})
+
+@require_http_methods(["GET", "POST"])
+@login_required 
+def student_import(request):
+    if request.method == "POST":
+        form = importStudentForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            csv_file = form.cleaned_data['csv_file']
+
+            # Convert uploaded file to text fo csv.reader
+            data_set = TextIOWrapper(csv_file.file, encoding='utf-8')
+            reader = csv.DictReader(data_set) #access columns by name
+
+            errors = []
+            created_count = 0
+
+            for i, row in enumerate(reader, start=1):
+                #Validation 
+                student_id = row.get('student_id', '').strip()
+                name = row.get('name', '').strip()
+                # Needs to be adjusted for full name and last name
+
+                if not student_id or not name: 
+                    errors.append(f"Row {i}: student_id and name are required.")
+                    continue 
+
+                 # Store errors for invalid lines 
+                if not student_id.isdigit() or len(student_id) != 8:
+                    errors.append(f"Row {i}: student_id must be exactly 8 digits.")
+                    continue 
+
+                # Optional fields
+                cwa = row.get('cwa')
+                major = row.get('major')
+                email = row.get('email')
+                notes = row.get('notes')
+
+                # Create Student
+                Student.objects.create(
+                    student_id=student_id,
+                    name=name,
+                    cwa=cwa if cwa else None,
+                    major=major if major else None, 
+                    email=email if email else None, 
+                    notes=notes if notes else None
+                )
+                created_count += 1 
+
+            if errors:
+                return render(request, 'admin_app/student_importCSV.html', {
+                    'form': form,
+                    'errors': errors
+                })
+            
+            messages.success(request, f"{created_count} students imported successfully!")
+            return redirect('admin_student_list')
+        
+    else: 
+        form = importStudentForm()
+
+    return render(request, 'admin_app/student_importCSV.html', {'form': form})
