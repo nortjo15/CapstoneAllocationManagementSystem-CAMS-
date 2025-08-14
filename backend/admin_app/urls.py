@@ -22,7 +22,8 @@ from django.conf.urls.static import static
 from .import views
 from django.urls import path
 from .views import AdminLogListCreateView
-    
+from .views import SendNotificationView
+ 
 urlpatterns = [
     path('register/', views.register_view, name="register"),
     path('login/', views.login_view, name="login"),
@@ -30,4 +31,5 @@ urlpatterns = [
     path('test/', views.test_view, name="test"),
     path('', AdminLogListCreateView.as_view()),
     path('student_view/', views.student_view, name='student_view'),
+    path('send-notification/', SendNotificationView.as_view(), name='send_notification'),
 ]
