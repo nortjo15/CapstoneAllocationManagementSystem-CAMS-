@@ -12,6 +12,7 @@ from django.views.decorators.http import require_http_methods
 from .forms import addStudentForm, importStudentForm
 from django.http import JsonResponse
 from io import TextIOWrapper
+from project_app.models import Major
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
@@ -132,6 +133,7 @@ def admin_student_import(request):
 
             errors = []
             created_count = 0
+            duplicate_count = 0
 
             for i, row in enumerate(reader, start=1):
                 #Validation 
@@ -150,7 +152,18 @@ def admin_student_import(request):
 
                 if Student.objects.filter(student_id=student_id).exists():
                     errors.append(f"Row {i}: student_id {student_id} already exists.")
+                    duplicate_count += 1
                     continue
+
+                # Foreign Key Validation for Major
+                major_name = row.get('major', '').strip()
+                major_obj = None 
+                if major_name: 
+                    try: 
+                        major_obj = Major.objects.get(name=major_name)
+                    except Major.DoesNotExist:
+                        errors.append(f"Row {i}: Major '{major_name}' does not exist.")
+                        continue
 
                 # Optional fields
                 cwa = row.get('cwa')
@@ -179,12 +192,19 @@ def admin_student_import(request):
                 )
                 created_count += 1 
 
+            # Get Totals
+            total_rows = created_count + len(errors)
+            skipped_count = len(errors)
+
             # AJAX Response
             if request.headers.get("x-requested-with") == "XMLHttpRequest":
                 return JsonResponse({
-                    "success": len(errors) == 0,
+                    "success": created_count > 0,
                     "errors": errors,
-                    "created_count": created_count
+                    "created_count": created_count,
+                    "skipped_count": skipped_count,
+                    "duplicate_count": duplicate_count,
+                    "total_rows": total_rows
                 }, status=200 if len(errors) == 0 else 400)
             
             # Normal form response

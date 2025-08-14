@@ -4,6 +4,7 @@ const import_modal = document.getElementById('importModal')
 const import_closeBtn = import_modal.querySelector('.close-btn')
 const import_modalSubmit = import_form.querySelector('button[type="submit"]');
 const import_fileInput = import_form.querySelector('input[type="file"');
+const importErrorDiv = document.getElementById('importFormErrors');
 
 function openImportModal()
 {
@@ -34,7 +35,6 @@ import_form.addEventListener('submit', function(e)
     e.preventDefault(); //Prevent normal form submit
 
     const importFormData = new FormData(import_form)
-    const importErrorDiv = document.getElementById('importFormErrors');
 
     //Disable button to prevent multiple submissions
     import_modalSubmit.disabled = true;
@@ -51,7 +51,19 @@ import_form.addEventListener('submit', function(e)
         //Clear previous error messages
         importErrorDiv.innerHTML = '';
 
-        if(data.success) {
+        if(data.success || data.skipped_count > 0) {
+            let summaryHTML = `
+                <p style=font-weight:bold; color:green;">
+                    ${data.created_count} students imported successfully.
+                </p>
+                <p styl="font-weight:bold; color:red;">
+                    ${data.skipped_count} students skipped.
+                </p>
+                <p style="font-weight:bold; color:orange;">
+                    ${data.duplicate_count} duplicates skipped.
+                </p>
+            `;
+
             //Message
             importErrorDiv.style.color = 'green';
             importErrorDiv.textContent = `${data.created_count} students imported successfully!`;
