@@ -4,15 +4,17 @@ const modal = document.getElementById('studentModal')
 const closeBtn = modal.querySelector('.close-btn')
 const modalSubmit = form.querySelector('button[type="submit"]');
 
-function openModal() {
+function openModal() 
+{
     //modal.style.display = 'block'; 
     modalSubmit.disabled = true;
     modal.style.display = 'flex';
 }
-closeBtn.onclick = () => modal.style.display = 'none'; //Hide if close button is clicked
-window.onclick = (e) => {
+    closeBtn.onclick = () => modal.style.display = 'none'; //Hide if close button is clicked
+    
+    window.onclick = (e) => {
     if (e.target == modal) modal.style.display = 'none'; //Hide if click outside of it 
-}
+    }
 
 // Client side validation for required fields 
 // If user leaves field empty and clicks away, shows red message under that field 
