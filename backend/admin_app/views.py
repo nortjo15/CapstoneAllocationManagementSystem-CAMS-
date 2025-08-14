@@ -57,3 +57,6 @@ def student_view(request):
         students = Student.objects.all()
 
     return render(request, 'student_view.html', {'students': students})
+
+def round_view(request):
+   return render(request, "rounds.html")
