@@ -6,6 +6,13 @@ const import_modalSubmit = import_form.querySelector('button[type="submit"]');
 const import_fileInput = import_form.querySelector('input[type="file"');
 const importErrorDiv = document.getElementById('importFormErrors');
 
+//Create a new div for success message
+const importSuccessDiv = document.createElement('div');
+importSuccessDiv.style.color = 'green';
+importSuccessDiv.style.fontWeight = 'bold';
+importSuccessDiv.style.marginTop = '10px';
+import_form.appendChild(importSuccessDiv); //Attach it to the parent form
+
 function openImportModal()
 {
     import_modalSubmit.disabled = true; 
@@ -35,7 +42,6 @@ import_form.addEventListener('submit', function(e)
     e.preventDefault(); //Prevent normal form submit
 
     const importFormData = new FormData(import_form)
-
     //Disable button to prevent multiple submissions
     import_modalSubmit.disabled = true;
 
@@ -50,44 +56,41 @@ import_form.addEventListener('submit', function(e)
     .then(data => {
         //Clear previous error messages
         importErrorDiv.innerHTML = '';
+        importSuccessDiv.textContent = '';
 
-        if(data.success || data.skipped_count > 0) {
-            let summaryHTML = `
-                <p style=font-weight:bold; color:green;">
-                    ${data.created_count} students imported successfully.
-                </p>
-                <p styl="font-weight:bold; color:red;">
-                    ${data.skipped_count} students skipped.
-                </p>
-                <p style="font-weight:bold; color:orange;">
-                    ${data.duplicate_count} duplicates skipped.
-                </p>
-            `;
+        if(data.success || data.skipped_count > 0) 
+        {
+            importSuccessDiv.textContent = `${data.created_count} students imported successfully!`;
 
-            //Message
-            importErrorDiv.style.color = 'green';
-            importErrorDiv.textContent = `${data.created_count} students imported successfully!`;
+            if(data.errors && data.errors.length > 0)
+            {
+                importErrorDiv.innerHTML = '<ul style="color:red; max-height:200px; overflow-y:auto;">' +
+                    data.errors.map(err => `<li>${err}</li>`).join('') +
+                    '</ul>';
+            }
 
             //Reset form
             import_form.reset();
             import_modalSubmit.disabled = true;
-            import_modal.style.display = 'none';
 
-            //Reload page to show new students
-            location.reload();
+            //Reload page to show new students after delay
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
         }
         else 
         {
-            //Display errors returned 
-            importErrorDiv.style.color = 'red';
-            if (Array.isArray(data.errors))
-            {
-                importErrorDiv.innerHTML = data.errors.json('<br>');
-            }
+            // NEW: display errors if nothing imported
+            if (data.errors && data.errors.length > 0) {
+                importErrorDiv.innerHTML = '<ul style="color:red; max-height:200px; overflow-y:auto;">' +
+                    data.errors.map(err => `<li>${err}</li>`).join('') +
+                    '</ul>';
+            } 
             else 
             {
                 importErrorDiv.textContent = 'Error importing students.';
             }
+            import_modalSubmit.disabled = false;
         }
     })
     .catch(err => {
