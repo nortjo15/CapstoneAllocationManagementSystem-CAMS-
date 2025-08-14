@@ -7,7 +7,7 @@ from django.contrib.auth import login
 from student_app.models import Student 
 from .studentFilters import StudentFilter
 from django.views.decorators.http import require_http_methods
-from forms import addStudentForm
+from .forms import addStudentForm
 from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
