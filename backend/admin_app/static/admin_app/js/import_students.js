@@ -58,16 +58,9 @@ import_form.addEventListener('submit', function(e)
         importErrorDiv.innerHTML = '';
         importSuccessDiv.textContent = '';
 
-        if(data.success || data.skipped_count > 0) 
+        if (data.created_count > 0)
         {
             importSuccessDiv.textContent = `${data.created_count} students imported successfully!`;
-
-            if(data.errors && data.errors.length > 0)
-            {
-                importErrorDiv.innerHTML = '<ul style="color:red; max-height:200px; overflow-y:auto;">' +
-                    data.errors.map(err => `<li>${err}</li>`).join('') +
-                    '</ul>';
-            }
 
             //Reset form
             import_form.reset();
@@ -78,26 +71,25 @@ import_form.addEventListener('submit', function(e)
                 location.reload();
             }, 3000);
         }
-        else 
+
+        if(data.errors && data.errors.length > 0)
         {
-            // NEW: display errors if nothing imported
-            if (data.errors && data.errors.length > 0) {
-                importErrorDiv.innerHTML = '<ul style="color:red; max-height:200px; overflow-y:auto;">' +
-                    data.errors.map(err => `<li>${err}</li>`).join('') +
-                    '</ul>';
-            } 
-            else 
-            {
-                importErrorDiv.textContent = 'Error importing students.';
-            }
+            importErrorDiv.innerHTML = '<ul style="color:red; max-height:200px; overflow-y:auto;">' +
+                data.errors.map(err => `<li>${err}</li>`).join('') +
+                '</ul>';
+
+            import_modalSubmit.disabled = false; 
+        }
+        else if (data.created_count === 0)
+        {
+            //Generic error if nothing created, no specific errors
+            importErrorDiv.textContent = 'No students were imported';
             import_modalSubmit.disabled = false;
         }
     })
     .catch(err => {
         importErrorDiv.style.color = 'red';
         importErrorDiv.textContent = 'Unexpected error occurred.';
-    })
-    .finally(() => {
-        import_modalSubmit.disabled = false;
+        import_modalSubmit.disabled = false;    
     });
 });

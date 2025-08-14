@@ -32,3 +32,8 @@ Without CSS just appends it to the bottom of the page */
     cursor: pointer;
     font-weight: bold;
 }
+
+#importStudentForm input[type="file"] {
+    display: block;
+    margin-top: 5px;
+}
