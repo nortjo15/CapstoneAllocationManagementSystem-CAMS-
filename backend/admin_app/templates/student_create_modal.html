@@ -11,11 +11,18 @@
         <form id="createStudentForm" method="post" action="{% url 'admin_student_create' %}" enctype="multipart/form-data">
             {% csrf_token %}
             {{ add_form.as_p }} <!-- Render fields -->
-            <button type="submit">Save</button>
+            <button type="submit" id="importStudentSubmit">Save</button>
         </form>
 
         <!-- Validation Errors display -->
         <div id="formErrors" style="color:red"></div>
+            {% if errors %}
+                <ul>
+                    {% for err in errors %}
+                        <li>{{ err.field }}: {{ err.message}}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
      </div>
  </div>
 

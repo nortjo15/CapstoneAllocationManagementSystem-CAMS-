@@ -127,6 +127,8 @@ def admin_student_import(request):
             # Convert uploaded file to text fo csv.reader
             data_set = TextIOWrapper(csv_file.file, encoding='utf-8')
             reader = csv.DictReader(data_set) #access columns by name
+            reader.fieldnames = [name.strip() for name in reader.fieldnames]
+            # Avoid whitespace issues
 
             errors = []
             created_count = 0
@@ -152,7 +154,16 @@ def admin_student_import(request):
 
                 # Optional fields
                 cwa = row.get('cwa')
-                cwa = float(cwa) if cwa and cwa.strip() else None
+
+                if cwa is not None and (cwa < 0 or cwa > 100):
+                    errors.append(f"Row {i}: CWA must be between 0 and 100")
+                    continue
+                
+                try:
+                    cwa = float(cwa) if cwa and cwa.strip() else None
+                except ValueError:
+                    errors.append(f"Row {i}: CWA must be a number.")
+
                 major = row.get('major')
                 email = row.get('email')
                 notes = row.get('notes')
@@ -169,9 +180,10 @@ def admin_student_import(request):
                 created_count += 1 
 
             if errors:
-                return render(request, 'admin_app/student_importCSV.html', {
+                return render(request, 'student_importCSV.html', {
                     'form': form,
-                    'errors': errors
+                    'errors': errors,
+                    'created_count': created_count
                 })
             
             messages.success(request, f"{created_count} students imported successfully!")
