@@ -135,17 +135,41 @@ def admin_student_import(request):
             created_count = 0
             duplicate_count = 0
 
+            # Check required columns
+            required_columns = {'student_id', 'name'}
+            if not required_columns.issubset(set(reader.fieldnames)):
+                errors.append("CSV must contain 'student_id' and 'name' columns.")
+
+                if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                    return JsonResponse({
+                        "success": False,
+                        "created_count": 0,
+                        "skipped_count": 0,
+                        "errors": errors,
+                        'duplicate_count': 0
+                    })
+                
+                # Non-AJAX
+                return render(request, 'admin_app/student_importCSV.html', {
+                    'form': form,
+                    'errors': errors,
+                    'created_count': 0,
+                    'skipped_count': 0,
+                    'duplicate_count': 0
+                })
+            
+
             for i, row in enumerate(reader, start=1):
+                # Skip completely empty rows
+                if not any(row.values()):
+                    continue
+
                 #Validation 
                 student_id = row.get('student_id', '').strip()
                 name = row.get('name', '').strip()
                 # Needs to be adjusted for full name and last name
 
-                if not student_id or not name: 
-                    errors.append(f"Row {i}: student_id and name are required.")
-                    continue 
-
-                 # Store errors for invalid lines 
+                # Store errors for invalid lines 
                 if not student_id.isdigit() or len(student_id) != 8:
                     errors.append(f"Row {i}: student_id must be exactly 8 digits.")
                     continue 
@@ -203,16 +227,17 @@ def admin_student_import(request):
                     "errors": errors,
                     "created_count": created_count,
                     "skipped_count": skipped_count,
-                    "duplicate_count": duplicate_count,
-                    "total_rows": total_rows
-                }, status=200 if len(errors) == 0 else 400)
+                    'duplicate_count': duplicate_count
+                })
             
             # Normal form response
             if errors:
                 return render(request, 'student_importCSV.html', {
                     'form': form,
                     'errors': errors,
-                    'created_count': created_count
+                    'created_count': created_count,
+                    'skipped_count': skipped_count,
+                    'duplicate_count': duplicate_count
                 })
             
             messages.success(request, f"{created_count} students imported successfully!")
