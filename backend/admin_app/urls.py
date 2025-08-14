@@ -31,4 +31,5 @@ urlpatterns = [
     path('', AdminLogListCreateView.as_view()),
     path('student_view/', views.student_view, name='student_view'),
     path('students/create/', views.student_create, name='admin_student_create'),
+    path('students/import/', views.admin_student_import, name='admin_student_import'),
 ]

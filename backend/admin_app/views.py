@@ -70,7 +70,8 @@ def student_view(request):
     group_status  = request.GET.get('group_status', 'all').lower()
 
     # Create student form
-    form = addStudentForm()
+    add_form = addStudentForm()
+    import_form = importStudentForm()
         
     context = {
         'students': students,
@@ -80,7 +81,8 @@ def student_view(request):
         'cwa_max': cwa_max,
         'application_submitted': application_submitted,
         'group_status': group_status,
-        'form': form,
+        'add_form': add_form,
+        'import_form': import_form,
     } 
     return render(request, 'student_view.html', context)
 
@@ -115,7 +117,7 @@ def student_create(request):
 
 @require_http_methods(["GET", "POST"])
 @login_required 
-def student_import(request):
+def admin_student_import(request):
     if request.method == "POST":
         form = importStudentForm(request.POST, request.FILES)
 
@@ -144,8 +146,13 @@ def student_import(request):
                     errors.append(f"Row {i}: student_id must be exactly 8 digits.")
                     continue 
 
+                if Student.objects.filter(student_id=student_id).exists():
+                    errors.append(f"Row {i}: student_id {student_id} already exists.")
+                    continue
+
                 # Optional fields
                 cwa = row.get('cwa')
+                cwa = float(cwa) if cwa and cwa.strip() else None
                 major = row.get('major')
                 email = row.get('email')
                 notes = row.get('notes')
