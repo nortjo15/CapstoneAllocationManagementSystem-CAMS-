@@ -10,7 +10,7 @@
         <!-- Form -->
         <form id="importStudentForm" method="post" action="{% url 'admin_student_import' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }} <!-- Render -->
+            {{ import_form.as_p }} <!-- Render -->
             <button type="submit">Import</button>
         </form>
 

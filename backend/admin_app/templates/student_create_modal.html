@@ -10,7 +10,7 @@
         <!-- Form posts to view -->
         <form id="createStudentForm" method="post" action="{% url 'admin_student_create' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }} <!-- Render fields -->
+            {{ add_form.as_p }} <!-- Render fields -->
             <button type="submit">Save</button>
         </form>
 
