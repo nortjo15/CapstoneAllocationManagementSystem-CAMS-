@@ -3,7 +3,7 @@ const import_form = document.getElementById('importStudentForm');
 const import_modal = document.getElementById('importModal')
 const import_closeBtn = import_modal.querySelector('.close-btn')
 const import_modalSubmit = import_form.querySelector('button[type="submit"]');
-const import_fileInput = import_form.querySelector('input[type="file"');
+const import_fileInput = import_form.querySelector('input[type="file"]');
 const importErrorDiv = document.getElementById('importFormErrors');
 let importSucceeded = false;  
 
@@ -28,13 +28,16 @@ import_closeBtn.onclick = () =>
 }
 window.onclick = (e) => 
 {
-    if (e.target == import_modal) import_modal.style.display = 'none';
-    if (importSucceeded) location.reload();
+    if (e.target == import_modal) 
+    {
+        import_modal.style.display = 'none';
+        if (importSucceeded) location.reload();
+    }
 }
 
 //Listen for changes
 import_fileInput.addEventListener('change', () => {
-    if (import_fileInput.isDefaultNamespace.length > 0)
+    if (import_fileInput.files.length > 0)
     {
         import_modalSubmit.disabled=false; 
     }
@@ -66,10 +69,11 @@ import_form.addEventListener('submit', function(e)
         importErrorDiv.innerHTML = '';
         importSuccessDiv.textContent = '';
 
-        if (data.created_count > 0)
+        if (data.created_count > 0 || data.updated_count > 0)
         {
             importSucceeded = true;
-            importSuccessDiv.textContent = `${data.created_count} students imported successfully!`;
+            importSuccessDiv.textContent = 
+                `${data.created_count} students created, ${data.updated_count} updated successfully!`;
 
             //Reset form
             import_form.reset();
@@ -84,7 +88,7 @@ import_form.addEventListener('submit', function(e)
 
             import_modalSubmit.disabled = false; 
         }
-        else if (data.created_count === 0)
+        else if (data.created_count === 0 && data.updated_count === 0)
         {
             //Generic error if nothing created, no specific errors
             importErrorDiv.textContent = 'No students were imported';

@@ -133,7 +133,7 @@ def admin_student_import(request):
 
             errors = []
             created_count = 0
-            duplicate_count = 0
+            updated_count = 0
 
             # Check required columns
             required_columns = {'student_id', 'name'}
@@ -146,7 +146,7 @@ def admin_student_import(request):
                         "created_count": 0,
                         "skipped_count": 0,
                         "errors": errors,
-                        'duplicate_count': 0
+                        'updated_count': 0
                     })
                 
                 # Non-AJAX
@@ -155,7 +155,7 @@ def admin_student_import(request):
                     'errors': errors,
                     'created_count': 0,
                     'skipped_count': 0,
-                    'duplicate_count': 0
+                    'updated_count': 0
                 })
             
 
@@ -173,11 +173,6 @@ def admin_student_import(request):
                 if not student_id.isdigit() or len(student_id) != 8:
                     errors.append(f"Row {i}: student_id must be exactly 8 digits.")
                     continue 
-
-                if Student.objects.filter(student_id=student_id).exists():
-                    errors.append(f"Row {i}: student_id {student_id} already exists.")
-                    duplicate_count += 1
-                    continue
 
                 # Foreign Key Validation for Major
                 major_name = row.get('major', '').strip()
@@ -202,9 +197,29 @@ def admin_student_import(request):
                 except ValueError:
                     errors.append(f"Row {i}: CWA must be a number.")
 
-                major = row.get('major')
                 email = row.get('email')
                 notes = row.get('notes')
+
+                print("Checking duplicate for:", student_id)
+                print("Exists:", Student.objects.filter(student_id=student_id).exists())
+
+                if Student.objects.filter(student_id=student_id.strip()).exists():
+                    student = Student.objects.get(student_id=student_id)
+                    # Update this student
+                    if name: 
+                        student.name = name
+                    if cwa is not None: 
+                        student.cwa = cwa 
+                    if major_obj is not None: 
+                        student.major = major_obj
+                    if email:
+                        student.email = email
+                    if notes: 
+                        student.notes = notes 
+                    student.save()
+
+                    updated_count += 1
+                    continue
 
                 # Create Student
                 Student.objects.create(
@@ -217,18 +232,16 @@ def admin_student_import(request):
                 )
                 created_count += 1 
 
-            # Get Totals
-            total_rows = created_count + len(errors)
             skipped_count = len(errors)
 
             # AJAX Response
             if request.headers.get("x-requested-with") == "XMLHttpRequest":
                 return JsonResponse({
-                    "success": created_count > 0,
+                    "success": created_count + updated_count > 0,
                     "errors": errors,
                     "created_count": created_count,
                     "skipped_count": skipped_count,
-                    'duplicate_count': duplicate_count
+                    'updated_count': updated_count
                 })
             
             # Normal form response
@@ -238,7 +251,7 @@ def admin_student_import(request):
                     'errors': errors,
                     'created_count': created_count,
                     'skipped_count': skipped_count,
-                    'duplicate_count': duplicate_count
+                    'updated_count': updated_count
                 })
             
             messages.success(request, f"{created_count} students imported successfully!")
