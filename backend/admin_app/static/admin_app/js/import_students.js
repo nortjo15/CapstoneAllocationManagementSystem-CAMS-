@@ -5,6 +5,7 @@ const import_closeBtn = import_modal.querySelector('.close-btn')
 const import_modalSubmit = import_form.querySelector('button[type="submit"]');
 const import_fileInput = import_form.querySelector('input[type="file"');
 const importErrorDiv = document.getElementById('importFormErrors');
+let importSucceeded = false;  
 
 //Create a new div for success message
 const importSuccessDiv = document.createElement('div');
@@ -19,9 +20,16 @@ function openImportModal()
     import_modal.style.display = 'flex';
 }
 
-import_closeBtn.onclick = () => import_modal.style.display = 'none';
-window.onclick = (e) => {
+import_closeBtn.onclick = () => 
+{
+    import_modal.style.display = 'none';
+    //If closed, the page will reload 
+    if(importSucceeded) location.reload();
+}
+window.onclick = (e) => 
+{
     if (e.target == import_modal) import_modal.style.display = 'none';
+    if (importSucceeded) location.reload();
 }
 
 //Listen for changes
@@ -60,16 +68,12 @@ import_form.addEventListener('submit', function(e)
 
         if (data.created_count > 0)
         {
+            importSucceeded = true;
             importSuccessDiv.textContent = `${data.created_count} students imported successfully!`;
 
             //Reset form
             import_form.reset();
             import_modalSubmit.disabled = true;
-
-            //Reload page to show new students after delay
-            setTimeout(() => {
-                location.reload();
-            }, 3000);
         }
 
         if(data.errors && data.errors.length > 0)

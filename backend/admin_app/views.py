@@ -211,7 +211,7 @@ def admin_student_import(request):
                     student_id=student_id,
                     name=name,
                     cwa=cwa if cwa else None,
-                    major=major if major else None, 
+                    major=major_obj if major_obj else None, 
                     email=email if email else None, 
                     notes=notes if notes else None
                 )
