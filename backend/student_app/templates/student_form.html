@@ -10,8 +10,6 @@
 <body>
     <div v-scope>
         <form name="student_form" action="/apiEnpointURL" method= "post">
-            <label for="fullname">Full name</label>
-            <input type="text" pattern="[a-zA-Z]+" name="fullname" id="fullname" required><br><br>
             <label for="studentID">Student ID</label>
             <input type="text" pattern="[0-9]+" maxlength="8" name="studentID" id="studentID" required><br><br>
 
@@ -24,25 +22,31 @@
 
             <label>Please choose your top 6 preferences for projects</label><br>
             <div v-for="n in 6" :key="n">
-                <select :name="'projectPreferences_' + n" :id="'rojectPreferences_' + n">
+                <select name="projects">
                     <option disabled selected>Select a Project</option>
-                    <option v-for="project in projects" :value="project.id">{{ project.title }}</option>
+                    {% for project in projects %}
+                        <option value = "{{ project.title }}">{{ project.title }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+
+            <label>Please choose 6 desirable group members</label><br>
+            <div v-for="n in 6" :key="n">
+                <select name="student-desirable">
+                    <option disabled selected>Select a student</option>
+                    {% for student in students%}
+                        <option value="{{ student.name }}">{{ student.name }}</option>
+                    {% endfor %}
                 </select><br>
             </div><br>
 
-            <label>Please choose your top 6 group member preferences</label><br>
+            <label>Please choose 6 undesirable group member</label>
             <div v-for="n in 6" :key="n">
-                <select :name="'memberPreferences_' + n" :id="'memberPreferences_' + n">
+                <select name="student-undesirable">
                     <option disabled selected>Select a student</option>
-                    <option v-for="student in students" :value="student.id">{{ student.name }}</option>
-                </select><br>
-            </div><br>
-
-            <label>Please choose your 6 anti group member preferences</label>
-            <div v-for="n in 6" :key="n">
-                <select :name="'memberAntiPreferences_' + n" :id="'memberAntiPreferences_' + n">
-                    <option disabled selected>Select a student</option>
-                    <option v-for="student in students" :value="student.id">{{ student.name }}</option>
+                    {% for student in students%}
+                        <option value="{{ student.name }}">{{ student.name }}</option>
+                    {% endfor %}
                 </select>
             </div><br>
 
@@ -53,24 +57,5 @@
             <input type="submit" value="submit">
         </form>
     </div>
-    <script type="module">
-        import { createApp } from 'https://unpkg.com/petite-vue?module'
-
-        createApp({
-            projects: [],
-            students: [],
-            async mounted() {
-                try {
-                    const projectRes = await fetch('/api/students/projects/')
-                    this.projects = await projectRes.json()
-
-                    const studentRes = await fetch('/api/students/students/')
-                    this.students = await studentRes.json()
-                } catch (error) {
-                    console.error('Failed to fetch data:', error)
-                }
-            }
-        }).mount()
-    </script>
 </body>
 </html>

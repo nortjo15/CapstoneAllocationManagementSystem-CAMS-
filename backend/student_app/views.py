@@ -23,4 +23,6 @@ class ProjectListCreateView(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
 
 def student_form(request):
-    return render(request, "student_form.html")
+    students = Student.objects.values('name')
+    projects = Project.objects.values('title')
+    return render(request, "student_form.html", {'students': students, 'projects': projects})
