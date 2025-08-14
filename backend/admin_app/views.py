@@ -179,6 +179,15 @@ def admin_student_import(request):
                 )
                 created_count += 1 
 
+            # AJAX Response
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({
+                    "success": len(errors) == 0,
+                    "errors": errors,
+                    "created_count": created_count
+                }, status=200 if len(errors) == 0 else 400)
+            
+            # Normal form response
             if errors:
                 return render(request, 'student_importCSV.html', {
                     'form': form,
@@ -189,7 +198,13 @@ def admin_student_import(request):
             messages.success(request, f"{created_count} students imported successfully!")
             return redirect('admin_student_list')
         
+        else:
+            #Form Invalid
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        
     else: 
+        # Form Valid
         form = importStudentForm()
 
     return render(request, 'admin_app/student_importCSV.html', {'form': form})

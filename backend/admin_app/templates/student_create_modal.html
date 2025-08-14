@@ -16,13 +16,6 @@
 
         <!-- Validation Errors display -->
         <div id="formErrors" style="color:red"></div>
-            {% if errors %}
-                <ul>
-                    {% for err in errors %}
-                        <li>{{ err.field }}: {{ err.message}}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
      </div>
  </div>
 

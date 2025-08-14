@@ -27,3 +27,62 @@ import_fileInput.addEventListener('change', () => {
         import_modalSubmit.disabled=true;
     }   
 })
+
+//AJAX Submission
+import_form.addEventListener('submit', function(e)
+{
+    e.preventDefault(); //Prevent normal form submit
+
+    const importFormData = new FormData(import_form)
+    const importErrorDiv = document.getElementById('importFormErrors');
+
+    //Disable button to prevent multiple submissions
+    import_modalSubmit.disabled = true;
+
+    fetch(import_form.action, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: importFormData
+    })
+    .then(response => response.json())
+    .then(data => {
+        //Clear previous error messages
+        importErrorDiv.innerHTML = '';
+
+        if(data.success) {
+            //Message
+            importErrorDiv.style.color = 'green';
+            importErrorDiv.textContent = `${data.created_count} students imported successfully!`;
+
+            //Reset form
+            import_form.reset();
+            import_modalSubmit.disabled = true;
+            import_modal.style.display = 'none';
+
+            //Reload page to show new students
+            location.reload();
+        }
+        else 
+        {
+            //Display errors returned 
+            importErrorDiv.style.color = 'red';
+            if (Array.isArray(data.errors))
+            {
+                importErrorDiv.innerHTML = data.errors.json('<br>');
+            }
+            else 
+            {
+                importErrorDiv.textContent = 'Error importing students.';
+            }
+        }
+    })
+    .catch(err => {
+        importErrorDiv.style.color = 'red';
+        importErrorDiv.textContent = 'Unexpected error occurred.';
+    })
+    .finally(() => {
+        import_modalSubmit.disabled = false;
+    });
+});
