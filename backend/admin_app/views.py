@@ -200,9 +200,6 @@ def admin_student_import(request):
                 email = row.get('email')
                 notes = row.get('notes')
 
-                print("Checking duplicate for:", student_id)
-                print("Exists:", Student.objects.filter(student_id=student_id).exists())
-
                 if Student.objects.filter(student_id=student_id.strip()).exists():
                     student = Student.objects.get(student_id=student_id)
                     # Update this student
@@ -246,7 +243,8 @@ def admin_student_import(request):
             
             # Normal form response
             if errors:
-                return render(request, 'student_importCSV.html', {
+                print("Block triggered =====================================================================")
+                return render(request, 'admin_app/student_importCSV.html', {
                     'form': form,
                     'errors': errors,
                     'created_count': created_count,
