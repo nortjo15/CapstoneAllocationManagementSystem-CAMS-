@@ -3,7 +3,7 @@ from rest_framework import generics
 from .models import AdminLog
 from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login 
 from django.contrib import messages
 from student_app.models import Student 
@@ -191,13 +191,14 @@ def admin_student_import(request):
 
                 # Optional fields
                 cwa = row.get('cwa')
-
-                if cwa is not None and (cwa < 0 or cwa > 100):
-                    errors.append(f"Row {i}: CWA must be between 0 and 100")
-                    continue
                 
                 try:
                     cwa = float(cwa) if cwa and cwa.strip() else None
+                    
+                    if cwa is not None and (cwa < 0 or cwa > 100):
+                        errors.append(f"Row {i}: CWA must be between 0 and 100")
+                        continue
+
                 except ValueError:
                     errors.append(f"Row {i}: CWA must be a number.")
 
