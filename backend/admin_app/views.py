@@ -15,13 +15,14 @@ class AdminLogListCreateView(generics.ListCreateAPIView):
 
 #View for registering a user, may not need this
 def register_view(request):
-    form = UserCreationForm(request.POST)
-    if form.is_valid():
-        form.save()
-        return redirect("posts:list")
+    if request.method == "POST":               # validate request method is post
+        form = UserCreationForm(request.POST)  # Create a form instance with the submitted data
+        if form.is_valid():
+            form.save()
+        return redirect("login_success")        #if user registration passes, redirect to login success page
     else:
         form = UserCreationForm()
-    return render(request, "", {"form": form})
+    return render(request, "register.html", {"form": form})
 
 #View for logging in user
 def login_view(request):

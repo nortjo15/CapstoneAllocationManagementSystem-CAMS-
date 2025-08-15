@@ -28,6 +28,7 @@ urlpatterns = [
     path('login/login_success.html/', admin_views.login_success, name='login_success'),
     path('admin/', admin.site.urls),
     path('login/', admin_views.login_view, name='login'),
+    path('register/', admin_views.register_view, name='register'),
     path('api/students/', include('student_app.urls')),
     path('api/projects/', include('project_app.urls')),
     path('admin-dashboard/', include('admin_app.urls')),
