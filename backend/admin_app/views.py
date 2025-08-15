@@ -3,7 +3,7 @@ from .models import AdminLog
 from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
-from django.contrib.auth import login 
+from django.contrib.auth import login, authenticate, logout
 from student_app.models import Student 
 
 from django.contrib.auth.decorators import login_required
@@ -19,7 +19,7 @@ def register_view(request):
         form = UserCreationForm(request.POST)  # Create a form instance with the submitted data
         if form.is_valid():
             form.save()
-        return redirect("login_success")        #if user registration passes, redirect to login success page
+        return redirect("login_success")                     #if user registration passes, redirect to login success page
     else:
         form = UserCreationForm()
     return render(request, "register.html", {"form": form})
@@ -30,9 +30,9 @@ def login_view(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             # LOGIN 
-            user = form.get_user() # Get validated user 
-            login(request, user)   # Log the user in 
-            return redirect("login_success") # Changed to use URL name, not template filename
+            user = form.get_user()                          # Get validated user 
+            login(request, user)                            # Log the user in 
+            return redirect("login_success")                # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
@@ -40,6 +40,11 @@ def login_view(request):
 @login_required
 def login_success(request):
     return render(request, "login_success.html")
+
+#View to log the user out
+def logout_view(request):
+    logout(request)
+    return redirect("login")
 
 def test_view(request):
     return render(request, "base.html")
