@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}Student Portal{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <header class="site-header">
+      <h1 class="site-title">{% block header_title %}Student Portal{% endblock %}</h1>
+      <nav class="primary-nav" aria-label="Student navigation">
+        <ul>
+          <li>
+            <a href="{% url 'student_app:student_form' %}"
+               {% if request.resolver_match.url_name == 'student_form' %}aria-current="page"{% endif %}>
+              Application
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'student_app:project_list' %}"
+               {% if request.resolver_match.url_name == 'project_list' %}aria-current="page"{% endif %}>
+              Projects
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'student_app:student_list' %}"
+               {% if request.resolver_match.url_name == 'student_list' %}aria-current="page"{% endif %}>
+              Students
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  </body>
+</html>
