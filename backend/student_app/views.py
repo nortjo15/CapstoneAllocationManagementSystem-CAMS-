@@ -26,4 +26,4 @@ def student_form(request):
     return render(request, "student_form.html")
 
 def student_test(request):
-    return render(request, "base.html")
+    return render(request, "student_base.html")

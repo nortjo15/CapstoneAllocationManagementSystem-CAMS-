@@ -24,8 +24,6 @@ from django.http import HttpResponse
 from admin_app import views as admin_views
 
 
-
-
 urlpatterns = [
     path('login/login_success.html/', admin_views.login_success, name='login_success'),
     path('admin/', admin.site.urls),

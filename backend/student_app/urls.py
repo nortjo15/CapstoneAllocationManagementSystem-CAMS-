@@ -4,7 +4,6 @@ from django.conf import settings
 from .import views
 from student_app.views import ProjectListCreateView, StudentListCreateView
 
-app_name = "students"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
