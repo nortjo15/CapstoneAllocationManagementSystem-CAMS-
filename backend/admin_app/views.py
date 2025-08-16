@@ -63,3 +63,8 @@ def student_view(request):
         students = Student.objects.all()
 
     return render(request, 'student_view.html', {'students': students})
+
+#Settings view - user needs to be logged in
+@login_required
+def settings_view(request):
+    return render(request, 'settings.html')
