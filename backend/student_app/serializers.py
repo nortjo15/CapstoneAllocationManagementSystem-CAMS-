@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Student, GroupPreference
-from .models import ProjectPreference
+from admin_app.models import ProjectPreference
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
