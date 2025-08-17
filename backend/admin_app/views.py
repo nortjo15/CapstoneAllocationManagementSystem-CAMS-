@@ -33,7 +33,7 @@ def register_view(request):
         form = UserCreationForm(request.POST)  # Create a form instance with the submitted data
         if form.is_valid():
             form.save()
-        return redirect("login_success") #if user registration passes, redirect to login success page
+        return redirect("admin_dashboard:login_success") #if user registration passes, redirect to login success page
     else:
         form = UserCreationForm()
     return render(request, "register.html", {"form": form})
@@ -46,7 +46,7 @@ def login_view(request):
             # LOGIN 
             user = form.get_user()             # Get validated user 
             login(request, user)               # Log the user in 
-            return redirect("login_success")   # Changed to use URL name, not template filename
+            return redirect("admin_dashboard:login_success")   # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
@@ -58,7 +58,7 @@ def login_success(request):
 #View to log the user out
 def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect("admin_dashboard:login")
 
 def test_view(request):
     return render(request, "base.html")
@@ -149,7 +149,7 @@ def student_create(request):
             if request.headers.get("x-requested-with") == "XMLHttpRequest":
                 return JsonResponse({"success":True})
             # Normal form submission redirect
-            return redirect('admin_student_list')
+            return redirect('admin_dashboard:admin_student_list')
     
         else: 
             # Return errors if form is invalid
@@ -298,7 +298,7 @@ def admin_student_import(request):
                 })
             
             messages.success(request, f"{created_count} students imported successfully!")
-            return redirect('admin_student_list')
+            return redirect('admin_dashboard:admin_student_list')
         
         else:
             #Form Invalid

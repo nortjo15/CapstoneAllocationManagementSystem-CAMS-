@@ -42,4 +42,5 @@ urlpatterns = [
     path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
     path('final/', FinalGroupListCreateView.as_view()),
     path('final/members/', FinalGroupMemberListCreateView.as_view()),
+    path('rounds/', round_view, name='round_view'),
 ]
