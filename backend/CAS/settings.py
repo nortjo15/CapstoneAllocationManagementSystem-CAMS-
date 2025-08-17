@@ -152,5 +152,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'backendcas2@gmail.com'
 EMAIL_HOST_PASSWORD = 'rwbo cukd oazg gzet '  # App password if using Gmail
-DEFAULT_FROM_EMAIL = 'I2A Project Allocation <noreply@i2a.edu>'
+DEFAULT_FROM_EMAIL = 'Backend CAS <backendcas2@gmail.com>'
 
