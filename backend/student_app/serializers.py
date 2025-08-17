@@ -10,3 +10,4 @@ class GroupPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupPreference
         fields = '__all__'
+
