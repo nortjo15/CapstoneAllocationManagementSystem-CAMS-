@@ -1,6 +1,6 @@
 # version: '3.8' # Use a recent Docker Compose file format
 
-services:
+services:        
   backend:
     build: ./backend # Build from the Dockerfile in the ./backend directory
     command: python manage.py runserver 0.0.0.0:8000 # Command to run Django
