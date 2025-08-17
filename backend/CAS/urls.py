@@ -22,12 +22,10 @@ from admin_app import views as admin_views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/students/', include('student_app.urls')),
+    path('admin/', admin.site.urls), #Default Admin
+    path('api/students/', include('student_app.urls')), #Student App
     path('api/projects/', include(('admin_app.urls', 'admin_app'), namespace='api_projects')),
     path('admin-dashboard/', include(('admin_app.urls', 'admin_app'), namespace='admin_dashboard')),
-    path('test/', admin_views.test_view, name='test'),
-    path('rounds/', admin_views.round_view, name='rounds'),
     # Root URL view
     path('', lambda request: HttpResponse("Welcome to CAS API!")),
 ]
