@@ -6,6 +6,7 @@ from .models import Student, GroupPreference
 from .serializers import StudentSerializer, GroupPreferenceSerializer
 from project_app.models import Project, Major
 from project_app.serializers import ProjectSerializer
+from django.http import JsonResponse
 
 
 class StudentListCreateView(generics.ListCreateAPIView):
@@ -26,7 +27,13 @@ class ProjectListCreateView(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
 
 def student_form(request):
-    students = Student.objects.values('name')
-    projects = Project.objects.values('title')
-    majors = Major.objects.values('name')
-    return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
+    if request.method =='POST':
+        data = request.POST
+        # projects = request.POST.getlist('projects[]')
+        print("Form data received: ", data)
+        return JsonResponse({"received_data" : data})
+    else: 
+        students = Student.objects.values('name')
+        projects = Project.objects.values('title')
+        majors = Major.objects.values('name')
+        return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
