@@ -10,7 +10,8 @@ from project_app.models import (
     SuggestedGroupMember,
     FinalGroup,
     FinalGroupMember,
-    Major
+    Major,
+    Degree
 )
 
 # Generate test data from specified or default files
@@ -64,6 +65,33 @@ class Command(BaseCommand):
             Student.objects.all().delete()
             self.stdout.write(self.style.SUCCESS("Database tables cleared."))
             return 
+        
+        # Add Degrees & Majors, hard coded test data
+        degrees_and_majors = {
+            "Computing": [
+                "Cybersecurity", 
+                "Information Technology", 
+                "Computer Science", 
+                "Software Engineering"
+            ],
+            "Arts": [
+                "Visual",
+                "Creative",
+                "Digital"
+            ],
+        }
+
+        self.stdout.write("Adding Degrees and Majors...")
+
+        for degree_name, majors_list in degrees_and_majors.items():
+            degree_obj, created = Degree.objects.get_or_create(name=degree_name)
+            if created: 
+                self.stdout.write(f"Created Degree: {degree_name}")
+
+            for major_name in majors_list:
+                major_obj, created = Major.objects.get_or_create(degree=degree_obj, name=major_name)
+                if created:
+                    self.stdout.write(f"  Created Major: {major_name} under Degree: {degree_name}")
 
         # --- Import Students --- 
         if not os.path.exists(student_file):
@@ -203,9 +231,3 @@ class Command(BaseCommand):
                     count += 1
 
             self.stdout.write(self.style.SUCCESS(f"Successfully imported {count} project preferences."))
-
-        
-
-        
-
-
