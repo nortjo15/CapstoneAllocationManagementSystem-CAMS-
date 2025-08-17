@@ -12,18 +12,16 @@ from django.views.decorators.http import require_http_methods
 from .forms import addStudentForm, importStudentForm
 from django.http import JsonResponse
 from io import TextIOWrapper
-from project_app.models import Major
-
-
+from .models import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from project_app.models import Project, FinalGroupMember
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
+from .serializers import *
 
 class AdminLogListCreateView(generics.ListCreateAPIView):
     queryset = AdminLog.objects.all()
@@ -46,9 +44,9 @@ def login_view(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             # LOGIN 
-            user = form.get_user()                          # Get validated user 
-            login(request, user)                            # Log the user in 
-            return redirect("login_success")                # Changed to use URL name, not template filename
+            user = form.get_user()             # Get validated user 
+            login(request, user)               # Log the user in 
+            return redirect("login_success")   # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})

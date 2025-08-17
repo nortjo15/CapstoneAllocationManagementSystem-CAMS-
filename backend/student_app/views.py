@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from .models import Student, GroupPreference
 from .serializers import StudentSerializer, GroupPreferenceSerializer
-from project_app.models import Project, Major
-from project_app.serializers import ProjectSerializer
+from .models import Project, Major
+from .serializers import ProjectSerializer
 from django.http import JsonResponse
 
 

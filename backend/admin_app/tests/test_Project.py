@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from student_app.models import Student
-from project_app.models import Project, ProjectPreference
+from admin_app.models import Project, ProjectPreference
 
 # Test creation of Project instance
 class ProjectModelTest(TestCase):
