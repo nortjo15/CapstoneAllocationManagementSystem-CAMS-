@@ -21,7 +21,7 @@
             <input type="email" id="email" name="email"><br><br>
 
             <label for="major">Select your major from the dropdown menu provided.</label><br>
-            <select name = "major" id="major">
+            <select name ="major" id="major">
                 <option disabled selected>Select a Major</option>
                 {% for major in majors %}
                     <option value="{{ major.name }}">{{ major.name }}</option>

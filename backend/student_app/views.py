@@ -28,8 +28,15 @@ class ProjectListCreateView(generics.ListCreateAPIView):
 
 def student_form(request):
     if request.method =='POST':
-        data = request.POST
+        studentId = request.POST.get("studentID")
         # projects = request.POST.getlist('projects[]')
+        Student.objects.filter(student_id=studentID).update(
+            cwa = request.POST.get("cwa"),
+            major = request.POST.get("major"),
+            application_submitted=true,
+            email = request.POST.get("email"),
+            resume = request.POST.get("filename")
+        )
         print("Form data received: ", data)
         return JsonResponse({"received_data" : data})
     else: 
