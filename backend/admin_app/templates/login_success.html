@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-{% extends "base.html" %}
+{% extends "admin_base.html" %}
 
 
 <html lang="en">
@@ -88,7 +88,7 @@
                     <a href="/admin/" class="nav-link">Admin Panel</a>
                 {% endif %}
 
-                <a href="{% url 'student_view' %}" class="nav-link">Student View</a>
+                <a href="{% url 'admin_dashboard:student_view' %}" class="nav-link">Student View</a>
                 <a href="{% url 'admin_dashboard:logout' %}" class="nav-link">Logout</a>
             {% else %}
                 <a href="{% url 'admin_dashboard:login' %}" class="nav-link">Login</a>

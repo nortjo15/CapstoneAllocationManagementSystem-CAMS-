@@ -8,7 +8,7 @@
         <h2>Add Student</h2>
 
         <!-- Form posts to view -->
-        <form id="createStudentForm" method="post" action="{% url 'admin_student_create' %}" enctype="multipart/form-data">
+        <form id="createStudentForm" method="post" action="{% url 'admin_dashboard:admin_student_create' %}" enctype="multipart/form-data">
             {% csrf_token %}
             {{ add_form.as_p }} <!-- Render fields -->
             <button type="submit" id="importStudentSubmit">Save</button>

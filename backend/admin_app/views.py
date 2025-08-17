@@ -49,22 +49,22 @@ def login_view(request):
             return redirect("admin_dashboard:login_success")   # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
-    return render(request, "login.html", {"form": form})
+    return render(request, "admin_dashboard:login.html", {"form": form})
 
 @login_required
 def login_success(request):
-    return render(request, "login_success.html")
+    return render(request, "admin_dashboard:login_success.html")
 
 #View to log the user out
 def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect("admin_dashboard:login")
 
 def test_view(request):
-    return render(request, "base.html")
+    return render(request, "admin_base.html")
 
 def round_view(request):
-   return render(request, "rounds.html")
+   return render(request, "admin_dashboard:rounds.html")
 
 class ProjectListCreateView(generics.ListCreateAPIView):
     queryset = Project.objects.all()
@@ -125,12 +125,12 @@ def student_view(request):
         'add_form': add_form,
         'import_form': import_form,
     } 
-    return render(request, 'student_view.html', context)
+    return render(request, 'admin_dashboard:student_view.html', context)
 
 #Settings view - user needs to be logged in
 @login_required
 def settings_view(request):
-    return render(request, 'settings.html')
+    return render(request, 'admin_dashboard:settings.html')
     
 
 @require_http_methods(["GET", "POST"])
@@ -149,7 +149,7 @@ def student_create(request):
             if request.headers.get("x-requested-with") == "XMLHttpRequest":
                 return JsonResponse({"success":True})
             # Normal form submission redirect
-            return redirect('admin_student_list')
+            return redirect('admin_dashboard:admin_student_list')
     
         else: 
             # Return errors if form is invalid
@@ -317,7 +317,6 @@ TEMPLATE_MAP = {
     "allocation_released": "emails/allocation_released.txt",
     "generic_notice": "emails/generic_notice.txt",
 }
-
 
 class SendNotificationView(APIView):
     permission_classes = [IsAdminUser]
