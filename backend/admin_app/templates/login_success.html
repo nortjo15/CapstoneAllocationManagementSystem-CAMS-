@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+
+{% extends "base.html" %}
+
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -85,9 +89,9 @@
                 {% endif %}
 
                 <a href="{% url 'student_view' %}" class="nav-link">Student View</a>
-                <a href="/logout/" class="nav-link">Logout</a>
+                <a href="{% url 'logout' %}" class="nav-link">Logout</a>
             {% else %}
-                <a href="/login/" class="nav-link">Login</a>
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
             {% endif %}
         </div>
     </div>
