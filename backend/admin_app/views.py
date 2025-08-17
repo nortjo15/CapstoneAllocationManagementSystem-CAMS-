@@ -33,7 +33,7 @@ def register_view(request):
         form = UserCreationForm(request.POST)  # Create a form instance with the submitted data
         if form.is_valid():
             form.save()
-        return redirect("login_success") #if user registration passes, redirect to login success page
+        return redirect("admin_dashboard:login_success") #if user registration passes, redirect to login success page
     else:
         form = UserCreationForm()
     return render(request, "register.html", {"form": form})
@@ -46,7 +46,7 @@ def login_view(request):
             # LOGIN 
             user = form.get_user()             # Get validated user 
             login(request, user)               # Log the user in 
-            return redirect("login_success")   # Changed to use URL name, not template filename
+            return redirect("admin_dashboard:login_success")   # Changed to use URL name, not template filename
     else:
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})

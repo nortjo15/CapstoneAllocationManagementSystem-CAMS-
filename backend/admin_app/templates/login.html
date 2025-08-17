@@ -6,7 +6,7 @@ Login
 
 {% block content %}
     <h1>User Login</h1>
-    <form class="form-with-validation" action="{% url 'login' %}" method="post">
+    <form class="form-with-validation" action="{% url 'admin_dashboard:login' %}" method="post">
         {% csrf_token %}
         {{ form }}
         <button class="form-submit">Submit</button>
