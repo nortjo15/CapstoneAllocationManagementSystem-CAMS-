@@ -27,6 +27,9 @@ class ProjectListCreateView(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
 
 def student_form(request):
+    return render(request, "student_form.html")
+
+def student_test(request):
     if request.method =='POST':
         studentId = request.POST.get("studentID")
         # projects = request.POST.getlist('projects[]')

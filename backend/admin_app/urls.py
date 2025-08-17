@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 from .import views
 from django.urls import path
 from .views import AdminLogListCreateView
+     
 from .views import SendNotificationView
  
 urlpatterns = [

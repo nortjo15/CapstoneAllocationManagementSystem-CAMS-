@@ -4,6 +4,7 @@ from django.conf import settings
 from .import views
 from student_app.views import ProjectListCreateView, StudentListCreateView, StudentDetailView, GroupPreferenceListCreateView
 
+
 urlpatterns = [
     #path('admin/', admin.site.urls),
     #path('<str:student_id>/', StudentDetailView.as_view()),
@@ -11,4 +12,5 @@ urlpatterns = [
     path('studentApplication/', views.student_form, name="student_form"),
     path('projects/', ProjectListCreateView.as_view(), name="project_list"),
     path('students/', StudentListCreateView.as_view(), name="student_list"),
+    path('student_test/', views.student_test, name="student_test"),
 ]
