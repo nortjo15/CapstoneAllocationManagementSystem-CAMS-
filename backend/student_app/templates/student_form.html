@@ -3,74 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Form</title>
+    <title>Project Application</title>
     <script src="https://unpkg.com/petite-vue" defer init></script>
 </head>
 
 <body>
+    <h1>Project Application form</h1>
+    <hr>
+    <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
     <div v-scope>
-        <form name="student_form" action="/apiEnpointURL" method= "post">
-            <label for="fullname">Full name</label>
-            <input type="text" pattern="[a-zA-Z]+" name="fullname" id="fullname" required><br><br>
+        <form name="student_form" action="{% url 'student_form' %}" method= "post">
+            {% csrf_token %}
+            <p>Begin by entering your student ID, make sure it's a valid number, such as 20865982.</p>
             <label for="studentID">Student ID</label>
             <input type="text" pattern="[0-9]+" maxlength="8" name="studentID" id="studentID" required><br><br>
+            <label for="email">Please enter your student email. E.g. john.smith@student.curtin.edu.au</label><br>
+            <input type="email" id="email" name="email"><br><br>
 
-            <select name = "major" id="major">
+            <label for="major">Select your major from the dropdown menu provided.</label><br>
+            <select name ="major" id="major">
                 <option disabled selected>Select a Major</option>
-                <option value="softwareEngineering">Software Engineering</option>
-                <option value="cybersecurity">Cybersecurity</option>
-                <option value="IT">IT</option>
+                {% for major in majors %}
+                    <option value="{{ major.name }}">{{ major.name }}</option>
+                {%  endfor %}
             </select><br><br>
+            <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br>
+            <input type="number" step="0.01" min="0" max="100" id="cwa" name="cwa">
+
+            <p>You are required to choose at least three preferences in projects. Although you may select up to six options in projects, a minimum of three is mandatory.</p>
 
             <label>Please choose your top 6 preferences for projects</label><br>
             <div v-for="n in 6" :key="n">
-                <select :name="'projectPreferences_' + n" :id="'rojectPreferences_' + n">
+                <select name="projects[]">
                     <option disabled selected>Select a Project</option>
-                    <option v-for="project in projects" :value="project.id">{{ project.title }}</option>
-                </select><br>
-            </div><br>
-
-            <label>Please choose your top 6 group member preferences</label><br>
-            <div v-for="n in 6" :key="n">
-                <select :name="'memberPreferences_' + n" :id="'memberPreferences_' + n">
-                    <option disabled selected>Select a student</option>
-                    <option v-for="student in students" :value="student.id">{{ student.name }}</option>
-                </select><br>
-            </div><br>
-
-            <label>Please choose your 6 anti group member preferences</label>
-            <div v-for="n in 6" :key="n">
-                <select :name="'memberAntiPreferences_' + n" :id="'memberAntiPreferences_' + n">
-                    <option disabled selected>Select a student</option>
-                    <option v-for="student in students" :value="student.id">{{ student.name }}</option>
+                    {% for project in projects %}
+                        <option value = "{{ project.title }}">{{ project.title }}</option>
+                    {% endfor %}
                 </select>
             </div><br>
 
+            <label>Please choose 6 desirable group members</label><br>
+            <div v-for="n in 6" :key="n">
+                <select name="student-desirable[]">
+                    <option disabled selected>Select a student</option>
+                    {% for student in students%}
+                        <option value="{{ student.name }}">{{ student.name }}</option>
+                    {% endfor %}
+                </select><br>
+            </div><br>
+
+            <label>Please choose 6 undesirable group member</label>
+            <div v-for="n in 6" :key="n">
+                <select name="student-undesirable[]">
+                    <option disabled selected>Select a student</option>
+                    {% for student in students%}
+                        <option value="{{ student.name }}">{{ student.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+
+            <p>When uploading your resume, ensure the file is named using the format "name_resume_year" for example, "jane_doe_resume_2025" 
+                and that it is in PDF format only.</p>
+
             <label for="resume">Upload Resume</label><br>
             <input type="file" id="resume" name="filename" accept=".pdf"><br><br>
+            <p>Finally, you must tick the “Agree to Terms” checkbox to confirm your acceptance of the allocation process. 
+                <span style="color: red;">If this box is not ticked, you will not be allocated to any group or project</span></p>
             <input type="checkbox" name="terms" id="terms">
             <label for="terms">Agree to Terms</label><br><br>
             <input type="submit" value="submit">
         </form>
     </div>
-    <script type="module">
-        import { createApp } from 'https://unpkg.com/petite-vue?module'
-
-        createApp({
-            projects: [],
-            students: [],
-            async mounted() {
-                try {
-                    const projectRes = await fetch('/api/students/projects/')
-                    this.projects = await projectRes.json()
-
-                    const studentRes = await fetch('/api/students/students/')
-                    this.students = await studentRes.json()
-                } catch (error) {
-                    console.error('Failed to fetch data:', error)
-                }
-            }
-        }).mount()
-    </script>
 </body>
 </html>
