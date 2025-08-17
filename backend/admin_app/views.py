@@ -243,7 +243,6 @@ def admin_student_import(request):
             
             # Normal form response
             if errors:
-                print("Block triggered =====================================================================")
                 return render(request, 'admin_app/student_importCSV.html', {
                     'form': form,
                     'errors': errors,
