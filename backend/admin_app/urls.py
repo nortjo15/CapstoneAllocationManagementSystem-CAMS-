@@ -21,9 +21,8 @@ from django.conf import settings
 from django.conf.urls.static import static 
 from .import views
 from django.urls import path
-from .views import AdminLogListCreateView
-     
-from .views import SendNotificationView
+from .views import *
+from .models import *
  
 urlpatterns = [
     path('register/', views.register_view, name="register"),
@@ -37,4 +36,10 @@ urlpatterns = [
     path('send-notification/', SendNotificationView.as_view(), name='send_notification'),
     path('students/create/', views.student_create, name='admin_student_create'),
     path('students/import/', views.admin_student_import, name='admin_student_import'),
+    path('', ProjectListCreateView.as_view()),
+    path('preferences/', ProjectPreferenceListCreateView.as_view()),
+    path('suggested/', SuggestedGroupListCreateView.as_view()),
+    path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
+    path('final/', FinalGroupListCreateView.as_view()),
+    path('final/members/', FinalGroupMemberListCreateView.as_view()),
 ]
