@@ -7,7 +7,7 @@ from .views import *
 
 urlpatterns = [
     path('', ProjectListCreateView.as_view()),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls), #Removing line to avoid duplicate namespace
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
     path('suggested/', SuggestedGroupListCreateView.as_view()),
     path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),

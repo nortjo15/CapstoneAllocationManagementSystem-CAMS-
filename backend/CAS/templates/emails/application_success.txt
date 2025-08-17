@@ -1,0 +1,7 @@
+Dear Participant,
+
+Your application for "{{ project_name }}" has been successfully submitted.
+{{ message_body }}
+
+Regards,  
+Admin Team

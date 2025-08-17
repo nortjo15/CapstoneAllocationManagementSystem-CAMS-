@@ -1,0 +1,7 @@
+Dear Participant,
+
+The group allocation for "{{ project_name }}" has been released.
+{{ message_body }}
+
+Regards,  
+Admin Team
