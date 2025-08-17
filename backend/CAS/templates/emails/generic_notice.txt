@@ -1,0 +1,6 @@
+Hello,
+
+{{ message_body }}
+
+Regards,  
+Admin Team

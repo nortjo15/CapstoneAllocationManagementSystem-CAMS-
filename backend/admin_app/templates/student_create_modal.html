@@ -1,0 +1,24 @@
+<!-- 
+ Modal Container for student creation
+ - Hidden by default, pops up when option is triggered
+ -->
+ <div id="studentModal" class="modal" style="display:none">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span> <!-- Close -->
+        <h2>Add Student</h2>
+
+        <!-- Form posts to view -->
+        <form id="createStudentForm" method="post" action="{% url 'admin_student_create' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ add_form.as_p }} <!-- Render fields -->
+            <button type="submit" id="importStudentSubmit">Save</button>
+        </form>
+
+        <!-- Validation Errors display -->
+        <div id="formErrors" style="color:red"></div>
+     </div>
+ </div>
+
+ <!-- Import JS -->
+{% load static %}
+<script src="{% static 'admin_app/js/add_student.js' %}"></script>
