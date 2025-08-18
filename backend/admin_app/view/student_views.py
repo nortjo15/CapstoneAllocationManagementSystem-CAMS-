@@ -1,7 +1,5 @@
 import csv
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
-from django.contrib.auth import login, authenticate, logout
 from student_app.models import Student 
 from admin_app.models import *
 from admin_app.studentFilters import StudentFilter
@@ -9,16 +7,41 @@ from django.views.decorators.http import require_http_methods
 from admin_app.forms.student_forms import addStudentForm, importStudentForm
 from io import TextIOWrapper
 from django.http import JsonResponse
-from django.template.loader import render_to_string
-from django.conf import settings
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
 from django.contrib import messages
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class StudentListView(LoginRequiredMixin, ListView):
+    model = Student 
+    template_name = "student_view.html"
+    context_object_name = "students"
+
+    def get_queryset(self):
+        filter_object = StudentFilter(self.request.GET) #Initialises filter
+        return filter_object.get_filtered_queryset() #Return filtered q-set
+    
+    # Context for template rendering 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filter_object = StudentFilter(self.request.GET)
+
+        context.update({
+            'degree_major_pairs': filter_object.get_degree_major_pairs(),
+            'selected_pairs': self.request.GET.getlist('degree_major'),
+            'cwa_min': self.request.GET.get('cwa_min', ''),
+            'cwa_max': self.request.GET.get('cwa_max', '')
+            'application_submitted': self.request.GET.get('application_submitted', '')
+            'group_status': self.request.GET.get('group_status', 'all').lower(),
+            'add_form': addStudentForm(),
+            'import_form': importStudentForm(),
+        })
+        return context
 
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
+
 @login_required
 def student_view(request):
     filter_object = StudentFilter(request.GET) #Initialise Filter with GET params
