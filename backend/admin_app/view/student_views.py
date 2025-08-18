@@ -12,6 +12,8 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
@@ -40,35 +42,30 @@ class StudentListView(LoginRequiredMixin, ListView):
             'import_form': importStudentForm(),
         })
         return context
-
-@require_http_methods(["GET", "POST"])
-@login_required
-def student_create(request):
-    if request.method == "POST":
-        form = addStudentForm(request.POST)
-        if form.is_valid():
-            # Set Default values
-            student = form.save(commit=False) # Don't add yet 
-            student.application_submitted = False 
-            student.allocated_group = False
-            student.save() 
-
-            # Handle AJAX request 
-            if request.headers.get("x-requested-with") == "XMLHttpRequest":
-                return JsonResponse({"success":True})
-            # Normal form submission redirect
-            return redirect('admin_dashboard:admin_student_list')
     
-        else: 
-            # Return errors if form is invalid
-            if request.headers.get("x-requested-with") == "XMLHttpRequest":
-                return JsonResponse({"success": False, "errors": form.errors}, status=400)
+# Creating a Student when Admin selects "Add Student"
+class StudentCreateView(LoginRequiredMixin, CreateView):
+    form_class = addStudentForm 
+    template_name = 'admin_app/student_create_modal.html'
+    success_url = reverse_lazy('admin_dashboard:admin_student_list') #Redirect upon success
 
-    else: 
-        # GET request -> show the empty form
-        form = addStudentForm()
+    # Defines what happens when form is valid (POST with valid data)
+    def form_valid(self, form):
+        student = form.save(commit=False)
+        student.application_submitted = False 
+        student.allocated_group = False
+        student.save()
 
-    return render(request, 'admin_app/student_create_modal.html', {'form': form})
+        #Handle AJAX Request
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({"success": True})
+        
+        return super().form_valid(form) #Default redirect
+    
+    def form_invalid(self, form):
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        return super().form_invalid(form)  # Default re-render with errors
 
 @require_http_methods(["GET", "POST"])
 @login_required 
