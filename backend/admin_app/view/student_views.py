@@ -14,6 +14,7 @@ from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
@@ -190,7 +191,23 @@ class StudentImportView(LoginRequiredMixin, FormView):
         
         messages.success(self.request, f"{created_count} students imported successfully!")
         return super().form_valid(self.get_form())
+    
+@login_required
+@require_POST
+def update_student_notes(request):
+    student_id = request.POST.get('student_id')
+    notes = request.POST.get('notes', '')
 
+    if not student_id:
+        return JsonResponse({"success": False, "error": "Missing student ID."})
+    
+    try: 
+        student = Student.objects.get(id=student_id)
+        student.notes = notes 
+        student.save() #update student
+        return JsonResponse({"success": True})
+    except Student.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Student not found"})
 
 TEMPLATE_MAP = {
     "round_closed": "emails/round_closed.txt",

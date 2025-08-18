@@ -1,25 +1,63 @@
+const notes_form = document.getElementById('notesForm')
+const notes_modal = document.getElementById('notesModal');
+const notes_textarea = document.getElementById('notesTextarea');
+const notes_closeBtn = notes_modal.querySelector('.close-btn')
+
 //Function to open the notes Modal
 function openNotesModal(button)
 {
-    const notes_modal = document.getElementById('notesModal');
-    const notes_textarea = document.getElementById('notesTextarea');
     notes_textarea.value = button.dataset.studentNotes || ''
     notes_modal.dataset.studentId = button.dataset.studentId; 
     notes_modal.style.display = 'flex';
 }
 
 //Close Modal
-document.querySelector('#notesModal .close-btn').onclick = function() {
-    document.getElementById('notesModal').style.display = 'none';
+notes_closeBtn.onclick = () =>
+{
+    notes_modal.style.display = 'none';
 }
-window.onclick = function(e) {
-    const notes_modal = document.getElementById('notesModal');
-    if (e.target == notes_modal) modal.style.display = 'none';
+
+window.onclick = (e) => 
+{
+    if (e.target == notes_modal)
+    {
+        notes_modal.style.display = 'none';
+    }
 }
 
 // Handle AJAX
-document.getElementById('notesForm').addEventListener('submit', function(e){
+notes_form.addEventListener('submit', function(e)
+{
     e.preventDefault();
-    const studentId = document.getElementById('notesModal').dataset.studentId;
-    const notes = document.getElementById('notesTextarea').value;
+    const studentId = notes_modal.dataset.studentId;
+    const notes = notes_textarea.value 
+
+    fetch("{% url 'admin_dashboard:update_student_notes' %}", 
+    {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value 
+        },
+
+        body: new URLSearchParams({
+            'student_id': studentId, 
+            'notes': notes
+        })
+    })
+    .then(res => res.json())
+    .then(data => 
+    {
+        if (data.success) 
+            {
+            notes_modal.style.display = 'none'; //Close modal upon success
+            alert("Notes saved successfully!");
+
+            //Update button colour in the table 
+        } 
+        else 
+        {
+            alert("Error: " + data.error);
+        }
+    })
+    .catch(err => console.error(err));
 });
