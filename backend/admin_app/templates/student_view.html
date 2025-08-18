@@ -141,6 +141,7 @@ tr:hover {
     <thead> 
         <tr> 
             <th>Student ID</th>
+            <th>Notes</th>
             <th>Name</th>
             <th>Group</th>
             <!-- CWA column with two arrow links (ascending or descending )-->
@@ -162,6 +163,11 @@ tr:hover {
             <tr>
                 <!-- Retrieving information from models -->
                 <td>{{ student.student_id }}</td>
+                <td>{% if student.notes is not None %}{{ student.notes }}
+                    {% else %}
+                        <span style="color:grey;">--</span>
+                    {% endif %}
+                </td>
                 <td>{{ student.name }}</td>
                 <td> 
                     {% if student.final_group_member %}
