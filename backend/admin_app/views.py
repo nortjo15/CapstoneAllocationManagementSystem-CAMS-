@@ -1,7 +1,5 @@
 import csv
 from rest_framework import generics
-from .models import AdminLog
-from .serializers import AdminLogSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
 from django.contrib.auth import login, authenticate, logout
@@ -23,12 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
 from .serializers import *
 
-class AdminLogListCreateView(generics.ListCreateAPIView):
-    queryset = AdminLog.objects.all()
-    serializer_class = AdminLogSerializer
 
-def test_view(request):
-    return render(request, "base.html")
 
 def round_view(request):
    return render(request, "rounds.html")

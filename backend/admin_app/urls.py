@@ -24,6 +24,7 @@ from django.urls import path
 from .views import *
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
 from .view.auth_views import register_view, login_view, logout_view, login_success
+from .view.admin_views import AdminLogListCreateView
 from .models import *
  
 urlpatterns = [
@@ -31,7 +32,7 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name="logout"),
     path('login_success/', login_success, name="login_success"),
-    path('test/', views.test_view, name="test"),
+    #path('test/', views.test_view, name="test"),
     path('admin/logs/', AdminLogListCreateView.as_view()),
     path('student_view/', views.student_view, name='student_view'),
     path('settings/', views.settings_view, name='settings'),
