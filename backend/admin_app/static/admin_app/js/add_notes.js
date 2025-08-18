@@ -50,6 +50,24 @@ notes_form.addEventListener('submit', function(e)
             alert("Notes saved successfully!");
 
             //Update button colour in the table 
+            const button = document.querySelector(`button[data-student-id="${studentId}"]`)
+            if (button) 
+            {
+                //Update data 
+                button.dataset.studentNotes = notes_textarea.value.trim();
+
+                //Toggle Colour
+                if(notes_textarea.value.trim() === "")
+                {
+                    button.classList.remove("btn-success");
+                    button.classList.add("btn-secondary");
+                }
+                else 
+                {
+                    button.classList.remove("btn-secondary");
+                    button.classList.add("btn-success");
+                }
+            }
         } 
         else 
         {
