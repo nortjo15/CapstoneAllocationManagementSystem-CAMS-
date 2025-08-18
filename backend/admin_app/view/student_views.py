@@ -6,7 +6,7 @@ from student_app.models import Student
 from admin_app.models import *
 from admin_app.studentFilters import StudentFilter
 from django.views.decorators.http import require_http_methods
-from admin_app.forms import addStudentForm, importStudentForm
+from admin_app.forms.student_forms import addStudentForm, importStudentForm
 from io import TextIOWrapper
 from django.http import JsonResponse
 from django.template.loader import render_to_string
