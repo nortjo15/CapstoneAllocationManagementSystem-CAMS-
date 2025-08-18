@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 from .import views
 from django.urls import path
 from .views import *
+from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
 from .models import *
  
 urlpatterns = [

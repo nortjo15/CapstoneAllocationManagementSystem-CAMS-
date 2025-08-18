@@ -66,14 +66,6 @@ def test_view(request):
 def round_view(request):
    return render(request, "rounds.html")
 
-class ProjectListCreateView(generics.ListCreateAPIView):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-
-class ProjectPreferenceListCreateView(generics.ListCreateAPIView):
-    queryset = ProjectPreference.objects.all()
-    serializer_class = ProjectPreferenceSerializer
-
 class SuggestedGroupListCreateView(generics.ListCreateAPIView):
     queryset = SuggestedGroup.objects.all()
     serializer_class = SuggestedGroupSerializer
