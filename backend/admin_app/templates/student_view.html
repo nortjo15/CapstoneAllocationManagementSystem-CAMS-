@@ -23,6 +23,10 @@ th, td {
     border: 1px solid #ddd; 
     padding: 8px 12px; 
     text-align: left; 
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    white-space: nowrap
 }
 th {
     background-color: #667eea; 
@@ -163,12 +167,21 @@ tr:hover {
             <tr>
                 <!-- Retrieving information from models -->
                 <td>{{ student.student_id }}</td>
-                <td>{% if student.notes is not None %}{{ student.notes }}
-                    {% else %}
-                        <span style="color:grey;">--</span>
-                    {% endif %}
+
+                <td>
+                    <!-- Add a button to view & edit student notes -->
+                    <button 
+                        class="notes-btn {% if student.notes %}btn-success{% else %}btn-secondary{% endif %}""
+                        data-student-id="{{ student.id }}"
+                        data-student-notes="{{ student.notes|default:'' }}"
+                        onclick="openNotesModal(this)"
+                    >
+                    Notes
+                </button>
                 </td>
+
                 <td>{{ student.name }}</td>
+
                 <td> 
                     {% if student.final_group_member %}
                         {{ student.final_group_member.final_group.finalgroup_id }}
@@ -176,16 +189,19 @@ tr:hover {
                         <span style="color: gray;">--</span>
                     {% endif %}
                 </td>
+
                 <td>{% if student.cwa is not None %}{{ student.cwa }}
                     {% else %}
                         <span style="color: grey;">--</span>
                     {% endif %}
-                    </td>
+                </td>
+
                 <td>{% if student.major %}{{ student.major }}
                     {% else %}
                         <span style="color: grey;">--</span>
                     {% endif %}
                 </td> <!-- Displays combined Major, Degree -->
+
             </tr>
         {% empty %}
         <tr>
