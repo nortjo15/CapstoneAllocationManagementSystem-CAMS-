@@ -12,6 +12,24 @@
 <link rel="stylesheet" href="{% static 'admin_app/css/addStudent.css' %}">
 
 <style> 
+/* Minimal styles for Notes buttons */
+.notes-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-success {
+    background-color: #28a745; /* green */
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* grey */
+    color: white;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
@@ -171,7 +189,7 @@ tr:hover {
                 <td>
                     <!-- Add a button to view & edit student notes -->
                     <button 
-                        class="notes-btn {% if student.notes %}btn-success{% else %}btn-secondary{% endif %}""
+                        class="notes-btn {% if student.notes %}btn-success{% else %}btn-secondary{% endif %}"
                         data-student-id="{{ student.id }}"
                         data-student-notes="{{ student.notes|default:'' }}"
                         onclick="openNotesModal(this)"
