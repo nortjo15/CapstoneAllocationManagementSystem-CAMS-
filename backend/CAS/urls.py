@@ -19,14 +19,17 @@ from django.urls import path, include
 from django.conf import settings 
 from django.http import HttpResponse
 
-
-
 urlpatterns = [
     path('admin/', admin.site.urls), #Default Admin
+
+    # Endpoints 
     path('api/students/', include('student_app.urls')), #Student App
     path('api/projects/', include(('admin_app.urls', 'admin_app'), namespace='api_projects')),
+
+    # Actual webpages for admin dashboard
     path('admin-dashboard/', include(('admin_app.urls', 'admin_app'), namespace='admin_dashboard')),
-    # Root URL view
+
+    # Root URL viewCan 
     path('', lambda request: HttpResponse("Welcome to CAS API!")),
 ]
 

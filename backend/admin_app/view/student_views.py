@@ -17,9 +17,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render 
 from django.contrib import messages
 
-
-
-
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
 @login_required
@@ -55,9 +52,6 @@ def student_view(request):
         'import_form': import_form,
     } 
     return render(request, 'student_view.html', context)
-
-
-    
 
 @require_http_methods(["GET", "POST"])
 @login_required
@@ -243,6 +237,3 @@ TEMPLATE_MAP = {
     "allocation_released": "emails/allocation_released.txt",
     "generic_notice": "emails/generic_notice.txt",
 }
-
-
-
