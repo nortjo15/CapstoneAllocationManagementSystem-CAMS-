@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
 
 # Adding a basic students view page 
@@ -66,155 +66,131 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
         if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
         return super().form_invalid(form)  # Default re-render with errors
+    
+class StudentImportView(LoginRequiredMixin, FormView):
+    template_name = 'admin_app/student_importCSV.html'
+    form_class = importStudentForm
+    success_url = reverse_lazy('admin_dashboard:admin_student_list')
 
-@require_http_methods(["GET", "POST"])
-@login_required 
-def admin_student_import(request):
-    if request.method == "POST":
-        form = importStudentForm(request.POST, request.FILES)
+    def form_valid(self, form):
+        # CSV handling logic 
+        csv_file = form.cleaned_data['csv_file']
+        data_set = TextIOWrapper(csv_file.file, encoding='utf-8')
+        reader = csv.DictReader(data_set)
+        reader.fieldnames = [name.strip() for name in reader.fieldnames]
 
-        if form.is_valid():
-            csv_file = form.cleaned_data['csv_file']
+        errors = []
+        created_count = 0
+        updated_count = 0
 
-            # Convert uploaded file to text fo csv.reader
-            data_set = TextIOWrapper(csv_file.file, encoding='utf-8')
-            reader = csv.DictReader(data_set) #access columns by name
-            reader.fieldnames = [name.strip() for name in reader.fieldnames]
-            # Avoid whitespace issues
+        # Check required columns
+        required_columns = {'student_id', 'name'}
+        if not required_columns.issubset(set(reader.fieldnames)):
+            errors.append("CSV must contain 'student_id' and 'name' columns.")
+            return self._handle_response(errors, created_count, updated_count)
+        
+        for i, row in enumerate(reader, start=1):
+            # Skip completely empty rows
+            if not any(row.values()):
+                continue
 
-            errors = []
-            created_count = 0
-            updated_count = 0
+            #Validation 
+            student_id = row.get('student_id', '').strip()
+            name = row.get('name', '').strip()
+            # Needs to be adjusted for full name and last name
 
-            # Check required columns
-            required_columns = {'student_id', 'name'}
-            if not required_columns.issubset(set(reader.fieldnames)):
-                errors.append("CSV must contain 'student_id' and 'name' columns.")
+            # Store errors for invalid lines 
+            if not student_id.isdigit() or len(student_id) != 8:
+                errors.append(f"Row {i}: student_id must be exactly 8 digits.")
+                continue 
 
-                if request.headers.get("x-requested-with") == "XMLHttpRequest":
-                    return JsonResponse({
-                        "success": False,
-                        "created_count": 0,
-                        "skipped_count": 0,
-                        "errors": errors,
-                        'updated_count': 0
-                    })
-                
-                # Non-AJAX
-                return render(request, 'admin_app/student_importCSV.html', {
-                    'form': form,
-                    'errors': errors,
-                    'created_count': 0,
-                    'skipped_count': 0,
-                    'updated_count': 0
-                })
-            
-
-            for i, row in enumerate(reader, start=1):
-                # Skip completely empty rows
-                if not any(row.values()):
+            # Foreign Key Validation for Major
+            major_name = row.get('major', '').strip()
+            major_obj = None 
+            if major_name: 
+                try: 
+                    major_obj = Major.objects.get(name=major_name)
+                except Major.DoesNotExist:
+                    errors.append(f"Row {i}: Major '{major_name}' does not exist.")
                     continue
 
-                #Validation 
-                student_id = row.get('student_id', '').strip()
-                name = row.get('name', '').strip()
-                # Needs to be adjusted for full name and last name
-
-                # Store errors for invalid lines 
-                if not student_id.isdigit() or len(student_id) != 8:
-                    errors.append(f"Row {i}: student_id must be exactly 8 digits.")
-                    continue 
-
-                # Foreign Key Validation for Major
-                major_name = row.get('major', '').strip()
-                major_obj = None 
-                if major_name: 
-                    try: 
-                        major_obj = Major.objects.get(name=major_name)
-                    except Major.DoesNotExist:
-                        errors.append(f"Row {i}: Major '{major_name}' does not exist.")
-                        continue
-
-                # Optional fields
-                cwa = row.get('cwa')
+            # Optional fields
+            cwa = row.get('cwa')
+            
+            try:
+                cwa = float(cwa) if cwa and cwa.strip() else None
                 
-                try:
-                    cwa = float(cwa) if cwa and cwa.strip() else None
-                    
-                    if cwa is not None and (cwa < 0 or cwa > 100):
-                        errors.append(f"Row {i}: CWA must be between 0 and 100")
-                        continue
-
-                except ValueError:
-                    errors.append(f"Row {i}: CWA must be a number.")
-
-                email = row.get('email')
-                notes = row.get('notes')
-
-                if Student.objects.filter(student_id=student_id.strip()).exists():
-                    student = Student.objects.get(student_id=student_id)
-                    # Update this student
-                    if name: 
-                        student.name = name
-                    if cwa is not None: 
-                        student.cwa = cwa 
-                    if major_obj is not None: 
-                        student.major = major_obj
-                    if email:
-                        student.email = email
-                    if notes: 
-                        student.notes = notes 
-                    student.save()
-
-                    updated_count += 1
+                if cwa is not None and (cwa < 0 or cwa > 100):
+                    errors.append(f"Row {i}: CWA must be between 0 and 100")
                     continue
 
-                # Create Student
-                Student.objects.create(
-                    student_id=student_id,
-                    name=name,
-                    cwa=cwa if cwa else None,
-                    major=major_obj if major_obj else None, 
-                    email=email if email else None, 
-                    notes=notes if notes else None
-                )
-                created_count += 1 
+            except ValueError:
+                errors.append(f"Row {i}: CWA must be a number.")
 
-            skipped_count = len(errors)
+            email = row.get('email')
+            notes = row.get('notes')
 
-            # AJAX Response
-            if request.headers.get("x-requested-with") == "XMLHttpRequest":
-                return JsonResponse({
-                    "success": created_count + updated_count > 0,
-                    "errors": errors,
-                    "created_count": created_count,
-                    "skipped_count": skipped_count,
-                    'updated_count': updated_count
-                })
-            
-            # Normal form response
-            if errors:
-                return render(request, 'admin_app/student_importCSV.html', {
-                    'form': form,
-                    'errors': errors,
-                    'created_count': created_count,
-                    'skipped_count': skipped_count,
-                    'updated_count': updated_count
-                })
-            
-            messages.success(request, f"{created_count} students imported successfully!")
-            return redirect('admin_dashboard:admin_student_list')
+            if Student.objects.filter(student_id=student_id.strip()).exists():
+                student = Student.objects.get(student_id=student_id)
+                # Update this student
+                if name: 
+                    student.name = name
+                if cwa is not None: 
+                    student.cwa = cwa 
+                if major_obj is not None: 
+                    student.major = major_obj
+                if email:
+                    student.email = email
+                if notes: 
+                    student.notes = notes 
+                student.save()
+
+                updated_count += 1
+                continue
+
+            # Create Student
+            Student.objects.create(
+                student_id=student_id,
+                name=name,
+                cwa=cwa if cwa else None,
+                major=major_obj if major_obj else None, 
+                email=email if email else None, 
+                notes=notes if notes else None
+            )
+            created_count += 1 
+
+        skipped_count = len(errors)
+        return self._handle_response(errors, created_count, updated_count, skipped_count)
+    
+    def form_invalid(self, form):
+        # Handle invalid form (no file, wrong type, etc.)
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        return super().form_invalid(form)
+    
+    # "Helper for consistent AJAX vs normal responses"
+    def _handle_response(self, errors, created_count, updated_count, skipped_count=0):
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": created_count + updated_count > 0,
+                "errors": errors,
+                "created_count": created_count,
+                "skipped_count": skipped_count,
+                "updated_count": updated_count
+            })
         
-        else:
-            #Form Invalid
-            if request.headers.get("x-requested-with") == "XMLHttpRequest":
-                return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        if errors:
+            return self.render_to_response(self.get_context_data(
+                form=self.get_form(),
+                errors=errors,
+                created_count=created_count,
+                skipped_count=skipped_count,
+                updated_count=updated_count
+            ))
         
-    else: 
-        # Form Valid
-        form = importStudentForm()
+        messages.success(self.request, f"{created_count} students imported successfully!")
+        return super().form_valid(self.get_form())
 
-    return render(request, 'admin_app/student_importCSV.html', {'form': form})
 
 TEMPLATE_MAP = {
     "round_closed": "emails/round_closed.txt",
