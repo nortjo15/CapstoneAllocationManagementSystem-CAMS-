@@ -30,19 +30,14 @@ notes_form.addEventListener('submit', function(e)
 {
     e.preventDefault();
     const studentId = notes_modal.dataset.studentId;
-    const notes = notes_textarea.value 
+    const notes_formData = new FormData(notes_form)
+    notes_formData.append('student_id', studentId)
 
-    fetch("{% url 'admin_dashboard:update_student_notes' %}", 
+    fetch(notes_form.action, 
     {
         method: "POST",
-        headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value 
-        },
-
-        body: new URLSearchParams({
-            'student_id': studentId, 
-            'notes': notes
-        })
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        body: notes_formData
     })
     .then(res => res.json())
     .then(data => 

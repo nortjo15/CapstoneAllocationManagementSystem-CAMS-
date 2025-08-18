@@ -41,7 +41,7 @@ urlpatterns = [
     path('student_view/', StudentListView.as_view(), name='student_view'),
     path('students/create/', StudentCreateView.as_view(), name='admin_student_create'),
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
-    path('students/update-notes/', update_student_notes, name='update_student_notes'),
+    path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
