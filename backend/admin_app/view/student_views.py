@@ -202,7 +202,7 @@ def update_student_notes(request):
         return JsonResponse({"success": False, "error": "Missing student ID."})
     
     try: 
-        student = Student.objects.get(id=student_id)
+        student = Student.objects.get(student_id=student_id)
         student.notes = notes 
         student.save() #update student
         return JsonResponse({"success": True})

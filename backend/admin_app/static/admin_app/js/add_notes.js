@@ -1,3 +1,5 @@
+console.log("add_notes.js loaded");
+
 const notes_form = document.getElementById('notesForm')
 const notes_modal = document.getElementById('notesModal');
 const notes_textarea = document.getElementById('notesTextarea');
@@ -8,10 +10,6 @@ function openNotesModal(button)
 {
     notes_textarea.value = button.dataset.studentNotes || ''
     notes_modal.dataset.studentId = button.dataset.studentId; 
-
-    // Debug: check that student ID is being passed correctly
-    console.log("Opening notes for studentId:", button.dataset.studentId);
-
     notes_modal.style.display = 'flex';
 }
 
@@ -36,8 +34,6 @@ notes_form.addEventListener('submit', function(e)
     const studentId = notes_modal.dataset.studentId;
     const notes_formData = new FormData(notes_form)
     notes_formData.append('student_id', studentId)
-
-    console.log("Submitting notes for studentId:", notes_modal.dataset.studentId, "Notes:", notes_textarea.value);
 
     fetch(notes_form.action, 
     {
