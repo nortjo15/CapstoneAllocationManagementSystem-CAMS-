@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+# Adding a basic students view page 
+# Ensures only authenticated users can access it 
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student 
     template_name = "student_view.html"
@@ -31,50 +33,13 @@ class StudentListView(LoginRequiredMixin, ListView):
             'degree_major_pairs': filter_object.get_degree_major_pairs(),
             'selected_pairs': self.request.GET.getlist('degree_major'),
             'cwa_min': self.request.GET.get('cwa_min', ''),
-            'cwa_max': self.request.GET.get('cwa_max', '')
-            'application_submitted': self.request.GET.get('application_submitted', '')
+            'cwa_max': self.request.GET.get('cwa_max', ''),
+            'application_submitted': self.request.GET.get('application_submitted', ''),
             'group_status': self.request.GET.get('group_status', 'all').lower(),
             'add_form': addStudentForm(),
             'import_form': importStudentForm(),
         })
         return context
-
-# Adding a basic students view page 
-# Ensures only authenticated users can access it 
-
-@login_required
-def student_view(request):
-    filter_object = StudentFilter(request.GET) #Initialise Filter with GET params
-    students = filter_object.get_filtered_queryset() # Apply filters to queryset
-    degree_major_pairs = filter_object.get_degree_major_pairs()
-
-    # List of string representing current filter selections
-    selected_pairs = request.GET.getlist('degree_major')
-    
-    # Persist CWA Min/Max Values in the selection
-    cwa_min = request.GET.get('cwa_min', '')
-    cwa_max = request.GET.get('cwa_max', '')
-    
-    # Booleans 
-    application_submitted = request.GET.get('application_submitted', '')
-    group_status  = request.GET.get('group_status', 'all').lower()
-
-    # Create student form
-    add_form = addStudentForm()
-    import_form = importStudentForm()
-        
-    context = {
-        'students': students,
-        'degree_major_pairs': degree_major_pairs,
-        'selected_pairs': selected_pairs,
-        'cwa_min': cwa_min,
-        'cwa_max': cwa_max,
-        'application_submitted': application_submitted,
-        'group_status': group_status,
-        'add_form': add_form,
-        'import_form': import_form,
-    } 
-    return render(request, 'student_view.html', context)
 
 @require_http_methods(["GET", "POST"])
 @login_required

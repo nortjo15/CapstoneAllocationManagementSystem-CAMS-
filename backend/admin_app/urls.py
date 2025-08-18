@@ -26,7 +26,7 @@ from .view.admin_views import AdminLogListCreateView, SendNotificationView
 from .view.round_views import round_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
-from .view.student_views import student_view, student_create, admin_student_import
+from .view.student_views import *
  
 urlpatterns = [
     #Auth_views
@@ -38,7 +38,7 @@ urlpatterns = [
     path('admin/logs/', AdminLogListCreateView.as_view()),
     path('send-notification/', SendNotificationView.as_view(), name='send_notification'),
     #Student_views
-    path('student_view/', student_view, name='student_view'),
+    path('student_view/', StudentListView.as_view(), name='student_view'),
     path('students/create/', student_create, name='admin_student_create'),
     path('students/import/', admin_student_import, name='admin_student_import'),
     #Project_views
