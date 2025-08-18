@@ -25,6 +25,7 @@ from .views import *
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
 from .view.auth_views import register_view, login_view, logout_view, login_success
 from .view.admin_views import AdminLogListCreateView
+from .view.round_views import round_view
 from .models import *
  
 urlpatterns = [
