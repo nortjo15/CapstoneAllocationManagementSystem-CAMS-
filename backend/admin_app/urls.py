@@ -18,7 +18,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
-from django.conf.urls.static import static 
 from .import views
 from django.urls import path
 from .views import *
@@ -26,25 +25,32 @@ from .view.project_views import ProjectListCreateView, ProjectPreferenceListCrea
 from .view.auth_views import register_view, login_view, logout_view, login_success
 from .view.admin_views import AdminLogListCreateView
 from .view.round_views import round_view
+from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .models import *
  
 urlpatterns = [
+    #Auth_views
     path('register/', register_view, name="register"),
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name="logout"),
     path('login_success/', login_success, name="login_success"),
-    #path('test/', views.test_view, name="test"),
+    #Admin_views
     path('admin/logs/', AdminLogListCreateView.as_view()),
-    path('student_view/', views.student_view, name='student_view'),
-    path('settings/', views.settings_view, name='settings'),
     path('send-notification/', SendNotificationView.as_view(), name='send_notification'),
+    #Student_views
+    path('student_view/', views.student_view, name='student_view'),
     path('students/create/', views.student_create, name='admin_student_create'),
     path('students/import/', views.admin_student_import, name='admin_student_import'),
+    #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
+    #Group_views
     path('suggested/', SuggestedGroupListCreateView.as_view()),
     path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
     path('final/', FinalGroupListCreateView.as_view()),
     path('final/members/', FinalGroupMemberListCreateView.as_view()),
+    #Settings_views
+    path('settings/', views.settings_view, name='settings'),
+    #Round_views
     path('rounds/', round_view, name='round_view'),
 ]
