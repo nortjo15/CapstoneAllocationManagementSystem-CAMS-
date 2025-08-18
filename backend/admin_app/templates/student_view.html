@@ -3,7 +3,7 @@
  Displays a table with all students and relevant fields 
  Allows sorting by each field 
  --> 
-{% extends 'base.html' %}
+{% extends 'admin_base.html' %}
 {% load query_tags %}
 
 {% block styles %}
@@ -117,7 +117,7 @@ tr:hover {
     <button
         type="button"
         id="reset-btn"
-        data-url="{% url 'student_view' %}"
+        data-url="{% url 'admin_dashboard:student_view' %}"
         >
         Reset
     </button>

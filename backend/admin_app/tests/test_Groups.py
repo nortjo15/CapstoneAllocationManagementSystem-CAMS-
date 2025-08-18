@@ -1,8 +1,7 @@
 from django.test import TestCase 
 from django.db import IntegrityError
 from student_app.models import Student
-from project_app.models import SuggestedGroup, SuggestedGroupMember
-from project_app.models import Project, FinalGroup, FinalGroupMember
+from admin_app.models import *
 
 
 class SuggestedGroupModelTests(TestCase):

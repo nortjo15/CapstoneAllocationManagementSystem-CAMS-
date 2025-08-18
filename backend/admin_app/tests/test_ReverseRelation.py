@@ -1,8 +1,6 @@
 from django.test import TestCase
 from student_app.models import Student 
-from project_app.models import ( 
-    FinalGroup, FinalGroupMember, SuggestedGroup, SuggestedGroupMember, Student, Project
-)
+from admin_app.models import *
 
 class ReverseRelationTests(TestCase):
     def setUp(self):

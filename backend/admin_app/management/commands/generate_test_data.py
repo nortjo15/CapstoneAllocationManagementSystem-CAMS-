@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from student_app.models import Student, GroupPreference 
-from project_app.models import (
+from admin_app.models import (
     Project,
     ProjectPreference, 
     SuggestedGroup, 
@@ -15,7 +15,7 @@ from project_app.models import (
 )
 
 # Generate test data from specified or default files
-# - Stored in project_app/fixtues 
+# - Stored in admin_app/fixtues 
 class Command(BaseCommand):
     help = "Generate test data"
 
@@ -24,25 +24,25 @@ class Command(BaseCommand):
             '--path',
             type=str,
             help='Path to CSV file to import student data',
-            default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_students.csv')
+            default=os.path.join(settings.BASE_DIR, 'admin_app', 'fixtures', 'test_students.csv')
         )
         parser.add_argument(
             '--project-path',
             type=str, 
             help='Path to CSV file to import project data',
-            default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_projects.csv')
+            default=os.path.join(settings.BASE_DIR, 'admin_app', 'fixtures', 'test_projects.csv')
         )
         parser.add_argument(
             '--memberpref-path',
             type=str, 
             help='Path to CSV file to import member preference data',
-            default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_group_pref.csv')
+            default=os.path.join(settings.BASE_DIR, 'admin_app', 'fixtures', 'test_group_pref.csv')
         )
         parser.add_argument(
             '--projectpref-path',
             type=str, 
             help='Path to CSV file to import project preference data',
-            default=os.path.join(settings.BASE_DIR, 'project_app', 'fixtures', 'test_project_pref.csv')
+            default=os.path.join(settings.BASE_DIR, 'admin_app', 'fixtures', 'test_project_pref.csv')
         )
         parser.add_argument(
             '--reset',

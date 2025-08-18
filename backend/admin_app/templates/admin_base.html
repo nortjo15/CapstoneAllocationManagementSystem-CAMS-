@@ -3,18 +3,20 @@
     <script src="https://unpkg.com/petite-vue" defer init></script>
 <head>
     <title>Admin Portal</title>
+    {% block styles %}
+    {% endblock %}
 </head>
 <body>
     <div id="navigationBar">
         {% block navigationBar %}
             <ul>
-                <li><a href="{% url 'login' %}"> Login </a></li> 
-                <li><a href="{% url 'logout' %}"> Logout </a></li> 
-                <li><a href="{% url 'student_view' %}"> Students </a></li> 
+                <li><a href="{% url 'admin_dashboard:login' %}"> Login </a></li> 
+                <li><a href="{% url 'admin_dashboard:logout' %}"> Logout </a></li> 
+                <li><a href="{% url 'admin_dashboard:student_view' %}"> Students </a></li> 
                 <li><a href="endpoint for screen"> Groups </a></li> 
                 <li><a href="endpoint for screen"> Projects </a></li> 
-                <li><a href="endpoint for screen"> Round form </a></li> 
-                <li><a href="{% url 'settings' %}"> Settings </a></li> 
+                <li><a href="{% url 'admin_dashboard:round_view' %}"> Round form </a></li> 
+                <li><a href="{% url 'admin_dashboard:settings' %}"> Settings </a></li> 
             </ul>
         {% endblock %}
     </div>

@@ -94,7 +94,7 @@ class StudentFilter:
     def get_degree_major_pairs(self):
         pairs = {}
 
-        from project_app.models import Degree 
+        from admin_app.models import Degree 
 
         for degree in Degree.objects.prefetch_related('majors').order_by('name'):
             degree_name = degree.name or 'Unknown Degree'

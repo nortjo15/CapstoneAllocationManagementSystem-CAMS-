@@ -17,7 +17,7 @@ class Student(models.Model):
         db_index=True, 
         blank=True
     )
-    major = models.ForeignKey('project_app.Major', on_delete=models.PROTECT, null=True, related_name='students')
+    major = models.ForeignKey('admin_app.Major', on_delete=models.PROTECT, null=True, related_name='students')
     application_submitted = models.BooleanField(default=False)
     allocated_group = models.BooleanField(default=False)
     email = models.EmailField(unique=True, null=True)
