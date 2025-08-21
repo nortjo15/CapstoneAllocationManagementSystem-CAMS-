@@ -38,9 +38,9 @@ class AdminLog(models.Model):
         return f"{self.user.username} - {self.action} {self.target} @ {self.timestamp}"
     
 # Capstone Rounds
-# THIS MODEL DOESN'T INCLUDE MAJORS/COURSES YET! Not sure how to implement them here..
 class Round(models.Model):
     round_id = models.AutoField(primary_key=True)
+    round_name = models.CharField(max_length=100, null=False)
     projects = models.ManyToManyField(
         'Project',
         related_name='rounds',

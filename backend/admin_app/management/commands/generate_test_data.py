@@ -253,6 +253,7 @@ class Command(BaseCommand):
             count = 0
 
             for row in reader:
+                round_name = row['round_name']
                 open_date_str = row['open_date']
                 close_date_str = row['close_date']
                 projects_titles = row['projects'].split(';')
@@ -269,6 +270,7 @@ class Command(BaseCommand):
 
                 # Create the Round instance
                 current_round, created = Round.objects.update_or_create(
+                    round_name =round_name,
                     open_date=open_date,
                     close_date=close_date,
                     defaults={'status': 'upcoming', 'is_active': False}
