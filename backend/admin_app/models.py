@@ -44,6 +44,7 @@ class Project(models.Model):
     title = models.CharField(max_length=200, null=False)
     description = models.TextField(null=True, blank=True)
     capacity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    rounds = models.ForeignKey('admin_app.Round', on_delete=models.PROTECT, null=True, related_name='projects')
 
     host_name = models.CharField(max_length=100, null=False)
     host_email = models.EmailField(null=False)
@@ -139,3 +140,24 @@ class Major(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.degree.name})"
+    
+# Rounds Model
+class Round(models.Model):
+    round_id = models.AutoField(primary_key=True)
+    round_name = models.CharField(max_length=100)
+
+    # Admin will manually activate a round by clicking a GUI button
+    is_active = models.BooleanField(default=False)
+
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('closed', 'Closed'),
+        ('upcoming', 'Upcoming'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    
+    open_date = models.DateTimeField()
+    close_date = models.DateTimeField()
+
+    def __str__(self):
+        return f"Round {self.round_id} - {self.status}"
