@@ -28,6 +28,7 @@ from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMember
 from .view.settings_views import settings_view
 from .view.student_views import student_view, student_create, admin_student_import
  
+app_name = 'admin_app'
 urlpatterns = [
     #Auth_views
     path('register/', register_view, name="register"),
