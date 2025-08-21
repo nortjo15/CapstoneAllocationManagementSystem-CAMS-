@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from networkx import project
+# from networkx import project
 from student_app.models import Student
 from django.core.validators import MinValueValidator
 
@@ -38,6 +38,7 @@ class AdminLog(models.Model):
         return f"{self.user.username} - {self.action} {self.target} @ {self.timestamp}"
     
 # Capstone Rounds
+# THIS MODEL DOESN'T INCLUDE MAJORS/COURSES YET! Not sure how to implement them here..
 class Round(models.Model):
     round_id = models.AutoField(primary_key=True)
     projects = models.ManyToManyField(
@@ -45,6 +46,9 @@ class Round(models.Model):
         related_name='rounds',
         blank=True,
     )
+
+    # Admin will manually activate a round by clicking a GUI button
+    is_active = models.BooleanField(default=False)
 
     STATUS_CHOICES = [
         ('open', 'Open'),
@@ -57,7 +61,7 @@ class Round(models.Model):
     close_date = models.DateTimeField()
 
     def __str__(self):
-        return f"Round {self.id} - {self.status}"
+        return f"Round {self.round_id} - {self.status}"
 
 
 # Project Information

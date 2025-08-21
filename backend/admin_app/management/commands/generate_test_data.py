@@ -2,6 +2,7 @@ import csv
 import os 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 from student_app.models import Student, GroupPreference 
 from admin_app.models import (
     Project,
@@ -11,7 +12,8 @@ from admin_app.models import (
     FinalGroup,
     FinalGroupMember,
     Major,
-    Degree
+    Degree,
+    Round,
 )
 
 # Generate test data from specified or default files
@@ -45,16 +47,24 @@ class Command(BaseCommand):
             default=os.path.join(settings.BASE_DIR, 'admin_app', 'fixtures', 'test_project_pref.csv')
         )
         parser.add_argument(
+            '--round-path',
+            type=str,
+            help='Path to CSV file to import round data',
+            default=os.path.join(settings.BASE_DIR, 'admin_app', 'fixtures', 'test_rounds.csv')
+        )
+        parser.add_argument(
             '--reset',
             action='store_true',
             help='Clear tables' 
         )
+
 
     def handle(self, *args, **options):
         student_file = options['path']
         project_file = options['project_path']
         member_pref_file = options['memberpref_path']
         project_pref_file = options['projectpref_path']
+        round_file = options['round_path']
 
         # --- Reset Flag Enabled --- 
         if options['reset']:
@@ -63,6 +73,7 @@ class Command(BaseCommand):
             GroupPreference.objects.all().delete()
             Project.objects.all().delete()
             Student.objects.all().delete()
+            Round.objects.all().delete()
             self.stdout.write(self.style.SUCCESS("Database tables cleared."))
             return 
         
@@ -228,6 +239,60 @@ class Command(BaseCommand):
                     defaults={'project':project},
                 )
                 if created: 
+                    count += 1
+
+        # --- Import Rounds ---
+        # Matt HK: This is from Gemini with little refactoring
+        # Ill test and make sure it works
+        if not os.path.exists(round_file):
+            self.stdout.write(self.style.ERROR(f"Round file not found: {round_file}"))
+            return
+
+        with open(round_file, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            count = 0
+
+            for row in reader:
+                open_date_str = row['open_date']
+                close_date_str = row['close_date']
+                projects_titles = row['projects'].split(';')
+
+                # Convert string dates to timezone-aware datetime objects
+                try:
+                    open_date = timezone.datetime.fromisoformat(open_date_str)
+                    close_date = timezone.datetime.fromisoformat(close_date_str)
+                except ValueError:
+                    self.stdout.write(self.style.ERROR(
+                        f"Invalid date format for round on row {reader.line_num}. Skipping."
+                    ))
+                    continue
+
+                # Create the Round instance
+                current_round, created = Round.objects.update_or_create(
+                    open_date=open_date,
+                    close_date=close_date,
+                    defaults={'status': 'upcoming', 'is_active': False}
+                )
+
+                # Retrieve project objects and link them to the round
+                projects_to_add = []
+                for title in projects_titles:
+                    title = title.strip() # Remove any leading/trailing whitespace
+                    if title:
+                        try:
+                            project = Project.objects.get(title=title)
+                            projects_to_add.append(project)
+                        except Project.DoesNotExist:
+                            self.stdout.write(self.style.WARNING(
+                                f"Project '{title}' not found. It will not be added to the round."
+                            ))
+                
+                # Use the add() method on the ManyToManyField to link the projects
+                # This is done after the Round object is saved (created or updated)
+                if projects_to_add:
+                    current_round.projects.add(*projects_to_add)
+                
+                if created:
                     count += 1
 
             self.stdout.write(self.style.SUCCESS(f"Successfully imported {count} project preferences."))
