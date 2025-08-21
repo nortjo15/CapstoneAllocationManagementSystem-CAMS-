@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from networkx import project
 from student_app.models import Student
 from django.core.validators import MinValueValidator
 
@@ -35,6 +36,29 @@ class AdminLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.action} {self.target} @ {self.timestamp}"
+    
+# Capstone Rounds
+class Round(models.Model):
+    round_id = models.AutoField(primary_key=True)
+    projects = models.ManyToManyField(
+        'Project',
+        related_name='rounds',
+        blank=True,
+    )
+
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('closed', 'Closed'),
+        ('upcoming', 'Upcoming'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    
+    open_date = models.DateTimeField()
+    close_date = models.DateTimeField()
+
+    def __str__(self):
+        return f"Round {self.id} - {self.status}"
+
 
 # Project Information
 # Primary key is configured and incremented automatically 
