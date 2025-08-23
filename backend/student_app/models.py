@@ -58,3 +58,48 @@ class GroupPreference(models.Model):
 
     def __str__(self):
         return f"{self.student} → {self.target_student} ({self.preference_type})"
+    
+# Contains any unit contacts for the capstone unit
+# This can be used to store information about unit coordinators, administrative contacts, etc.
+# More for later, in case there is more than one manager
+class UnitContacts(models.Model):
+    id = models.serial(primary_key=True)
+    name = models.CharField(max_length=100, null=False)
+    email = models.EmailField(unique=True, null=False)
+    phone = models.CharField(max_length=15)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+#Section dividers for Capstone Information information
+# Can be used to create subsections for information
+class CapstoneInformationSection(models.Model):
+    id = models.serial(primary_key=True)
+    name = models.CharField(max_length=100, null=False)
+    parent_section = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subsections')
+    order = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# Stores actual information that is displayed on Capstone Information pages
+# Each section can have multiple pieces of content, and each piece can be pinned or have a priority
+# Content can be published, archived or in draft state
+class CapstoneInformationContent(models.Model):
+    id = models.serial(primary_key=True)
+    section_id = models.ForeignKey(CapstoneInformationSection, on_delete=models.CASCADE, related_name='contents')
+    title = models.CharField(max_length=200, null=False)
+    body = models.TextField(null=False)
+    status = models.CharField(max_length=20, default= 'published', 
+        choices=[
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+        ('archived', 'Archived')
+        ])
+    pinned = models.BooleanField(default=False)
+    priority = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    published_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)    # Content needs to be converted to archived after this date
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    author = models.charField(max_length=120, null=False)
+
