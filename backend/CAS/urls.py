@@ -28,7 +28,7 @@ urlpatterns = [
     # Actual webpages for admin dashboard & student facing end
     path('admin-dashboard/', include(('admin_app.urls', 'admin_app'), namespace='admin_dashboard')),
     path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
-
+    path('api/', include('admin_app.urls')),
     # Root URL viewCan 
     path('', lambda request: HttpResponse("Welcome to CAS API!")),
 ]
