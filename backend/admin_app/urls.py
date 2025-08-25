@@ -22,12 +22,18 @@ from django.urls import path
 #Import all required views
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
 from .view.auth_views import register_view, login_view, logout_view, login_success
-from .view.admin_views import AdminLogListCreateView, SendNotificationView
+from .view.admin_views import AdminLogListCreateView
 from .view.round_views import round_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
 from .view.student_views import *
- 
+from .view.admin_views import (
+    SendRoundStartView,
+    SendRoundClosedView,
+    SendApplicationSuccessView,
+    SendAllocationReleasedView,
+)
+
 app_name = 'admin_app'
 urlpatterns = [
     #Auth_views
@@ -37,7 +43,10 @@ urlpatterns = [
     path('login_success/', login_success, name="login_success"),
     #Admin_views
     path('admin/logs/', AdminLogListCreateView.as_view()),
-    path('send-notification/', SendNotificationView.as_view(), name='send_notification'),
+    path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
+    path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
+    path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
+    path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
     #Student_views
     path('student_view/', StudentListView.as_view(), name='student_view'),
     path('students/create/', StudentCreateView.as_view(), name='admin_student_create'),
