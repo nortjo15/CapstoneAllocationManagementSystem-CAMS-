@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Application</title>
+    <script src="https://unpkg.com/petite-vue" defer init></script>
+</head>
+
+{% extends "student_base.html" %}
+{% block content %}
+<body>
+    <h1>Capstone Information</h1>
+    <hr>
+    <p>Here you can find information about the capstone projects available for this round.</p>
+    <form name="capstone_information" action="{% url 'students:capstone_information' %}" method="post">
+        {% csrf_token %}
+        <p>This is a test</p>
+        
+
+{% endblock content %}

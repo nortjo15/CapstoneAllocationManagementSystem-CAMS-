@@ -167,7 +167,7 @@ class Major(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.degree.name})"
-    
+
 # Contains any unit contacts for the capstone unit
 # This can be used to store information about unit coordinators, administrative contacts, etc.
 # More for later, in case there is more than one manager

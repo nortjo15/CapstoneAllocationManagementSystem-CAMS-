@@ -58,3 +58,4 @@ class GroupPreference(models.Model):
 
     def __str__(self):
         return f"{self.student} → {self.target_student} ({self.preference_type})"
+

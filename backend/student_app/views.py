@@ -28,12 +28,12 @@ class ProjectListCreateView(generics.ListCreateAPIView):
 
 def student_form(request):
     if request.method =='POST':
-        studentId = request.POST.get("studentID")
+        studentID = request.POST.get("studentID")
         # projects = request.POST.getlist('projects[]')
         Student.objects.filter(student_id=studentID).update(
             cwa = request.POST.get("cwa"),
             major = request.POST.get("major"),
-            application_submitted=true,
+            application_submitted=True,
             email = request.POST.get("email"),
             resume = request.POST.get("filename")
         )
@@ -45,4 +45,8 @@ def student_form(request):
         majors = Major.objects.values('name')
         return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
 
-    
+def capstone_information(request):
+    # Placeholder for capstone information view
+    test = "This is a test variable"
+    context = {'test': test}
+    return render(request, "capstone_information.html")
