@@ -5,12 +5,12 @@ from .import views
 from student_app.views import ProjectListCreateView, StudentListCreateView, StudentDetailView, GroupPreferenceListCreateView
 
 
+app_name = 'student_app'
 urlpatterns = [
     #path('admin/', admin.site.urls),
     #path('<str:student_id>/', StudentDetailView.as_view()),
-    path('preferences/', GroupPreferenceListCreateView.as_view()),
-    path('studentApplication/', views.student_form, name="student_form"),
+    #path('preferences/', GroupPreferenceListCreateView.as_view()),
+    path('student_application/', views.student_form, name="student_form"),
     path('projects/', ProjectListCreateView.as_view(), name="project_list"),
     path('students/', StudentListCreateView.as_view(), name="student_list"),
-    path('student_test/', views.student_test, name="student_test"),
 ]

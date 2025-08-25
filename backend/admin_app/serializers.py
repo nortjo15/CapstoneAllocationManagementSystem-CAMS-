@@ -6,7 +6,7 @@ class AdminLogSerializer(serializers.ModelSerializer):
         model = AdminLog
         fields = '__all__'
 
-from .models import Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember
+from .models import Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Round
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,4 +36,10 @@ class FinalGroupSerializer(serializers.ModelSerializer):
 class FinalGroupMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinalGroupMember
+        fields = '__all__'
+
+class RoundSerializer(serializers.ModelSerializer):
+    projects = ProjectSerializer(many=True, read_only=True)
+    class Meta:
+        model = Round
         fields = '__all__'
