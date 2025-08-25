@@ -21,7 +21,10 @@ class AdminLog(models.Model):
         ('CREATE', 'Create'),
         ('EDIT', 'Edit'),
         ('DELETE', 'Delete'),
-        ('ASSIGN', 'Assign Student')
+        ('ASSIGN', 'Assign Student'),
+        ('USER_CREATED', 'User Created'),
+        ('LOGIN', 'User Logged In'),
+        ('LOGOUT', 'User Logged Out')
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
