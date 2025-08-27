@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeFor
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 
-from backend.admin_app.models import AdminLog
+from admin_app.models import AdminLog
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -15,10 +15,11 @@ def register_view(request):
             newUser = form.save()
 
             # Log the creation of a new user in the admin log
+            user_content_type = ContentType.objects.get_for_model(newUser)
             AdminLog.objects.create(
                 user=request.user, # The currently logged-in admin user
                 action='USER_CREATED',
-                target_content_type="admin action - user created",
+                target_content_type=user_content_type,
                 target_id=newUser.id,
                 notes=f"New user created: {newUser.username}"
             )
@@ -44,10 +45,11 @@ def login_view(request):
 @login_required
 def login_success(request):
     # Log action - user login
+    user_content_type = ContentType.objects.get_for_model(request.user)
     AdminLog.objects.create(
         user=request.user, # The currently logged-in admin user
         action='LOGIN',
-        target_content_type="admin action - user login",
+        target_content_type=user_content_type,
         target_id=request.user.id,
         notes=f"user login: {request.user.username}"
     )
@@ -58,10 +60,11 @@ def login_success(request):
 def logout_view(request):
     logout(request)
     # Log action - user logout
+    user_content_type = ContentType.objects.get_for_model(request.user)
     AdminLog.objects.create(
         user=request.user, # The currently logged-in admin user
         action='LOGOUT',
-        target_content_type="admin action - user logout",
+        target_content_type=user_content_type,
         target_id=request.user.id,
         notes=f"user logout: {request.user.username}"
     )
