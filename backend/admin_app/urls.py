@@ -64,4 +64,10 @@ urlpatterns = [
     path('settings/', settings_view, name='settings'),
     #Round_views
     path('rounds/', round_view, name='round_view'),
+    #Announcements CRUD
+    path('announcements/',              announcement_list,  name='announcement_list'),
+    path('announcements/new/',          announcement_create, name='announcement_create'),
+    path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
+    path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
+    
 ]
