@@ -4,5 +4,23 @@
     <h1>Settings</h1>
     <p>Manage your account settings here.</p>
 
-    <button>Generate sign-up link</button>
+    <button onclick="showPopup()">Generate sign-up link</button>
+
+    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5);">
+    <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
+        <p>This is your popup message!<br>
+        <a href="/admin-dashboard/register">Go to page</a>
+        </p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+    </div>
+
+    <script>
+    function showPopup() {
+    document.getElementById('customModal').style.display = 'block';
+    }
+    function closePopup() {
+    document.getElementById('customModal').style.display = 'none';
+    }
+    </script>
 {% endblock %}
