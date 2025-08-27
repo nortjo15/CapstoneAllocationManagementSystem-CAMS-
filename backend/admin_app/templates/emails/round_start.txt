@@ -1,0 +1,7 @@
+Dear Participant,
+
+The selection round "{{ round_name }}" has now closed.
+{{ message_body }}
+
+Regards,  
+Admin Team
