@@ -10,12 +10,53 @@
 {% extends "student_base.html" %}
 {% block content %}
 <body>
-    <h1>Capstone Information</h1>
-    <hr>
-    <p>Here you can find information about the capstone projects available for this round.</p>
-    <form name="capstone_information" action="{% url 'students:capstone_information' %}" method="post">
-        {% csrf_token %}
-        <p>This is a test</p>
+{% load humanize %}
+
+<main class="container">
+  {% if sections %}
+    <nav aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        {% for s in sections %}
+          <li><a href="#s{{ s.pk }}">{{ s.title }}</a></li>
+        {% endfor %}
+      </ol>
+    </nav>
+
+    {% for s in sections %}
+      <section id="s{{ s.pk }}" class="section">
+        <h2>{{ s.title }}</h2>
+
+        {% with items=s.contents.all %}
+          {% if items %}
+            {% for item in items %}
+              <article class="card">
+                <header>
+                  <h3>{{ item.title }}</h3>
+                  {% if item.pinned %}<span class="badge">Pinned</span>{% endif %}
+                </header>
+
+                <p class="meta">
+                  {{ item.published_at|date:"Y-m-d H:i" }}
+                  {% if item.expires_at %} · expires {{ item.expires_at|naturaltime }}{% endif %}
+                </p>
+
+                <div class="body">
+                  {{ item.body|linebreaks }}
+                </div>
+              </article>
+            {% endfor %}
+          {% else %}
+            <p>No content in this section yet.</p>
+          {% endif %}
+        {% endwith %}
+      </section>
+    {% endfor %}
+  {% else %}
+    <p>No sections found.</p>
+  {% endif %}
+</main>
+
         
 
 {% endblock content %}

@@ -27,6 +27,9 @@ from .view.round_views import round_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
 from .view.student_views import student_view, student_create, admin_student_import
+from .view.announcements_views import (
+    announcement_list, announcement_create, announcement_edit, announcement_delete
+)
  
 app_name = 'admin_app'
 urlpatterns = [
@@ -54,4 +57,10 @@ urlpatterns = [
     path('settings/', settings_view, name='settings'),
     #Round_views
     path('rounds/', round_view, name='round_view'),
+    #Announcements CRUD
+    path('announcements/',              announcement_list,  name='announcement_list'),
+    path('announcements/new/',          announcement_create, name='announcement_create'),
+    path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
+    path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
+    
 ]

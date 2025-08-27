@@ -156,9 +156,12 @@ class UnitContacts(models.Model):
 class CapstoneInformationSection(models.Model):
     name = models.CharField(max_length=100, null=False)
     parent_section = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subsections')
-    order = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    order = models.IntegerField(default=0, validators=[MinValueValidator(0)]) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "id"]
 
 # Stores actual information that is displayed on Capstone Information pages
 # Each section can have multiple pieces of content, and each piece can be pinned or have a priority
@@ -180,3 +183,9 @@ class CapstoneInformationContent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.CharField(max_length=120, null=False)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["section_id", "-pinned", "priority", "-published_at"]),
+            models.Index(fields=["status", "published_at", "expires_at"]),
+        ]

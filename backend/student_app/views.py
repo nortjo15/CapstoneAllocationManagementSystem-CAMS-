@@ -4,9 +4,14 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from .models import Student, GroupPreference
 from .serializers import StudentSerializer, GroupPreferenceSerializer
-from admin_app.models import Project, Major
+from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse
+from django.db.models import Prefetch
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+
 
 
 class StudentListCreateView(generics.ListCreateAPIView):
@@ -46,7 +51,13 @@ def student_form(request):
         return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
 
 def capstone_information(request):
-    # Placeholder for capstone information view
-    test = "This is a test variable"
-    context = {'test': test}
-    return render(request, "capstone_information.html")
+    sections = (CapstoneInformationSection.objects
+                .prefetch_related(
+                    Prefetch(
+                        'contents',
+                        queryset=(CapstoneInformationContent.objects
+                                  .order_by('-pinned', 'priority', '-published_at'))
+                    )
+                ))
+    return render(request, "capstone_information.html", {"sections": sections})
+
