@@ -21,7 +21,7 @@ from django.conf import settings
 from django.urls import path
 #Import all required views
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
-from .view.auth_views import register_view, login_view, logout_view, login_success
+from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView, SendNotificationView
 from .view.round_views import round_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
@@ -35,6 +35,7 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name="logout"),
     path('login_success/', login_success, name="login_success"),
+    path('change_password/', change_password, name='change_password'),
     #Admin_views
     path('admin/logs/', AdminLogListCreateView.as_view()),
     path('send-notification/', SendNotificationView.as_view(), name='send_notification'),

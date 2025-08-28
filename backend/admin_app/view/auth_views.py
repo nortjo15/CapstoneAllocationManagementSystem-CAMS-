@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm, UserCreationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 
 from admin_app.models import AdminLog
 from django.contrib.contenttypes.models import ContentType
@@ -69,3 +69,16 @@ def logout_view(request):
         notes=f"user logout: {request.user.username}"
     )
     return redirect("admin_dashboard:login")
+
+#View to change password
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = AdminPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Keeps user logged in
+            return redirect('password_change_done')
+    else:
+        form = AdminPasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})
