@@ -22,7 +22,7 @@ from django.urls import path
 #Import all required views
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
-from .view.admin_views import AdminLogListCreateView, SendNotificationView
+from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
