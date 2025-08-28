@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from admin_app.models import Round, FinalGroup
 from student_app.models import Student
 from admin_app import email_service
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 class AdminLogListCreateView(generics.ListCreateAPIView):
     queryset = AdminLog.objects.all()
@@ -62,3 +64,10 @@ class SendAllocationReleasedView(APIView):
     def post(self, request, final_group_id):
         sent = email_service.send_allocation_released(final_group_id)
         return Response({"ok": True, "sent": sent})
+    
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)  # only admins can access
+def email_page(request):
+    """Render the Email Notifications page"""
+    return render(request, "admin_email.html")

@@ -26,6 +26,13 @@ from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
+from .view.student_views import student_view, student_create, admin_student_import
+from .view.announcements_views import (
+    announcement_list, announcement_create, announcement_edit, announcement_delete
+)
+from admin_app.view import admin_views
+
+from admin_app.view.email_views import MailtoLinkView
 from .view.student_views import *
 from .view.admin_views import (
     SendRoundStartView,
@@ -44,6 +51,10 @@ urlpatterns = [
     path('change_password/', change_password, name='change_password'),
     #Admin_views
     path('admin/logs/', AdminLogListCreateView.as_view()),
+    path("email/mailto/", MailtoLinkView.as_view(), name="mailto_link"),
+    path("email/page/", admin_views.email_page, name="email_page"),
+
+     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
