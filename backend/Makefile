@@ -40,6 +40,6 @@ rebuild:
 	docker-compose build --no-cache 
 	docker-compose up -d 
 
-.PHONY: bash 
-bash: 
-	docker exec -it $(CONTAINER_NAME_B) bash 
+.PHONY: bash
+bash:
+	docker exec -it $(CONTAINER_NAME_B) bash
