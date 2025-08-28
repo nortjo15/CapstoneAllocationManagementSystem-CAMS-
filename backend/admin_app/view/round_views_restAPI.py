@@ -31,12 +31,12 @@ def rounds_api(request, round_id=None):
         data = json.loads(request.body)
         projects = Project.objects.filter(project_id__in=data.get('projects', []))
         
-        # Create a new Round instance
+
         new_round = Round(
             round_name=data.get('round_name'),
             open_date=data.get('open_date'),
             close_date=data.get('close_date'),
-            status='upcoming'  # Set initial status
+            status='upcoming'
         )
         new_round.save()
         new_round.projects.set(projects) # Set the ManyToMany relationship
