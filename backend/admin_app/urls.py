@@ -33,6 +33,7 @@ from .view.announcements_views import (
 from admin_app.view import admin_views
 
 from admin_app.view.email_views import MailtoLinkView
+from .view.student_views import *
 from .view.admin_views import (
     SendRoundStartView,
     SendRoundClosedView,
@@ -53,13 +54,15 @@ urlpatterns = [
     path("email/page/", admin_views.email_page, name="email_page"),
 
      path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
+    path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
     #Student_views
-    path('student_view/', student_view, name='student_view'),
-    path('students/create/', student_create, name='admin_student_create'),
-    path('students/import/', admin_student_import, name='admin_student_import'),
+    path('student_view/', StudentListView.as_view(), name='student_view'),
+    path('students/create/', StudentCreateView.as_view(), name='admin_student_create'),
+    path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
+    path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
