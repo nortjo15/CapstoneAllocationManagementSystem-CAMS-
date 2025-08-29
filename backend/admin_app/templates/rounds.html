@@ -1,41 +1,87 @@
-{% extends "admin_base.html" %}
 {% load static %}
-<script src="../static/admin_app/js/javascript.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
+    <title>Manage Project Rounds</title>
+</head>
+<body>
+    {% csrf_token %}
 
-<style>
-  .form-popup {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  right: 15px;
-  border: 3px solid #f1f1f1;
-  z-index: 9;
-}
+    <div class="container">
+        <div id="left-pane">
+            <h1>Project Rounds</h1>
+            <button id="create-new-round-btn">
+                + Create New Round
+            </button>
+            <div id="rounds-list">
+            </div>
+        </div>
 
-.form-container {
-  display: block;
-  max-width: 300px;
-  padding: 10px;
-}
 
-</style>
-{% block content %}
-<p>Test content block</p>
-<div id="round-list-block">
-  <!-- <button onclick="createRound()">+ Create New Round</button> -->
-   <button id="createRound">+ Create New Round</button>
-  <button onclick="buttonClick()">Click Me</button>
-  <input type="text" id="inc" value="0"></input>
-</div>
-<div id="expanded-round-block">
-  <div class="form-popup" id="popUpForm">
-  <form class="form-container">
-    <input type="text" id="roundName" placeholder="Round Name">
-    <input type="text" id="roundNote" placeholder="Note">
-    <input type="checkbox" id="readOption" name="readOption">
-    <label for="readOption">Have you read it?</label>
-    <button type="submit">Submit</button>
-  </form>
-</div>
-</div>
-{% endblock %}
+        <div id="right-pane">
+            <h2 id="right-pane-title">Select a Round</h2>
+            
+            <div id="round-details-view">
+                <form id="edit-round-form">
+                    <input type="hidden" id="edit-round-id">
+                    <div>
+                        <label for="edit-round-name">Round Name</label>
+                        <input type="text" id="edit-round-name">
+                    </div>
+                    <div>
+                        <label for="edit-open-date">Open Date</label>
+                        <input type="datetime-local" id="edit-open-date">
+                    </div>
+                    <div>
+                        <label for="edit-close-date">Close Date</label>
+                        <input type="datetime-local" id="edit-close-date">
+                    </div>
+                    <div>
+                        <label for="edit-round-projects">Projects</label>
+                        <select multiple id="edit-round-projects">
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit">
+                            Save Changes
+                        </button>
+                        <button type="button" id="delete-round-btn">
+                            Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div id="create-round-view">
+                <form id="create-round-form">
+                    <div>
+                        <label for="create-round-name">Round Name</label>
+                        <input type="text" id="create-round-name">
+                    </div>
+                    <div>
+                        <label for="create-open-date">Open Date</label>
+                        <input type="datetime-local" id="create-open-date">
+                    </div>
+                    <div>
+                        <label for="create-close-date">Close Date</label>
+                        <input type="datetime-local" id="create-close-date">
+                    </div>
+                    <div>
+                        <label for="create-round-projects">Projects</label>
+                        <select multiple id="create-round-projects">
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit">
+                            Create Round
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{% static '../static/admin_app/js/round.js' %}"></script>
+</body>
+</html>
