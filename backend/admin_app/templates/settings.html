@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+    <h1>Settings</h1>
+    <p>Manage your account settings here.</p>
+
+    <button onclick="showPopup()">Generate sign-up link</button>
+    <button onclick="showPopup()">Change Password</button>
+
+    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5);">
+        <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
+            <p>Copy the link below:<br>
+                <a href="/admin-dashboard/register">Link to user registration</a>
+            </p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <div id="customModal1" style=" align: center; display:none; position:fixed; top:0; left:0; width:200vw; height:200vh; background:rgba(0,0,0,0.5);">
+        <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
+            <form class="form-with-validation" action="{% url 'admin_dashboard:change_password' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }} 
+                <button type="submit">Change Password</button>
+            </form>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <script>
+    function showPopup() {
+    document.getElementById('customModal').style.display = 'block';
+    }
+    function closePopup() {
+    document.getElementById('customModal').style.display = 'none';
+    }
+    function showPopup() {
+    document.getElementById('customModal1').style.display = 'block';
+    }
+    function closePopup() {
+    document.getElementById('customModal1').style.display = 'none';
+    }
+    </script>
+{% endblock %}

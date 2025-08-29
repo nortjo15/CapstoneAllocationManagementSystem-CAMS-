@@ -1,9 +1,18 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.shortcuts import render
 from .models import Student, GroupPreference
 from .serializers import StudentSerializer, GroupPreferenceSerializer
-from project_app.models import Project
-from project_app.serializers import ProjectSerializer
+from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
+from admin_app.serializers import ProjectSerializer
+from django.http import JsonResponse
+from django.db.models import Prefetch
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+
+
 
 class StudentListCreateView(generics.ListCreateAPIView):
     queryset = Student.objects.all()
@@ -23,4 +32,32 @@ class ProjectListCreateView(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
 
 def student_form(request):
-    return render(request, "student_form.html")
+    if request.method =='POST':
+        studentID = request.POST.get("studentID")
+        # projects = request.POST.getlist('projects[]')
+        Student.objects.filter(student_id=studentID).update(
+            cwa = request.POST.get("cwa"),
+            major = request.POST.get("major"),
+            application_submitted=True,
+            email = request.POST.get("email"),
+            resume = request.POST.get("filename")
+        )
+        print("Form data received: ", data)
+        return JsonResponse({"received_data" : data})
+    else: 
+        students = Student.objects.values('name')
+        projects = Project.objects.values('title')
+        majors = Major.objects.values('name')
+        return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
+
+def capstone_information(request):
+    sections = (CapstoneInformationSection.objects
+                .prefetch_related(
+                    Prefetch(
+                        'contents',
+                        queryset=(CapstoneInformationContent.objects
+                                  .order_by('-pinned', 'priority', '-published_at'))
+                    )
+                ))
+    return render(request, "capstone_information.html", {"sections": sections})
+

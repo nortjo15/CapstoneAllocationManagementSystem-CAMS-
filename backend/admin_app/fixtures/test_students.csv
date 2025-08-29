@@ -1,0 +1,101 @@
+student_id,name,cwa,major
+10000001,John Doe,85.32,Computer Science
+10000002,Jane Smith,91.47,Cybersecurity
+10000003,Alice Johnson,78.05,Software Engineering
+10000004,Bob Williams,66.89,Information Technology
+10000005,Emily Davis,72.34,Computer Science
+10000006,Michael Brown,88.76,Cybersecurity
+10000007,Sarah Wilson,94.15,Software Engineering
+10000008,David Lee,59.48,Information Technology
+10000009,Linda Martinez,80.22,Computer Science
+10000010,James Anderson,69.87,Cybersecurity
+20000011,Mary Thomas,77.90,Software Engineering
+20000012,Robert Jackson,83.45,Information Technology
+20000013,Patricia White,65.12,Computer Science
+20000014,Charles Harris,90.67,Cybersecurity
+20000015,Jennifer Martin,74.88,Software Engineering
+20000016,Thomas Thompson,82.33,Information Technology
+20000017,Karen Garcia,68.55,Computer Science
+20000018,Daniel Martinez,79.99,Cybersecurity
+20000019,Nancy Robinson,85.44,Software Engineering
+20000020,Paul Clark,70.11,Information Technology
+20000021,Laura Lewis,88.72,Computer Science
+20000022,Steven Hall,91.15,Cybersecurity
+20000023,Donna Allen,76.43,Software Engineering
+20000024,Kevin Young,69.32,Information Technology
+20000025,Barbara Hernandez,82.16,Computer Science
+20000026,Jason King,73.89,Cybersecurity
+20000027,Betty Wright,86.71,Software Engineering
+20000028,Brian Scott,63.58,Information Technology
+20000029,Dorothy Green,78.94,Computer Science
+20000030,Matthew Adams,87.25,Cybersecurity
+20000031,Ashley Baker,81.66,Software Engineering
+20000032,Edward Gonzalez,66.77,Information Technology
+20000033,Kimberly Nelson,90.33,Computer Science
+20000034,Jeffrey Carter,75.29,Cybersecurity
+20000035,Susan Mitchell,83.84,Software Engineering
+20000036,Anthony Perez,70.52,Information Technology
+20000037,Carol Roberts,88.06,Computer Science
+20000038,Mark Turner,79.63,Cybersecurity
+20000039,Lisa Phillips,74.44,Software Engineering
+20000040,George Campbell,67.98,Information Technology
+30000001,Olivia Turner,56.12,Creative
+30000002,Ethan Parker,92.38,Digital
+30000003,Madison Evans,81.45,Cybersecurity
+30000004,Alexander Morgan,48.99,Computer Science
+30000005,Isabella Rivera,75.30,Visual
+30000006,William Cox,67.54,Software Engineering
+30000007,Sophia Diaz,89.24,Information Technology
+30000008,James Foster,55.43,Cybersecurity
+30000009,Emma Cooper,77.66,Digital
+30000010,Michael Simmons,83.71,Creative
+30000011,Charlotte Ramirez,62.88,Visual
+30000012,Daniel Bailey,49.37,Information Technology
+30000013,Amelia Brooks,90.57,Computer Science
+30000014,David Kelly,72.15,Software Engineering
+30000015,Abigail Price,58.04,Cybersecurity
+30000016,Joseph Long,84.12,Creative
+30000017,Emily Russell,69.77,Digital
+30000018,Matthew Hughes,74.98,Visual
+30000019,Grace Foster,47.51,Information Technology
+30000020,Andrew Bryant,79.45,Software Engineering
+30000021,Elizabeth Ward,93.20,Computer Science
+30000022,Joshua Cooper,66.09,Cybersecurity
+30000023,Mia Bell,71.88,Creative
+30000024,Christopher Reed,63.55,Digital
+30000025,Chloe Jenkins,85.14,Visual
+30000026,Samuel Griffin,52.46,Software Engineering
+30000027,Ava Brooks,88.32,Information Technology
+30000028,Anthony Russell,60.97,Cybersecurity
+30000029,Sofia Bailey,76.49,Computer Science
+30000030,Jacob Sanders,69.28,Digital
+30000031,Liam Foster,83.67,Creative
+30000032,Madeline Hayes,57.89,Digital
+30000033,Noah Brooks,78.45,Cybersecurity
+30000034,Avery Kelly,65.23,Visual
+30000035,Ella Patterson,91.02,Computer Science
+30000036,Logan Morgan,49.75,Software Engineering
+30000037,Harper Bennett,72.80,Information Technology
+30000038,Jackson Morris,54.31,Creative
+30000039,Mia Ward,87.41,Digital
+30000040,Oliver Murphy,69.55,Cybersecurity
+30000041,Emily Cook,77.14,Visual
+30000042,Ethan Diaz,44.90,Information Technology
+30000043,Isabella Fisher,84.36,Software Engineering
+30000044,Lucas Hughes,61.08,Computer Science
+30000045,Amelia Collins,70.44,Cybersecurity
+30000046,Mason Simmons,88.29,Creative
+30000047,Sophia Reed,66.72,Digital
+30000048,Benjamin Brooks,73.58,Visual
+30000049,Charlotte Sanders,51.22,Information Technology
+30000050,Alexander Rivera,80.83,Software Engineering
+30000051,Emily Wood,93.16,Computer Science
+30000052,Jacob Murphy,64.33,Cybersecurity
+30000053,Olivia Turner,68.47,Creative
+30000054,James Parker,79.91,Digital
+30000055,Ella Johnson,59.28,Visual
+30000056,Logan Bailey,85.07,Software Engineering
+30000057,Avery Diaz,53.44,Information Technology
+30000058,Lucas Rivera,62.31,Cybersecurity
+30000059,Madison Bennett,75.22,Computer Science
+30000060,Oliver Brooks,90.58,Digital

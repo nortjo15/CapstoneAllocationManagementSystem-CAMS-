@@ -18,14 +18,74 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
-from django.conf.urls.static import static 
-from .import views
 from django.urls import path
-from .views import AdminLogListCreateView
-    
+
+#Import all required views
+from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
+from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
+from .view.admin_views import AdminLogListCreateView #, SendNotificationView
+from .view.round_views import round_view
+from .view.round_views_restAPI import rounds_api
+from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
+from .view.settings_views import settings_view
+from .view.student_views import student_view, student_create, admin_student_import
+from .view.announcements_views import (
+    announcement_list, announcement_create, announcement_edit, announcement_delete
+)
+from admin_app.view import admin_views
+
+from admin_app.view.email_views import MailtoLinkView
+from .view.student_views import *
+from .view.admin_views import (
+    SendRoundStartView,
+    SendRoundClosedView,
+    SendApplicationSuccessView,
+    SendAllocationReleasedView,
+)
+
+app_name = 'admin_app'
 urlpatterns = [
-    path('register/', views.register_view, name="register"),
-    path('login/', views.login_view, name="login"),
-    path('login_success/', views.login_success, name="login_success"),
-    path('', AdminLogListCreateView.as_view()),
+    #Auth_views
+    path('register/', register_view, name="register"),
+    path('login/', login_view, name="login"),
+    path('logout/', logout_view, name="logout"),
+    path('login_success/', login_success, name="login_success"),
+    path('change_password/', change_password, name='change_password'),
+    #Admin_views
+    path('admin/logs/', AdminLogListCreateView.as_view()),
+    path("email/mailto/", MailtoLinkView.as_view(), name="mailto_link"),
+    path("email/page/", admin_views.email_page, name="email_page"),
+
+     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
+    path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
+    path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
+    path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
+    path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
+    #Student_views
+    path('student_view/', StudentListView.as_view(), name='student_view'),
+    path('students/create/', StudentCreateView.as_view(), name='admin_student_create'),
+    path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
+    path('student/update-notes/', update_student_notes, name='update_student_notes'),
+    #Project_views
+    path('projects/', ProjectListCreateView.as_view()),
+    path('preferences/', ProjectPreferenceListCreateView.as_view()),
+    #Group_views
+    path('suggested/', SuggestedGroupListCreateView.as_view()),
+    path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
+    path('final/', FinalGroupListCreateView.as_view()),
+    path('final/members/', FinalGroupMemberListCreateView.as_view()),
+    #Settings_views
+    path('settings/', settings_view, name='settings'),
+
+    #Round_views
+    path('rounds/', round_view, name='round_view'),
+    path('api/rounds/', rounds_api, name='rounds_api_list'),
+    path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
+    path('api/projects/', rounds_api, name='projects_api'),
+    #Announcements CRUD
+    path('announcements/',              announcement_list,  name='announcement_list'),
+    path('announcements/new/',          announcement_create, name='announcement_create'),
+    path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
+    path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
+    
 ]

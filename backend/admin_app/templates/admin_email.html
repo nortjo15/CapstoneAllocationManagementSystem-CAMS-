@@ -1,0 +1,59 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<h2>Email Notifications</h2>
+
+<button onclick="sendEmail()">Send Email via Outlook Web</button>
+
+<script>
+async function sendEmail() {
+    const csrftoken = getCookie('csrftoken');
+
+    // 1️⃣ Call your backend API to get the recipients
+    const res = await fetch("{% url 'admin_dashboard:mailto_link' %}", {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            subject: "Round 1 Closed",
+            body: "Dear Students,\n\nRound 1 has been closed.\n\nRegards,\nAdmin",
+            audience: "students"
+        })
+    });
+
+    const data = await res.json();
+    if (!data.mailto_link) {
+        alert("Error: " + (data.error || "Could not generate email link"));
+        return;
+    }
+
+    // 2️⃣ Parse recipients from mailto link
+    const mailto = new URL(data.mailto_link);
+    const recipients = mailto.pathname;  // emails before ?
+    const subject = mailto.searchParams.get("subject") || "";
+    const body = mailto.searchParams.get("body") || "";
+
+    // 3️⃣ Open Outlook Web compose URL
+    const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(recipients)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(outlookUrl, "_blank");
+}
+
+// Function to get CSRF cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

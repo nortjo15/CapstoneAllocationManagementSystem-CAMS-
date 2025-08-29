@@ -1,19 +1,11 @@
-# version: '3.8' # Use a recent Docker Compose file format
-
-services:
+services:        
   backend:
-    build: ./backend # Build from the Dockerfile in the ./backend directory
-    command: python manage.py runserver 0.0.0.0:8000 # Command to run Django
+    build: ./backend 
+    command: python manage.py runserver 0.0.0.0:8000 
     volumes:
-      - ./backend:/app # Mount your local backend code into the container for live updates
-      #- ./backend/db.sqlite3:/app/db.sqlite3 # <--- IMPORTANT: Persist SQLite DB
+      - ./backend:/app
     ports:
-      - "8000:8000" # Expose Django port to your host machine
-    # Remove 'depends_on' and 'environment' related to PostgreSQL
-    # If you had environment variables for PostgreSQL, remove them.
-    networks:
-      - cas_network # Connect to a custom network for inter-service communication
-
+      - "8000:8000" #this is the local host port for development
     environment:
       POSTGRES_DB: cas_db
       POSTGRES_USER: cas_db_user
@@ -23,18 +15,3 @@ services:
       SECRET_KEY: django-insecure-cwvx9hp!sdh*6p+_-i8rq!5cr2i771u*v(b_1*dcv*7v8*ympt
       DEBUG: "True"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
-
-  frontend:
-    build: ./frontend # Build from the Dockerfile in the ./frontend directory
-    volumes:
-      - ./frontend:/app # Mount frontend code for development
-    ports:
-      - "80:80" # Expose Nginx port (for serving built Vue app) to your host
-    depends_on: # You can keep this if you want to ensure backend starts first, but not strictly necessary for SQLite.
-      - backend
-    networks:
-      - cas_network # Connect to the same custom network
-
-networks:
-  cas_network: # Define the custom network for your services
-    driver: bridge

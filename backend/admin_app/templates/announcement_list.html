@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Announcements</title>
+  {# Optional: <link rel="stylesheet" href="{% static 'admin_app/admin.css' %}"> #}
+</head>
+<body>
+  <h1>Announcements</h1>
+  <p><a href="{% url 'admin_app:announcement_create' %}">+ New announcement</a></p>
+
+  <form class="filters" method="get">
+    <input type="text" name="q" placeholder="Search title/body/author" value="{{ request.GET.q }}">
+    <select name="section">
+      <option value="">All sections</option>
+      {% for s in sections %}
+        <option value="{{ s.id }}" {% if request.GET.section == s.id|stringformat:"s" %}selected{% endif %}>
+          {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <select name="status">
+      {% with cur=request.GET.status|default:'published' %}
+        <option value=""          {% if cur == "" %}selected{% endif %}>Any status</option>
+        <option value="draft"     {% if cur == "draft" %}selected{% endif %}>Draft</option>
+        <option value="published" {% if cur == "published" %}selected{% endif %}>Published</option>
+        <option value="archived"  {% if cur == "archived" %}selected{% endif %}>Archived</option>
+      {% endwith %}
+    </select>
+    <button type="submit">Apply</button>
+  </form>
+
+  {% if items %}
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Section</th>
+          <th>Pinned</th>
+          <th>Priority</th>
+          <th>Published</th>
+          <th>Expires</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in items %}
+          <tr>
+            <td>{{ a.title }}</td>
+            <td>{{ a.section_id.name }}</td>
+            <td>{{ a.pinned }}</td>
+            <td>{{ a.priority }}</td>
+            <td>{{ a.published_at|date:"Y-m-d H:i" }}</td>
+            <td>{% if a.expires_at %}{{ a.expires_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
+            <td>{{ a.status }}</td>
+            <td>
+              <a href="{% url 'admin_app:announcement_edit' a.id %}">Edit</a> |
+              <a href="{% url 'admin_app:announcement_delete' a.id %}">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      {% if page.has_previous %}
+        <a href="?q={{ request.GET.q }}&section={{ request.GET.section }}&status={{ request.GET.status }}&page={{ page.previous_page_number }}">« Prev</a>
+      {% endif %}
+      <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}
+        <a href="?q={{ request.GET.q }}&section={{ request.GET.section }}&status={{ request.GET.status }}&page={{ page.next_page_number }}">Next »</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>No announcements found.</p>
+  {% endif %}
+</body>
+</html>

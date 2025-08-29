@@ -17,22 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings 
-from django.urls import path, include
-from django.conf.urls.static import static 
 from django.http import HttpResponse
 
-from admin_app import views as admin_views
-
-
 urlpatterns = [
-    path('login/login_success.html/', admin_views.login_success, name='login_success'),
-    path('admin/', admin.site.urls),
-    path('login/', admin_views.login_view, name='login'),
-    path('api/students/', include('student_app.urls')),
-    path('api/projects/', include('project_app.urls')),
-    path('api/admins/', include('admin_app.urls')),
-    path('test/', admin_views.test_view, name='test'),
-    # Root URL view
+    path('admin/', admin.site.urls), #Default Admin
+
+    # Endpoints 
+    path('api/projects/', include(('admin_app.urls', 'admin_app'), namespace='api_projects')),
+
+    # Actual webpages for admin dashboard & student facing end
+    path('admin-dashboard/', include(('admin_app.urls', 'admin_app'), namespace='admin_dashboard')),
+    path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
+    path('api/', include('admin_app.urls')),
+    # Root URL viewCan 
     path('', lambda request: HttpResponse("Welcome to CAS API!")),
 ]
 

@@ -1,6 +1,5 @@
 # Makefile 
 CONTAINER_NAME_B = i2a-project-allocation-backend-1
-CONTAINER_NAME_D = i2a-project-allocation-db-1
 CONTAINER_NAME_F = i2a-project-allocation-frontend-1
 POSTGRES_HOST = dpg-d25gs8be5dus73a36ncg-a.singapore-postgres.render.com
 POSTGRES_USER = cas_db_user
@@ -14,6 +13,7 @@ help:
 	@echo " make shell	- Open Django shell inside container"
 	@echo " make db	- Connect to psql inside container"
 	@echo " make rebuild	- Rebuild container"
+	@echo " make bash	- Connect to bash inside container"
 
 .PHONY: testdata 
 testdata:
@@ -29,7 +29,7 @@ shell:
 
 .PHONY: db
 db:
-	docker exec -e PGPASSWORD=Bs0bCEPOoh7DIPRMdlOdKSsLbfvC3Rsh -it $(CONTAINER_NAME_D) psql \
+	docker exec -e PGPASSWORD=Bs0bCEPOoh7DIPRMdlOdKSsLbfvC3Rsh -it $(CONTAINER_NAME_B) psql \
 	  -h $(POSTGRES_HOST) \
 	  -U $(POSTGRES_USER) \
 	  -d $(POSTGRES_DB)
@@ -39,3 +39,7 @@ rebuild:
 	docker-compose down
 	docker-compose build --no-cache 
 	docker-compose up -d 
+
+.PHONY: bash
+bash:
+	docker exec -it $(CONTAINER_NAME_B) bash

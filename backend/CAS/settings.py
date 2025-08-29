@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'rest_framework',
-    'project_app',
     'admin_app',
     'student_app',
 ]
@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'CAS.urls'
-LOGIN_REDIRECT_URL = 'login_success'          #If loggged in, redirect to url
+LOGIN_REDIRECT_URL = 'admin_dashboard:login_success'          #If loggged in, redirect to url
 #LOGOUT_REDIRECT_URL = '/login/'    #if logged out, redirect to url
 #LOGIN_URL = '/login/'              #login url
 
@@ -145,3 +145,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files for storing Student attachments 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media' 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # or your SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'backendcas2@gmail.com'
+EMAIL_HOST_PASSWORD = 'rwbo cukd oazg gzet '  # App password if using Gmail
+DEFAULT_FROM_EMAIL = 'Backend CAS <backendcas2@gmail.com>'
+
