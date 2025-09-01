@@ -1,0 +1,97 @@
+<!-- 
+ Contains filters for Student View 
+ - Moved to separate file for reuse 
+ -->
+
+ <!-- Filter Bar for admin to select from -->
+<div id="filterModal" class="modal" style="display:none;"> 
+    <div class="modal-content">
+        <span class="close-btn">&times;</span> 
+        <h2>Filter Students</h2>
+    
+        <form method="get" action="{{ filter_target_url }}"> 
+            <label for="cwa_min">CWA Min:</label> 
+            <input 
+                type="number"
+                id="cwa_min"
+                name="cwa_min" 
+                step="1"
+                min="0"
+                max="100"
+                value="{{ request.GET.cwa_min|default_if_none:'0' }}"  
+            />
+            <label for="cwa_max">CWA Max:</label>
+            <input
+                type="number"
+                id="cwa_max"
+                name="cwa_max"
+                step="1"
+                min="0"
+                max="100"
+                value="{{ request.GET.cwa_max|default_if_none:'100' }}"
+            />
+
+            <!-- Display error message for CWA if invalid values -->
+            <div id="cwa_error" style="color:red; margin-top:5px; display:none;"></div>
+            <br><br>
+
+            <!-- 
+            Degree-Major CheckBox
+            - Allows for selection of multiple majors for filtering the view
+            -->
+            <fieldset> 
+                <legend>Degree & Major</legend>
+                {% for degree, majors in degree_major_pairs.items %}
+                    <strong>{{ degree }}</strong><br>
+                    {% for major in majors %}
+                        <label> 
+                            <input type="checkbox" name="degree_major" value="{{ degree }}||{{ major }}"
+                                {% if degree|add:"||"|add:major in selected_pairs %}
+                                    checked 
+                                {% endif %}
+                            >
+                            {{ major }}
+                        </label><br>
+                    {% endfor %}
+                    <br>
+                {% endfor %}
+            </fieldset>
+            <br><br>
+
+            <label for="application_submitted">Application Submitted</label>
+            <select id="application_submitted" name="application_submitted">
+                <option value="">-- Any --</option>
+                <option value="yes" {% if application_submitted == 'yes' %}selected{% endif %}>Yes</option>
+                <option value="no" {% if application_submitted == 'no' %}selected{% endif %}>No</option>
+            </select>
+            <br><br>
+
+            <!-- Dropdown to show students who are allocated a group, or not -->
+            <label for="group_status">Group Status:</label>
+            <select name="group_status" id="group_status">
+                <option value="all" {% if group_status == 'all' or not group_status %}selected{% endif %}>All Students</option> <!-- Default -->
+                <option value="assigned" {% if group_status == 'assigned' %}selected{% endif %}>Assigned Students Only</option>
+                <option value="unassigned" {% if group_status == 'unassigned' %}selected{% endif %}>Unassigned Students Only</option>
+            </select>
+            <br><br>
+
+            <!-- 
+            Submit filters button 
+            Goes to the same page without any GET parameters
+            -->
+            <button type="submit">Filter</button>
+
+            <!-- Reset button that clears all filters -->
+            <button
+                type="button"
+                id="reset-btn"
+                data-url="{{ filter_target_url }}"
+                >
+                Reset
+            </button>
+        </form>
+    </div>
+</div>  
+
+{% load static %}
+<script src="{% static 'admin_app/js/student_filters.js' %}"></script>

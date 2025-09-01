@@ -6,8 +6,6 @@
  Base Page for Student View - calls all relevant html files 
  --> 
 {% extends 'admin_base.html' %}
-{% load query_tags %}
-
 {% block styles %}
 
 {% load static %}
@@ -71,7 +69,28 @@ tr:hover {
 {% block content %}
 <h1 style="text-align:center;">Student List</h1>
 
+<!-- Button to view filters -->
+<div style="text-align:center; margin: 15px 0;">
+  <button type="button" onclick="openFilterModal()">Open Filters</button>
+</div>
+
+<!-- Add Student, Import Students Options -->
+<br><br>
+<button
+    type="button"
+    onclick="openModal()"
+    style="margin: 10px 0;">+ Add Student
+</button> 
+
+<br>
+<button 
+    type="button"
+    onclick="openImportModal()"
+    style="margin:10px 0;">Import Students</button>
+</button>
+
 <!-- Include htmls -->
+{% include "student_filters.html" with filter_target_url=filter_target_url %}
 {% include "student_table.html" with from_groups_page=False %}
 {% include 'student_create_modal.html' with form=add_form %}
 {% include 'student_importCSV.html' with form=import_form %}

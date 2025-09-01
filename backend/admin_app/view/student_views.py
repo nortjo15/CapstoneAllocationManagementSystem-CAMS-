@@ -41,6 +41,7 @@ class StudentListView(LoginRequiredMixin, ListView):
             'group_status': self.request.GET.get('group_status', 'all').lower(),
             'add_form': addStudentForm(),
             'import_form': importStudentForm(),
+            'filter_target_url': reverse_lazy('admin_dashboard:student_view')
         })
         return context
     
