@@ -8,8 +8,6 @@
     <title>Manage Project Rounds</title>
 </head>
 <body>
-    {% csrf_token %}
-
     <div class="container">
         <div id="left-pane">
             <h1>Project Rounds</h1>
@@ -26,6 +24,7 @@
             
             <div id="round-details-view">
                 <form id="edit-round-form">
+                    {% csrf_token %}
                     <input type="hidden" id="edit-round-id">
                     <div>
                         <label for="edit-round-name">Round Name</label>
@@ -56,6 +55,7 @@
             </div>
             <div id="create-round-view">
                 <form id="create-round-form">
+                    {% csrf_token %}
                     <div>
                         <label for="create-round-name">Round Name</label>
                         <input type="text" id="create-round-name">
