@@ -17,6 +17,10 @@ class ProjectApplicationForm(forms.Form):
     desirable_students = forms.CharField(widget=forms.HiddenInput(), required=False)
     undesirable_students = forms.CharField(widget=forms.HiddenInput(), required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['major'].queryset = Major.objects.all()
+
     #Field validators
     def clean_student_id(self):
         student_id = self.cleaned_data.get("student_id")
@@ -30,16 +34,27 @@ class ProjectApplicationForm(forms.Form):
             raise ValidationError("Please enter a valid Curtin Student Email E.g. john.smith@student.curtin.edu.au")
         return email
     
+    def clean_project_preference(self):
+        try:
+            prefs = json.loads(self.cleaned_data['project_preferences'])
+        except json.JSONDecodeError:
+            raise forms.ValidationError("Invalid Preference format")
+        
+        if not isinstance(prefs, list):
+            raise forms.ValidationError("Preferences must be a list")
+        if len(set(prefs) != len(prefs)):
+            raise forms.ValidationError("Duplicate preferences are not allowed")
+        return prefs
+    
     # def clean_resume(self):
+    #     print("Clean resume called")
     #     resume = self.cleaned_data.get("resume")
-
     #     if not resume:
-    #         raise ValidationError("Please upload a resume file")
-    #     fileName = resume.name
-    #     if not re.match(r'^[A-Za-z]+-[A-Za-z]+_\d{8}_resume$', fileName):
-    #         raise ValidationError("Filename must be in the format: FirstName-LastName_studentId_resume")
-    #     if not filename.lower().endswith('.pdf'):
-    #         raise ValidationError("You can only upload PDF files")
+    #         # raise ValidationError("Please upload a resume file")
+    #         return None
+    #     filename = resume.name
+    #     if not re.match(r'^[A-Za-z]+-[A-Za-z]+_\d{8}_resume\.pdf$', filename):
+    #         raise ValidationError("Filename must be in the format: FirstName-LastName_studentId_resume.pdf")
 
     # def clean(self):
     #     cleaned_data = super().clean()

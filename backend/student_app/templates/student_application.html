@@ -13,7 +13,62 @@
     <h1>Project Application form</h1>
     <hr>
     <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
-    <div v-scope>
+    <form method="post" enctype="multipart/form-data" id="Application-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div>
+            {{ form.major.label_tag }} {{ form.major }}
+            {{ form.major.errors }}
+        </div>
+
+        <select id="project-dropdown">
+            <option value="">-- Select a project --</option>
+            {% for project in projects %}
+                <option value="{{ project.title }}">{{ project.title }}</option>
+            {% endfor %}
+        </select>
+
+        <ul id="preference-list"></ul>
+        <input type="hidden" name="project-preferences" id="project-preferences-input">
+
+        <script>
+            const dropdown = document.getElementById('project-dropdown');
+            const list = document.getElementById('preference-list');
+            const hiddenInput = document.getElementById('project-preferences-input');
+            let projectPreferences = [];
+
+            dropdown.addEventListener('change', () => {
+                const id = dropdown.value;
+                const name = dropdown.options[dropdown.selectedIndex].text;
+                if(!projectPreferences.includes(id)) {
+                    projectPreferences.push(id);
+                    updateList();
+                }
+            });
+
+            function updateList(){
+                list.innerHTML = '';
+                projectPreferences.forEach((id, index) => {
+                    const currentId = id
+                    const li = document.createElement('li');
+                    li.textContent = `${index + 1}. ${dropdown.querySelector(`option[value="${id}"]`).text}`;
+                    console.log('Preferences:', projectPreferences);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.onclick = () => {
+                        projectPreferences = projectPreferences.filter(pid => pid != currentId);
+                        updateList();
+                    };
+                    li.appendChild(removeBtn);
+                    list.appendChild(li);
+                });
+                hiddenInput.value = JSON.stringify(projectPreferences);
+            }
+        </script>
+    </form>
+    {% comment %} <div v-scope>
         <form name="student_form" action="{% url 'students:student_form' %}" method= "post">
             {% csrf_token %}
             <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
@@ -75,7 +130,7 @@
             <label for="terms">Agree to Terms</label><br><br>
             <input type="submit" value="submit">
         </form>
-    </div>
+    </div> {% endcomment %}
 </body>
 {% endblock content %}
 
