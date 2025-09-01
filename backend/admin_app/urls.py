@@ -28,7 +28,6 @@ from .view.round_views import round_view
 from .view.round_views_restAPI import rounds_api
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
-# from .view.student_views import student_view, student_create, admin_student_import
 from .view.announcements_views import (
     announcement_list, announcement_create, announcement_edit, announcement_delete
 )
