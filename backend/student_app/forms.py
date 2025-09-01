@@ -14,8 +14,8 @@ class ProjectApplicationForm(forms.Form):
     resume = forms.FileField(label="Resume", required=False, validators=[FileExtensionValidator(allowed_extensions=['pdf'])], widget=forms.FileInput(attrs={'accept': 'application/pdf'}))
     terms = forms.BooleanField(label="Agree to terms", required=True)
     project_preference = forms.CharField(widget=forms.HiddenInput(), required=False)
-    desirable_students = forms.CharField(widget=forms.HiddenInput(), required=False)
-    undesirable_students = forms.CharField(widget=forms.HiddenInput(), required=False)
+    preferred_students = forms.CharField(widget=forms.HiddenInput(), required=False)
+    avoided_students = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,6 +45,24 @@ class ProjectApplicationForm(forms.Form):
         if len(set(prefs) != len(prefs)):
             raise forms.ValidationError("Duplicate preferences are not allowed")
         return prefs
+
+    def clean_desirable_students(self):
+        return self._clean_json_list('preferred_students')
+    
+    def clean_undesirable_students(self):
+        return self._clean_json_list('avoided_students')
+    
+    def _clean_json_list(self, field_name):
+        try:
+            data = json.loads(self.cleaned_data[field_name])
+        except json.JSONDecodeError:
+            raise forms.ValidationError("Invalid Preference format for {field_name}")
+        
+        if not isinstance(data, list):
+            raise forms.ValidationError("{field_name} must be a list")
+        if len(set(data) != len(data)):
+            raise forms.ValidationError("Duplicate preferences are not allowed")
+        return data
     
     # def clean_resume(self):
     #     print("Clean resume called")

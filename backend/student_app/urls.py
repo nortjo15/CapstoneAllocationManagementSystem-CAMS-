@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.contrib import admin
 from django.conf import settings 
 from .import views
-from student_app.views import ProjectListCreateView, StudentListCreateView, StudentDetailView, GroupPreferenceListCreateView
+from student_app.views import ProjectListCreateView, StudentListCreateView, StudentDetailView, GroupPreferenceListCreateView, autocomplete_users
 
 
 app_name = 'student_app'
@@ -14,4 +14,5 @@ urlpatterns = [
     path('projects/', ProjectListCreateView.as_view(), name="project_list"),
     path('students/', StudentListCreateView.as_view(), name="student_list"),
     path('capstone_information/', views.capstone_information, name="capstone_information"),
+    path('autocomplete-results/', views.autocomplete_users, name='autocomplete_users'),
 ]

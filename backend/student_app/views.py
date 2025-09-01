@@ -7,12 +7,12 @@ from .serializers import StudentSerializer, GroupPreferenceSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 from django.db.models import Prefetch
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from student_app.forms import ProjectApplicationForm
-
 
 
 class StudentListCreateView(generics.ListCreateAPIView):
@@ -44,6 +44,14 @@ def student_application_view(request):
     projects = Project.objects.all().values('project_id', 'title')
     students = Student.objects.all().order_by('name').values('student_id', 'name')
     return render(request, 'student_application.html', {'form':form, 'projects': projects, 'students': students})
+
+@require_GET #Only respond to get requests
+def autocomplete_users(request):
+    #extracts query from URL
+    query = request.GET.get('q', '')
+    #limit matches to 10
+    results = Student.objects.filter(name__icontains=query)[:10]
+    return JsonResponse([{'student_id': u.student_id, 'name': u.name} for u in results], safe=False)
 
 def capstone_information(request):
     sections = (CapstoneInformationSection.objects

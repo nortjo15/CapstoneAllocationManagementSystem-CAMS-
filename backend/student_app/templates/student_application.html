@@ -25,18 +25,29 @@
         <select id="project-dropdown">
             <option value="">-- Select a project --</option>
             {% for project in projects %}
-                <option value="{{ project.title }}">{{ project.title }}</option>
+                <option value="{{ project.project_id }}">{{ project.title }}</option>
             {% endfor %}
         </select>
 
         <ul id="preference-list"></ul>
         <input type="hidden" name="project-preferences" id="project-preferences-input">
 
+        <input type="text" id="user-search" placeholder="Search Students...">
+        <ul id="autocomplete-results"></ul>
+
+        <ul id="preferred-list"></ul>
+        <ul id="avoided-list"></ul>
+
+        <input type="hidden" name="preferred-students" id="preferred-input">
+        <input type="hidden" name="avoided-students" id="avoided-input">
+    
         <script>
             const dropdown = document.getElementById('project-dropdown');
             const list = document.getElementById('preference-list');
             const hiddenInput = document.getElementById('project-preferences-input');
-            let projectPreferences = [];
+            const searchInput = document.getElementById('user-search');
+            const resultsList = document.getElementById('autocomplete-results');
+            let projectPreferences = [], preferred = [], avoided =[];
 
             dropdown.addEventListener('change', () => {
                 const id = dropdown.value;
@@ -46,6 +57,50 @@
                     updateList();
                 }
             });
+
+            searchInput.addEventListener('input', () => {
+                fetch(`/students/autocomplete-results?q=${encodeURIComponent(searchInput.value)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        resultsList.innerHTML = '';
+                        data.forEach(student => {
+                            const li = document.createElement('li');
+                            li.textContent = student.name;
+                            li.onclick = () => {
+                                if(!preferred.includes(student.id)){
+                                    preferred.push({id: student.id, name: student.name});
+                                    updateStudentList('preferred');
+                                }
+                            };
+                            resultsList.appendChild(li);
+                        });
+                    });
+            });
+
+            function updateStudentList(type){
+                const list = document.getElementById(`${type}-list`);
+                const input = document.getElementById(`${type}-input`);
+                const data = type == 'preferred' ? preferred : avoided;
+
+                list.innerHTML = '';
+                data.forEach(id => {
+                    const li = document.createElement('li'); 
+                    li.textContent = `student: ${id.name}`;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.onclick = () => {
+                        if(type == 'preferred'){
+                            preferred = preferred.filter(uid => uid != id);
+                        } else {
+                            avoided = avoided.filter(uid => uid != id);
+                        }
+                        updateStudentList(type);
+                    };
+                    li.appendChild(removeBtn);
+                    list.appendChild(li);
+                });
+                input.value = JSON.stringify(data)
+            }
 
             function updateList(){
                 list.innerHTML = '';
