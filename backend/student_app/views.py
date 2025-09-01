@@ -11,6 +11,7 @@ from django.db.models import Prefetch
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from student_app.forms import ProjectApplicationForm
 
 
 
@@ -31,24 +32,18 @@ class ProjectListCreateView(generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-def student_form(request):
-    if request.method =='POST':
-        studentID = request.POST.get("studentID")
-        # projects = request.POST.getlist('projects[]')
-        Student.objects.filter(student_id=studentID).update(
-            cwa = request.POST.get("cwa"),
-            major = request.POST.get("major"),
-            application_submitted=True,
-            email = request.POST.get("email"),
-            resume = request.POST.get("filename")
-        )
-        print("Form data received: ", data)
-        return JsonResponse({"received_data" : data})
+def student_application_view(request):
+    if request.method == 'POST':
+        form = ProjectApplicationForm(request.POST, request.FILES)
+        if form.is_Valid():
+            student = form.save()   
+            return render(request, 'Success.html', {'student': student})
     else: 
-        students = Student.objects.values('name')
-        projects = Project.objects.values('title')
-        majors = Major.objects.values('name')
-        return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
+        form = ProjectApplicationForm()
+
+    projects = Project.objects.all().values('project_id', 'title')
+    students = Student.objects.all().order_by('name').values('student_id', 'name')
+    return render(request, 'student_application.html', {'form':form, 'projects': projects, 'students': students})
 
 def capstone_information(request):
     sections = (CapstoneInformationSection.objects
