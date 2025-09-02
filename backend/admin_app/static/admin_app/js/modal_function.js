@@ -14,9 +14,14 @@ function openFilterModal() {
     if (modal) modal.style.display = "flex";
 }
 
-function openNotesModal() {
+function openNotesModal(button) 
+{
     const modal = document.getElementById("notesModal");
+    
     if (modal) modal.style.display = "flex";
+    const textarea = document.getElementById("notesTextarea");
+    textarea.value = button.dataset.studentNotes || "";
+    modal.dataset.studentId = button.dataset.studentId;
 }
 
 // Attach close + outside click for any modal
