@@ -33,6 +33,16 @@ filterForm.addEventListener('submit', function(e)
 
 document.getElementById('reset-btn').addEventListener('click', function(e) 
 {
+    console.log("Reset clicked, location before:", window.location.href);
+    setTimeout(() => {
+        console.log("Reset clicked, location after 1s:", window.location.href);
+    }, 1000);
+
+    e.preventDefault(); // Cancel form submit 
+    e.stopPropagation();
+
+    filterForm.reset(); //Visual form reset
+
     fetch(ajaxUrl, { 
         headers: { 'X-Requested-With': 'XMLHttpRequest' }})
         .then(response => response.json())

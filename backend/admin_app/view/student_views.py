@@ -16,6 +16,8 @@ from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
@@ -213,6 +215,7 @@ def update_student_notes(request):
     
 # Partial Render (AJAX)
 # Renders student table to a string when submitting or resetting filters
+@method_decorator(never_cache, name='dispatch')
 class StudentTableAjaxView(LoginRequiredMixin, ListView):
     model = Student
     template_name = "student_table.html"
