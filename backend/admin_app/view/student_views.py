@@ -15,6 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
 
 # Adding a basic students view page 
 # Ensures only authenticated users can access it 
@@ -209,6 +210,23 @@ def update_student_notes(request):
         return JsonResponse({"success": True})
     except Student.DoesNotExist:
         return JsonResponse({"success": False, "error": "Student not found"})
+    
+# Partial Render (AJAX)
+# Renders student table to a string when submitting or resetting filters
+class StudentTableAjaxView(LoginRequiredMixin, ListView):
+    model = Student
+    template_name = "student_table.html"
+    context_object_name = "students"
+
+    def get_queryset(self):
+        filter_object = StudentFilter(self.request.GET)
+        return filter_object.get_filtered_queryset()
+    
+    def render_to_response(self, context, **response_kwargs):
+        html = render_to_string(self.template_name, context, self.request)
+        return JsonResponse({"table.html": html})
+    
+
 
 TEMPLATE_MAP = {
     "round_closed": "emails/round_closed.txt",
