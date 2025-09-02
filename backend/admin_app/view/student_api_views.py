@@ -13,10 +13,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 import csv
 from io import TextIOWrapper
+from admin_app.forms.student_forms import addStudentForm, importStudentForm
 
 @login_required 
 def student_page(request):
-    return render(request, "student_view.html")
+    return render(request, "student_view.html",
+        {
+            "add_form": addStudentForm(),
+            "import_form": importStudentForm(),
+            "filter_target_url": request.path, 
+        })
 
 class StudentImportAPIView(APIView):
     """
