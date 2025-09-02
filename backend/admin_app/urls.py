@@ -31,6 +31,7 @@ from .view.settings_views import settings_view
 from .view.announcements_views import *
 from admin_app.view import admin_views
 from .view.group_views import *
+from .view.student_api_views import *
 
 from admin_app.view.email_views import MailtoLinkView
 from .view.student_views import *
@@ -65,6 +66,10 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     path('students/table/', StudentTableAjaxView.as_view(), name='student_table_ajax'),
+
+    path("api/students/", StudentListCreateAPIView.as_view(), name="student_list"),
+    path("api/students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
+
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
@@ -87,5 +92,5 @@ urlpatterns = [
     path('announcements/new/',          announcement_create, name='announcement_create'),
     path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
     path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
-    
+   
 ]

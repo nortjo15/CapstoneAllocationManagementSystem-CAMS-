@@ -51,7 +51,7 @@ class StudentListView(LoginRequiredMixin, ListView):
 # Creating a Student when Admin selects "Add Student"
 class StudentCreateView(LoginRequiredMixin, CreateView):
     form_class = addStudentForm 
-    template_name = 'admin_app/student_create_modal.html'
+    template_name = 'student_create_modal.html'
     success_url = reverse_lazy('admin_dashboard:admin_student_list') #Redirect upon success
 
     # Defines what happens when form is valid (POST with valid data)
@@ -73,7 +73,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)  # Default re-render with errors
     
 class StudentImportView(LoginRequiredMixin, FormView):
-    template_name = 'admin_app/student_importCSV.html'
+    template_name = 'student_importCSV.html'
     form_class = importStudentForm
     success_url = reverse_lazy('admin_dashboard:admin_student_list')
 

@@ -1,11 +1,18 @@
 from rest_framework import serializers
-from .models import Student, GroupPreference
-from admin_app.models import ProjectPreference
+from student_app.models import *
+from admin_app.models import *
+
+class MajorSerializer(serializers.ModelSerializer):
+    """Serializer for Major model (minimal fields needed for display)."""
+    class Meta:
+        model = Major
+        fields = ["id", "name"] 
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
+        read_only_fields = ["student_id"]
 
 class GroupPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,21 +23,3 @@ class ProjectPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectPreference
         fields = '__all__'
-
-#Production endpoints
-# class StudentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Student
-#         fields = ['student_id', 'name', 'cwa', 'major', 'email', 'resume', 'application_submitted']
-
-# class GroupPreferenceSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = GroupPreference
-#         fields = ['student', 'target_student', 'preference_type']
-
-# class ProjectPreferenceSerializer(serializers.ModelSerializer);
-#     class Meta:
-#         model = ProjectPreference
-#         fields = ['student', 'project', 'rank']
-
-
