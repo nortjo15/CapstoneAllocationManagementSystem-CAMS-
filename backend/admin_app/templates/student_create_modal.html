@@ -25,7 +25,7 @@
     <div class="modal-content">
         <span class="close-btn">&times;</span>
         <h2>Student Notes</h2>
-        <form id="notesForm" method="post" action="{% url 'admin_dashboard:update_student_notes' %}">
+        <form id="notesForm" method="post">
             {% csrf_token %}
             <textarea id="notesTextarea" rows="6" style="width:100%"></textarea>
             <br>
