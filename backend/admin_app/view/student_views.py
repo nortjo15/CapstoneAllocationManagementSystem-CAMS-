@@ -228,7 +228,6 @@ class StudentTableAjaxView(LoginRequiredMixin, ListView):
     def render_to_response(self, context, **response_kwargs):
         html = render_to_string(self.template_name, context, self.request)
         return JsonResponse({"table_html": html})
-    
 
 
 TEMPLATE_MAP = {

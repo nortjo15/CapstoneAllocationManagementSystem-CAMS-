@@ -39,7 +39,7 @@ document.getElementById('reset-btn').addEventListener('click', function(e)
 
     filterForm.reset(); //Visual form reset
 
-    fetch(ajaxUrl, { 
+    fetch(`${ajaxUrl}?_=${Date.now()}`, { 
         headers: { 'X-Requested-With': 'XMLHttpRequest' }})
         .then(response => response.json())
         .then(data => 
