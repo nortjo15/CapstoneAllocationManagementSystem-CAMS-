@@ -1,50 +1,49 @@
-const filterModal = document.getElementById('filterModal');
-const closeFilterBtn = filterModal.querySelector('.close-btn');
-const filterForm = document.getElementById('studentFilterForm');
-const ajaxUrl = document.querySelector('.scroll-container').dataset.ajaxUrl;
+const filterForm = document.getElementById("studentFilterForm");
+const resetBtn = document.getElementById("reset-btn");
+const cwaMinInput = document.getElementById("cwa_min");
+const cwaMaxInput = document.getElementById("cwa_max");
+const cwaError = document.getElementById("cwa_error"); 
 
-function openFilterModal()
-{
-    filterModal.style.display = 'flex';
+if (filterForm) {
+    filterForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const cwaMin = parseFloat(cwaMinInput.value) || null;
+        const cwaMax = parseFloat(cwaMaxInput.value) || null;
+
+        // Validation
+        if ((cwaMin !== null && (cwaMin < 0 || cwaMin > 100)) ||
+            (cwaMax !== null && (cwaMax < 0 || cwaMax > 100))) {
+            cwaError.textContent = "CWA must be between 0 and 100.";
+            cwaError.style.color = "red";
+            return;
+        }
+
+        if (cwaMin !== null && cwaMax !== null && cwaMax < cwaMin) {
+            cwaError.textContent = "Max CWA cannot be less than Min CWA.";
+            cwaError.style.color = "red";
+            return;
+        }
+
+        cwaError.textContent = "";
+
+        const formData = new FormData(filterForm);
+        const params = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            if (value && value.trim() !== "") {
+                params.append(key, value);
+            }
+        }
+
+        fetchStudents("?" + params.toString());
+    });
 }
 
-closeFilterBtn.onclick = () => filterModal.style.display = 'none';
-window.onclick = (e) => {
-    if (e.target === filterModal) filterModal.style.display = 'none';
-};
-
-//Add Event listeners for AJAX responses when submit or reset are clicked
-filterForm.addEventListener('submit', function(e) 
-{
-    e.preventDefault();
-    const formData = new FormData(this);
-    const query = new URLSearchParams(formData).toString();
-
-    // JSON
-    fetch(`${ajaxUrl}?${query}`, 
-      { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-      .then(response => response.json())
-      .then(data => 
-      {
-          document.querySelector('.scroll-container').innerHTML = data.table_html;
-          filterModal.style.display = 'none';
-      });
-});
-
-
-document.getElementById('reset-btn').addEventListener('click', function(e) 
-{
-    e.preventDefault(); // Cancel form submit 
-    e.stopPropagation();
-
-    filterForm.reset(); //Visual form reset
-
-    fetch(`${ajaxUrl}?_=${Date.now()}`, { 
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-        .then(response => response.json())
-        .then(data => 
-        {
-            document.querySelector('.scroll-container').innerHTML = data.table_html;
-            filterModal.style.display = 'none';
-        });
-});
+if (resetBtn) {
+    resetBtn.addEventListener("click", function () {
+        filterForm.reset();
+        cwaError.textContent = "";
+        fetchStudents();
+    });
+}

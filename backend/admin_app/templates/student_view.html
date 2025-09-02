@@ -86,23 +86,43 @@ tr:hover {
 <button 
     type="button"
     onclick="openImportModal()"
-    style="margin:10px 0;">Import Students</button>
+    style="margin:10px 0;">Import Students
 </button>
 
 <!-- Include htmls -->
 {% include "student_filters.html" with filter_target_url=filter_target_url %}
-<div class="scroll-container" data-ajax-url="{% url 'admin_dashboard:student_table_ajax' %}">
-    {% include "student_table.html" with from_groups_page=False %}
-</div> 
+
+<div class="scroll-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>CWA</th>
+                <th>Major</th>
+                <th>Submitted</th>
+                <th>Allocated</th>
+                <th>Email</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody id="studentsTableBody"></tbody>
+    </table>
+</div>
+
+
 {% include 'student_create_modal.html' with form=add_form %}
 {% include 'student_importCSV.html' with form=import_form %}
 
 <!-- Import Scripts -->
 {% load static %}
 <script src="{% static 'admin_app/js/student_view.js' %}"></script>
+
+<!-- New additions -->
+<script src="{% static 'admin_app/js/student_table.js' %}"></script>
 <script src="{% static 'admin_app/js/student_filters.js' %}"></script>
-<script src="{% static 'admin_app/js/add_student.js' %}"></script>
 <script src="{% static 'admin_app/js/add_notes.js' %}"></script>
 <script src="{% static 'admin_app/js/import_students.js' %}"></script>
+<script src="{% static 'admin_app/js/add_student.js' %}"></script>
 
 {% endblock content %}

@@ -8,20 +8,11 @@
         <h2>Import Students CSV</h2>
 
         <!-- Form -->
-        <form id="importStudentForm" method="post" action="{% url 'admin_dashboard:admin_student_import' %}" enctype="multipart/form-data">
+        <form id="studentImportForm" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ import_form.as_p }} <!-- Render -->
+            <div id="importFormErrors" style="color:red"></div>
             <button type="submit">Import</button>
         </form>
-
-        <!-- Errors Display -->
-        <div id="importFormErrors" style="color:red"></div>
-        {% if errors %}
-            <ul> 
-            {% for err in errors %}
-                <li>{{ err }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
     </div>
 </div>

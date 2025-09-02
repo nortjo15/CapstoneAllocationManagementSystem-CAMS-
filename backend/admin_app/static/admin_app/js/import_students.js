@@ -1,103 +1,55 @@
-//Get form elements
-const import_form = document.getElementById('importStudentForm');
-const import_modal = document.getElementById('importModal')
-const import_closeBtn = import_modal.querySelector('.close-btn')
-const import_modalSubmit = import_form.querySelector('button[type="submit"]');
-const import_fileInput = import_form.querySelector('input[type="file"]');
-const importErrorDiv = document.getElementById('importFormErrors');
-let importSucceeded = false;  
+const importForm = document.getElementById("studentImportForm");
+const importModal = document.getElementById("importModal");
+const importCloseBtn = importModal ? importModal.querySelector(".close-btn") : null;
+const importFormErrors = document.getElementById("importFormErrors");
 
-//Create a new div for success message
-const importSuccessDiv = document.createElement('div');
-importSuccessDiv.style.color = 'green';
-importSuccessDiv.style.fontWeight = 'bold';
-importSuccessDiv.style.marginTop = '10px';
-import_form.appendChild(importSuccessDiv); //Attach it to the parent form
+if (importForm) {
+    importForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        importFormErrors.innerHTML = ""; // clear old errors
 
-function openImportModal()
-{
-    import_modalSubmit.disabled = true; 
-    import_modal.style.display = 'flex';
-}
+        const formData = new FormData(importForm);
 
-import_closeBtn.onclick = () => 
-{
-    import_modal.style.display = 'none';
-    //If closed, the page will reload 
-    if(importSucceeded) location.reload();
-}
-window.onclick = (e) => 
-{
-    if (e.target == import_modal) 
-    {
-        import_modal.style.display = 'none';
-        if (importSucceeded) location.reload();
-    }
-}
-
-//Listen for changes
-import_fileInput.addEventListener('change', () => {
-    if (import_fileInput.files.length > 0)
-    {
-        import_modalSubmit.disabled=false; 
-    }
-    else 
-    {
-        import_modalSubmit.disabled=true;
-    }   
-})
-
-//AJAX Submission
-import_form.addEventListener('submit', function(e)
-{
-    e.preventDefault(); //Prevent normal form submit
-
-    const importFormData = new FormData(import_form)
-    //Disable button to prevent multiple submissions
-    import_modalSubmit.disabled = true;
-
-    fetch(import_form.action, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: importFormData
-    })
-    .then(response => response.json())
-    .then(data => {
-        //Clear previous error messages
-        importErrorDiv.innerHTML = '';
-        importSuccessDiv.textContent = '';
-
-        if (data.created_count > 0 || data.updated_count > 0)
-        {
-            importSucceeded = true;
-            importSuccessDiv.textContent = 
-                `${data.created_count} students created, ${data.updated_count} updated successfully!`;
-
-            //Reset form
-            import_form.reset();
-            import_modalSubmit.disabled = true;
-        }
-
-        if(data.errors && data.errors.length > 0)
-        {
-            importErrorDiv.innerHTML = '<ul style="color:red; max-height:200px; overflow-y:auto;">' +
-                data.errors.map(err => `<li>${err}</li>`).join('') +
-                '</ul>';
-
-            import_modalSubmit.disabled = false; 
-        }
-        else if (data.created_count === 0 && data.updated_count === 0)
-        {
-            //Generic error if nothing created, no specific errors
-            importErrorDiv.textContent = 'No students were imported';
-            import_modalSubmit.disabled = false;
-        }
-    })
-    .catch(err => {
-        importErrorDiv.style.color = 'red';
-        importErrorDiv.textContent = 'Unexpected error occurred.';
-        import_modalSubmit.disabled = false;    
+        fetch("/api/students/import/", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"), // CSRF if enabled
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(
+                    `Imported successfully! Created: ${data.created_count}, ` +
+                    `Updated: ${data.updated_count}, Skipped: ${data.skipped_count}`
+                );
+                importForm.reset();
+                if (importModal) importModal.style.display = "none";
+                fetchStudents(); // reload table with new data
+            } else {
+                // Show backend errors inline
+                if (data.error) {
+                    importFormErrors.innerHTML = `<p>${data.error}</p>`;
+                }
+                if (data.errors && data.errors.length > 0) {
+                    importFormErrors.innerHTML +=
+                        "<ul>" +
+                        data.errors.map(err => `<li>${err}</li>`).join("") +
+                        "</ul>";
+                }
+            }
+        })
+        .catch(err => {
+            console.error("Import request failed", err);
+            importFormErrors.innerHTML = "<p>Request failed. Check console.</p>";
+        });
     });
-});
+}
+
+if (importCloseBtn) {
+    importCloseBtn.onclick = () => {
+        importModal.style.display = "none";
+    };
+}

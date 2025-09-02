@@ -1,144 +1,75 @@
-// Get form element inside modal
-const form = document.getElementById('createStudentForm');
-const modal = document.getElementById('studentModal')
-const closeBtn = modal.querySelector('.close-btn')
-const modalSubmit = form.querySelector('button[type="submit"]');
+const addStudentForm = document.getElementById("addStudentForm");
+const addStudentModal = document.getElementById("addStudentModal");
+const addStudentCloseBtn = addStudentModal ? addStudentModal.querySelector(".close-btn") : null;
+const addStudentErrorDiv = document.getElementById("addStudentErrors"); 
 
-function openModal() 
-{
-    //modal.style.display = 'block'; 
-    modalSubmit.disabled = true;
-    modal.style.display = 'flex';
-}
+if (addStudentForm) {
+    addStudentForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        addStudentErrorDiv.innerHTML = ""; // clear old errors
 
-closeBtn.onclick = () => modal.style.display = 'none'; //Hide if close button is clicked
+        const formData = new FormData(addStudentForm);
+        const payload = {};
+        const errors = [];
 
-window.onclick = (e) => {
-    if (e.target == modal) modal.style.display = 'none'; //Hide if click outside of it 
-}
-
-// Client side validation for required fields 
-// If user leaves field empty and clicks away, shows red message under that field 
-function addImmediateValidation(input, options = {})
-{
-    const errorSpan = document.createElement('div');
-    errorSpan.style.color = 'red';
-    input.insertAdjacentElement('afterend', errorSpan)
-
-    const validate = () => {
-        const value = input.value.trim();
-        let valid = true;
-
-        //Required  field check
-        if (value === '') {
-            errorSpan.textContent = `${input.name.replace('_', ' ')} is required.`;
-            valid = false;
+        for (const [key, value] of formData.entries()) {
+            payload[key] = value.trim();
         }
 
-        //Custom check (enforce 8 digits for studentID)
-        if (options.customCheck && !options.customCheck(value))
-        {
-            errorSpan.textContent = options.customMessage || 'Invalid Value.';
-            valid = false;
+        // --- Frontend validation ---
+        // Student ID must be exactly 8 digits
+        if (!/^\d{8}$/.test(payload.student_id || "")) {
+            errors.push("Student ID must be exactly 8 digits.");
         }
 
-        //Clear error message if everything is fine 
-        if (valid) {
-            errorSpan.textContent = '';
+        // CWA must be between 0 and 100 (if provided)
+        if (payload.cwa) {
+            const cwaVal = parseFloat(payload.cwa);
+            if (isNaN(cwaVal) || cwaVal < 0 || cwaVal > 100) {
+                errors.push("CWA must be a number between 0 and 100.");
+            }
         }
 
-        //Disable the Save button if all fields aren't valid 
-        modalSubmit.disabled = !allFieldsValid()
+        if (errors.length > 0) {
+            addStudentErrorDiv.innerHTML = errors.map(err => `<p style="color:red;">${err}</p>`).join("");
+            return; // don’t submit if validation fails
+        }
 
-        return valid;
-    }
-
-    input.addEventListener('blur', validate);
-    input.addEventListener('input', validate);
-}
-
-//Checks to see if input fields are valid
-function allFieldsValid()
-{
-    //List of required inputs
-    const requiredFields = [idField, nameField];
-
-    //Return true only when every field is non-emtpy and there are no error messages
-    return requiredFields.every(input => {
-        const valueFilled = input.value.trim() !== '';
-        const noError = !input.nextElementSibling.textContent;
-        return valueFilled && noError;
-    })
-}
-
-//Enable validation
-const idField = form.querySelector('input[name="student_id"]');
-const nameField = form.querySelector('input[name="name"]');
-
-if (idField) 
-{
-    addImmediateValidation(idField, {
-        customCheck: value =>/^\d{8}$/.test(value), //must be exactly 8 digits
-        customMessage: 'Student ID must be exactly 8 digits.'
+        // --- Submit to API ---
+        fetch("/api/students/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify(payload),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.errors && !data.error) {
+                alert("Student created successfully!");
+                addStudentForm.reset();
+                if (addStudentModal) addStudentModal.style.display = "none";
+                fetchStudents(); // reload table
+            } else {
+                // Show backend validation errors
+                const backendErrors = [];
+                for (const [field, messages] of Object.entries(data)) {
+                    backendErrors.push(`${field}: ${messages}`);
+                }
+                addStudentErrorDiv.innerHTML = backendErrors.map(err => `<p style="color:red;">${err}</p>`).join("");
+            }
+        })
+        .catch(err => {
+            console.error("Failed to create student", err);
+            addStudentErrorDiv.innerHTML = `<p style="color:red;">Request failed. Check console.</p>`;
+        });
     });
 }
 
-if (nameField) addImmediateValidation(nameField)
-
-const cwaInput = document.getElementById('cwa');
-const cwaErrorDiv = document.getElementById('cwa_error');
-
-function validateCWA()
-{
-    let value = parseFloat(cwaInput.value);
-
-    //Enforce 0-100
-    if (!isNaN(value) && value < 0) {
-        value = 0;
-        cwaInput.value = value;
-    }
-    if (!isNaN(value) && value > 100) {
-        value = 100;
-        cwaInput.value = value;
-    }
+if (addStudentCloseBtn) {
+    addStudentCloseBtn.onclick = () => {
+        addStudentModal.style.display = "none";
+    };
 }
-
-cwaInput.addEventListener('input', validateCWA);
-validateCWA();
-
-//Event Listener
-form.addEventListener('submit', function(e) 
-{
-    e.preventDefault(); //Prevent default full-page form submission
-    
-    const formData = new FormData(form);
-    fetch(form.action, { //Send form using Fetch API
-        method: 'POST', 
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) 
-        {
-            //Form submitted successfully 
-            alert('Student added successfully!');
-            modal.style.display = 'none'; //close modal
-        }
-        else 
-        {
-            //Validation Failed
-            const errorsDiv = document.getElementById('formErrors');
-            errorsDiv.innerHTML = ''; //clear previous errors
-
-            //Loop through each error and display:
-            for (const field in data.errors)
-            {
-                errorsDiv.innerHTML += `${field}: ${data.errors[field].join(', ')}<br>`; 
-            }
-        }
-    })
-    .catch(err => console.error(err)); //Log unexpected errors
-})

@@ -45,11 +45,7 @@
                     <strong>{{ degree }}</strong><br>
                     {% for major in majors %}
                         <label> 
-                            <input type="checkbox" name="degree_major" value="{{ degree }}||{{ major }}"
-                                {% if degree|add:"||"|add:major in selected_pairs %}
-                                    checked 
-                                {% endif %}
-                            >
+                            <input type="checkbox" name="major" value="{{ major_id }}">
                             {{ major }}
                         </label><br>
                     {% endfor %}

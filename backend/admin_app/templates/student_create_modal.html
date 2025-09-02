@@ -2,20 +2,19 @@
  Modal Container for student creation
  - Hidden by default, pops up when option is triggered
  -->
- <div id="studentModal" class="modal" style="display:none">
+ <div id="addStudentModal" class="modal" style="display:none">
     <div class="modal-content">
         <span class="close-btn">&times;</span> <!-- Close -->
         <h2>Add Student</h2>
 
         <!-- Form posts to view -->
-        <form id="createStudentForm" method="post" action="{% url 'admin_dashboard:admin_student_create' %}" enctype="multipart/form-data">
+        <form id="addStudentForm" method="post">
             {% csrf_token %}
             {{ add_form.as_p }} <!-- Render fields -->
-            <button type="submit" id="importStudentSubmit">Save</button>
+            <!-- Validation Errors display -->
+            <div id="addStudentErrors" style="color:red"></div>
+            <button type="submit" id="addStudentSubmit">Save</button>
         </form>
-
-        <!-- Validation Errors display -->
-        <div id="formErrors" style="color:red"></div>
      </div>
  </div>
 

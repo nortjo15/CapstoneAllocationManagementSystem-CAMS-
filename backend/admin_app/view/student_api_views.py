@@ -9,8 +9,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 import csv
 from io import TextIOWrapper
+
+@login_required 
+def student_page(request):
+    return render(request, "student_view.html")
 
 class StudentImportAPIView(APIView):
     """
@@ -114,7 +120,7 @@ class StudentNotesUpdateAPIView(generics.UpdateAPIView):
 class StudentFilter(filters.FilterSet):
     cwa_min = filters.NumberFilter(field_name="cwa", lookup_expr="gte")
     cwa_max = filters.NumberFilter(field_name="cwa", lookup_expr="lte")
-    major = filters.NumberFilter(field_name="major__id")
+    major = filters.BaseInFilter(field_name="major__id", lookup_expr="in")
     application_submitted = filters.BooleanFilter(field_name="application_submitted")
     allocated_group = filters.BooleanFilter(field_name="allocated_group")
 
