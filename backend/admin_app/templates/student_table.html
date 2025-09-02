@@ -3,74 +3,72 @@
 -->
 {% load query_tags %}
 
-<div class="scroll-container">
-    <table> 
-        <thead> 
-            <tr> 
-                <th>Student ID</th>
-                <th>Notes</th>
-                <th>Name</th>
-                <th>Group</th>
-                <!-- CWA column with two arrow links (ascending or descending )-->
-                <th>
-                    CWA 
-                    <!-- ascending -->
-                    <a href="?{% update_query sort='cwa_asc' %}" title="Sort CWA ascending" style="margin-left: 8px; text-decoration:none;">▲</a>
-                    <!-- descending -->
-                    <a href="?{% update_query sort='cwa_desc' %}" title="Sort CWA descending" style="margin-left: 4px; text-decoration:none;">▼</a>
-                </th>
-                <th>
-                    Course
-                    <a href="?{% update_query sort='major_asc' %}" title="Group by Major" style="margin-left: 4px; text-decoration:none;">▼</a>
-                </th>
-            </tr>
-        </thead>
-        <tbody> 
-            {% for student in students %}
-                <tr>
-                    <!-- Retrieving information from models -->
-                    <td>{{ student.student_id }}</td>
-
-                    <td>
-                        <!-- Add a button to view & edit student notes -->
-                        <button 
-                            class="notes-btn {% if student.notes %}btn-success{% else %}btn-secondary{% endif %}"
-                            data-student-id="{{ student.student_id }}"
-                            data-student-notes="{{ student.notes|default:'' }}"
-                            onclick="openNotesModal(this)"
-                        >
-                        Notes
-                    </button>
-                    </td>
-
-                    <td>{{ student.name }}</td>
-
-                    <td> 
-                        {% if student.final_group_member %}
-                            {{ student.final_group_member.final_group.finalgroup_id }}
-                        {% else %}
-                            <span style="color: gray;">--</span>
-                        {% endif %}
-                    </td>
-
-                    <td>{% if student.cwa is not None %}{{ student.cwa }}
-                        {% else %}
-                            <span style="color: grey;">--</span>
-                        {% endif %}
-                    </td>
-
-                    <td>{% if student.major %}{{ student.major }}
-                        {% else %}
-                            <span style="color: grey;">--</span>
-                        {% endif %}
-                    </td> <!-- Displays combined Major, Degree -->
-
-                </tr>
-            {% empty %}
+<table> 
+    <thead> 
+        <tr> 
+            <th>Student ID</th>
+            <th>Notes</th>
+            <th>Name</th>
+            <th>Group</th>
+            <!-- CWA column with two arrow links (ascending or descending )-->
+            <th>
+                CWA 
+                <!-- ascending -->
+                <a href="?{% update_query sort='cwa_asc' %}" title="Sort CWA ascending" style="margin-left: 8px; text-decoration:none;">▲</a>
+                <!-- descending -->
+                <a href="?{% update_query sort='cwa_desc' %}" title="Sort CWA descending" style="margin-left: 4px; text-decoration:none;">▼</a>
+            </th>
+            <th>
+                Course
+                <a href="?{% update_query sort='major_asc' %}" title="Group by Major" style="margin-left: 4px; text-decoration:none;">▼</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody> 
+        {% for student in students %}
             <tr>
-                <td colspan="5" style="text-align:center;">No students found.</td>
+                <!-- Retrieving information from models -->
+                <td>{{ student.student_id }}</td>
+
+                <td>
+                    <!-- Add a button to view & edit student notes -->
+                    <button 
+                        class="notes-btn {% if student.notes %}btn-success{% else %}btn-secondary{% endif %}"
+                        data-student-id="{{ student.student_id }}"
+                        data-student-notes="{{ student.notes|default:'' }}"
+                        onclick="openNotesModal(this)"
+                    >
+                    Notes
+                </button>
+                </td>
+
+                <td>{{ student.name }}</td>
+
+                <td> 
+                    {% if student.final_group_member %}
+                        {{ student.final_group_member.final_group.finalgroup_id }}
+                    {% else %}
+                        <span style="color: gray;">--</span>
+                    {% endif %}
+                </td>
+
+                <td>{% if student.cwa is not None %}{{ student.cwa }}
+                    {% else %}
+                        <span style="color: grey;">--</span>
+                    {% endif %}
+                </td>
+
+                <td>{% if student.major %}{{ student.major }}
+                    {% else %}
+                        <span style="color: grey;">--</span>
+                    {% endif %}
+                </td> <!-- Displays combined Major, Degree -->
+
             </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+        {% empty %}
+        <tr>
+            <td colspan="5" style="text-align:center;">No students found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
