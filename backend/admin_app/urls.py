@@ -66,6 +66,8 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     path('students/table/', StudentTableAjaxView.as_view(), name='student_table_ajax'),
+    #Group_Views
+    path('groups_view/', GroupListView.as_view(), name='group_view'),
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),

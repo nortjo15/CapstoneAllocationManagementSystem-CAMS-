@@ -19,7 +19,7 @@ notes_closeBtn.onclick = () =>
 
 window.onclick = (e) => 
 {
-    if (e.target == notes_modal)
+    if (e.target === notes_modal)
     {
         notes_modal.style.display = 'none';
     }

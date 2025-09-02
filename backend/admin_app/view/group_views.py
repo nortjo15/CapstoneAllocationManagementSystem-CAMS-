@@ -1,5 +1,6 @@
 from rest_framework import generics
-from admin_app.models import SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember
+from admin_app.models import *
+from django.views.generic import ListView
 from admin_app.serializers import SuggestedGroupSerializer, SuggestedGroupMemberSerializer, FinalGroupSerializer, FinalGroupMemberSerializer
 
 class SuggestedGroupListCreateView(generics.ListCreateAPIView):
@@ -17,3 +18,8 @@ class FinalGroupListCreateView(generics.ListCreateAPIView):
 class FinalGroupMemberListCreateView(generics.ListCreateAPIView):
     queryset = FinalGroupMember.objects.all()
     serializer_class = FinalGroupMemberSerializer
+
+class GroupListView(ListView):
+    model = SuggestedGroup
+    template_name = "admin_app/suggested_groups.html"  
+    context_object_name = "suggested_groups"
