@@ -91,7 +91,11 @@ tr:hover {
 
 <!-- Include htmls -->
 {% include "student_filters.html" with filter_target_url=filter_target_url %}
-{% include "student_table.html" with from_groups_page=False %}
+
+<div class="scroll-container" data-ajax-url="{% url 'admin_dashboard:student_table_ajax' %}">
+    {% include "student_table.html" with from_groups_page=False %}
+</div>  
+
 {% include 'student_create_modal.html' with form=add_form %}
 {% include 'student_importCSV.html' with form=import_form %}
 

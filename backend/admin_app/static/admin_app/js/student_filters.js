@@ -1,6 +1,7 @@
 const filterModal = document.getElementById('filterModal');
 const closeFilterBtn = filterModal.querySelector('.close-btn');
 const filterForm = document.getElementById('studentFilterForm');
+const ajaxUrl = document.querySelector('.scroll_container').dataset.ajaxUrl;
 
 function openFilterModal()
 {
@@ -20,7 +21,7 @@ filterForm.addEventListener('submit', function(e)
     const query = new URLSearchParams(formData).toString();
 
     // JSON
-    fetch(`/students/table/?${query}`, 
+    fetch(`${ajaxUrl}?${query}`, 
       { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
       .then(response => response.json())
       .then(data => 
@@ -32,7 +33,7 @@ filterForm.addEventListener('submit', function(e)
 
 document.getElementById('reset-btn').addEventListener('click', function(e) 
 {
-    fetch(`/students/table/`, 
+    fetch(`{ajaxUrl}`, 
       { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
       .then(response => response.json())
       .then(data => 
