@@ -1,7 +1,7 @@
 const filterModal = document.getElementById('filterModal');
 const closeFilterBtn = filterModal.querySelector('.close-btn');
 const filterForm = document.getElementById('studentFilterForm');
-const ajaxUrl = document.querySelector('.scroll_container').dataset.ajaxUrl;
+const ajaxUrl = document.querySelector('.scroll-container').dataset.ajaxUrl;
 
 function openFilterModal()
 {
@@ -33,12 +33,12 @@ filterForm.addEventListener('submit', function(e)
 
 document.getElementById('reset-btn').addEventListener('click', function(e) 
 {
-    fetch(`{ajaxUrl}`, 
-      { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-      .then(response => response.json())
-      .then(data => 
-      {
-          document.querySelector('.scroll-container').innerHTML = data.table_html;
-          filterModal.style.display = 'none';
-      });
+    fetch(ajaxUrl, { 
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+        .then(response => response.json())
+        .then(data => 
+        {
+            document.querySelector('.scroll-container').innerHTML = data.table_html;
+            filterModal.style.display = 'none';
+        });
 });

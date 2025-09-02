@@ -9,7 +9,7 @@
         <span class="close-btn">&times;</span> 
         <h2>Filter Students</h2>
     
-        <form id="studentFilterForm" method="get"> 
+        <form id="studentFilterForm" method="get" action="{{ filter_target_url }}"> 
             <label for="cwa_min">CWA Min:</label> 
             <input 
                 type="number"
@@ -92,6 +92,3 @@
         </form>
     </div>
 </div>  
-
-{% load static %}
-<script src="{% static 'admin_app/js/student_filters.js' %}"></script>
