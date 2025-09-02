@@ -1,5 +1,3 @@
-console.log("add_notes.js loaded");
-
 const notes_form = document.getElementById('notesForm')
 const notes_modal = document.getElementById('notesModal');
 const notes_textarea = document.getElementById('notesTextarea');
