@@ -26,12 +26,11 @@ from .view.auth_views import register_view, login_view, logout_view, login_succe
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
 from .view.round_views_restAPI import rounds_api
-from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
+from .view.group_api_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
-from .view.announcements_views import (
-    announcement_list, announcement_create, announcement_edit, announcement_delete
-)
+from .view.announcements_views import *
 from admin_app.view import admin_views
+from .view.group_views import *
 
 from admin_app.view.email_views import MailtoLinkView
 from .view.student_views import *
@@ -66,19 +65,18 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     path('students/table/', StudentTableAjaxView.as_view(), name='student_table_ajax'),
-    #Group_Views
-    path('groups_view/', GroupListView.as_view(), name='group_view'),
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
     #Group_views
-    path('suggested/', SuggestedGroupListCreateView.as_view()),
-    path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
-    path('final/', FinalGroupListCreateView.as_view()),
-    path('final/members/', FinalGroupMemberListCreateView.as_view()),
+    path('api/suggested_groups/', SuggestedGroupListCreateView.as_view()),
+    path('api/suggested_members/', SuggestedGroupMemberListCreateView.as_view()),
+    path('api/final_groups/', FinalGroupListCreateView.as_view()),
+    path('api/final_members/', FinalGroupMemberListCreateView.as_view()),
+
+    path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views
     path('settings/', settings_view, name='settings'),
-
     #Round_views
     path('rounds/', round_view, name='round_view'),
     path('api/rounds/', rounds_api, name='rounds_api_list'),
