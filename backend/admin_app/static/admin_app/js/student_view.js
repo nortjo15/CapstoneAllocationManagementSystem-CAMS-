@@ -1,8 +1,3 @@
-//Reset button 
-document.getElementById('reset-btn').addEventListener('click', function() {
-    window.location.href = this.dataset.url;
-  });
-
 //JS code for CWA Validation
 /* Validation for the CWA inputs
 - Enforce min < max
