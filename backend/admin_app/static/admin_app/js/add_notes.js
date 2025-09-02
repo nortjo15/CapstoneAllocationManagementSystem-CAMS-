@@ -1,4 +1,4 @@
-notes_form.addEventListener('submit', function(e) {
+notesForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const studentId = notes_modal.dataset.studentId;
     const notes = notes_textarea.value.trim();
