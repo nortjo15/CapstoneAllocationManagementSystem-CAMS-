@@ -31,7 +31,13 @@ from .view.settings_views import settings_view
 from .view.announcements_views import *
 from admin_app.view import admin_views
 from .view.group_views import *
-from .view.student_api_views import *
+from admin_app.view.student_api_views import (
+    StudentListCreateAPIView,
+    StudentRetrieveUpdateDestroyAPIView,
+    StudentNotesUpdateAPIView,
+    StudentImportAPIView,
+    student_page,
+)
 from admin_app.view.email_views import MailtoLinkView
 from .view.admin_views import (
     SendRoundStartView,
@@ -59,11 +65,12 @@ urlpatterns = [
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
     #Student_views
-    path("api/students/", StudentListCreateAPIView.as_view(), name="student_list"),
-    path("api/students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
-    path("api/students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
-    path("api/students/import/", StudentImportAPIView.as_view(), name="student_import"),
-    path("students/", student_page, name="student_view"),
+    path("students/", StudentListCreateAPIView.as_view(), name="student_list"),
+    path("students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
+    path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
+    path("students/import/", StudentImportAPIView.as_view(), name="student_import"),
+
+    path("viewStudents/", student_page, name="student_view"),
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
