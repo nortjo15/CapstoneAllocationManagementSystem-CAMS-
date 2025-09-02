@@ -14,6 +14,12 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ["student_id"]
 
+        def create(self, validated_data):
+            # enforce defaults
+            validated_data.setdefault("application_submitted", False)
+            validated_data.setdefault("allocated_group", False)
+            return super().create(validated_data)
+
 class GroupPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupPreference

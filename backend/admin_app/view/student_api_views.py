@@ -1,12 +1,101 @@
 import django_filters
 
 from rest_framework import generics
-from student_app.models import Student
+from student_app.models import *
 from student_app.serializers import *
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser
+import csv
+from io import TextIOWrapper
+
+class StudentImportAPIView(APIView):
+    """
+    POST /api/students/import/ → import students from CSV file
+    """
+    parser_classes = [MultiPartParser]  # handle file upload
+
+    def post(self, request, *args, **kwargs):
+        if "file" not in request.FILES:
+            return Response({"success": False, "error": "CSV file is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        csv_file = request.FILES["file"]
+        data_set = TextIOWrapper(csv_file.file, encoding="utf-8")
+        reader = csv.DictReader(data_set)
+        reader.fieldnames = [name.strip() for name in reader.fieldnames]
+
+        errors, created_count, updated_count = [], 0, 0
+
+        required_columns = {"student_id", "name"}
+        if not required_columns.issubset(set(reader.fieldnames)):
+            return Response(
+                {"success": False, "error": "CSV must contain 'student_id' and 'name' columns."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        for i, row in enumerate(reader, start=1):
+            if not any(row.values()):
+                continue
+
+            student_id = row.get("student_id", "").strip()
+            name = row.get("name", "").strip()
+
+            if not student_id.isdigit() or len(student_id) != 8:
+                errors.append(f"Row {i}: student_id must be exactly 8 digits.")
+                continue
+
+            # Validate major
+            major_obj = None
+            major_name = row.get("major", "").strip()
+            if major_name:
+                try:
+                    major_obj = Major.objects.get(name=major_name)
+                except Major.DoesNotExist:
+                    errors.append(f"Row {i}: Major '{major_name}' does not exist.")
+                    continue
+
+            # Validate CWA
+            cwa = row.get("cwa")
+            try:
+                cwa = float(cwa) if cwa and cwa.strip() else None
+                if cwa is not None and (cwa < 0 or cwa > 100):
+                    errors.append(f"Row {i}: CWA must be between 0 and 100.")
+                    continue
+            except ValueError:
+                errors.append(f"Row {i}: CWA must be a number.")
+                continue
+
+            email = row.get("email")
+            notes = row.get("notes")
+
+            student, created = Student.objects.update_or_create(
+                student_id=student_id,
+                defaults={
+                    "name": name,
+                    "cwa": cwa,
+                    "major": major_obj,
+                    "email": email,
+                    "notes": notes,
+                },
+            )
+            if created:
+                created_count += 1
+            else:
+                updated_count += 1
+
+        return Response(
+            {
+                "success": True,
+                "created_count": created_count,
+                "updated_count": updated_count,
+                "errors": errors,
+                "skipped_count": len(errors),
+            },
+            status=status.HTTP_200_OK,
+        )
 
 class StudentNotesUpdateAPIView(generics.UpdateAPIView):
     """

@@ -32,7 +32,6 @@ from .view.announcements_views import *
 from admin_app.view import admin_views
 from .view.group_views import *
 from .view.student_api_views import *
-
 from admin_app.view.email_views import MailtoLinkView
 from .view.student_views import *
 from .view.admin_views import (
@@ -69,6 +68,8 @@ urlpatterns = [
 
     path("api/students/", StudentListCreateAPIView.as_view(), name="student_list"),
     path("api/students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
+    path("api/students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
+    path("api/students/import/", StudentImportAPIView.as_view(), name="student_import"),
 
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
