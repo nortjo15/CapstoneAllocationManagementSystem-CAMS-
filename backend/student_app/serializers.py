@@ -25,6 +25,11 @@ class StudentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("A student with this ID already exists.")
         return value
     
+    def validate_email(self, value):
+        if value in ("", None):
+            return None #force DB NULL
+        return value
+    
     # Allow optional fields to be blank
     email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
     cwa = serializers.FloatField(required=False, allow_null=True)
