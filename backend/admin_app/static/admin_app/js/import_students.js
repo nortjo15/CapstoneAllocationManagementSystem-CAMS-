@@ -10,12 +10,15 @@ if (importForm) {
 
         const formData = new FormData(importForm);
 
+        const csrfTokenInput = importForm.querySelector("input[name='csrfmiddlewaretoken']");
+        const csrfToken = csrfTokenInput ? csrfTokenInput.value : "";
+
         fetch("/api/students/import/", {
             method: "POST",
             body: formData,
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken"), // CSRF if enabled
+                "X-CSRFToken": csrfToken, // CSRF if enabled
             },
         })
         .then(res => res.json())
