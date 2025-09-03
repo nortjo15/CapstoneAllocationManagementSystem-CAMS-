@@ -62,7 +62,7 @@ def overlap_in_top_n_projects(student_a, student_b, n=3):
 # Classify a group of students as 'strong', 'medium' or 'weak'
 # Return a dict with strength & flag
 def classify_group(students, project_capacity=None, top_n=3):
-    if len(students < 2):
+    if len(students) < 2:
         raise ValueError("Groups must contain at least 2 students")
     
     has_anti = False
@@ -96,6 +96,9 @@ def classify_group(students, project_capacity=None, top_n=3):
         if same_set or overlap_top:
             return {"strength": "weak" if has_anti else "medium", "has_anti_preference": has_anti}
         
+    # To Confirm: 
+    # - Weaker groups encompass everything - either students who have preferenced each other 
+    # - Or students who have some matching preferences
     # --- Some or no mutual likes ----
     if mutual_like_count > 0:
         return {"strength": "weak", "has_anti_preference": has_anti}
