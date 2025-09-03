@@ -8,6 +8,13 @@ class MajorSerializer(serializers.ModelSerializer):
         model = Major
         fields = ["id", "name"] 
 
+# Handle "" inputs for CWA
+class NullableFloatField(serializers.FloatField):
+    def to_internal_value(self, data):
+        if data in ("", None):
+            return None
+        return super().to_internal_value(data)
+
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
@@ -28,11 +35,15 @@ class StudentSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         if value in ("", None):
             return None #force DB NULL
+        
+        # Enforce uniqueness check
+        if Student.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A student with this email already exists.")
         return value
     
     # Allow optional fields to be blank
     email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
-    cwa = serializers.FloatField(required=False, allow_null=True)
+    cwa = NullableFloatField(required=False, allow_null=True)
     notes = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     resume = serializers.FileField(required=False, allow_null=True)
 
