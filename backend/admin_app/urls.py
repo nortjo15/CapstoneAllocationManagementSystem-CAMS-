@@ -69,8 +69,8 @@ urlpatterns = [
     path("students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
     path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
     path("students/import/", StudentImportAPIView.as_view(), name="student_import"),
-
     path("viewStudents/", student_page, name="student_view"),
+    
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
