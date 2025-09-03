@@ -58,17 +58,17 @@
             <label for="application_submitted">Application Submitted</label>
             <select id="application_submitted" name="application_submitted">
                 <option value="">-- Any --</option>
-                <option value="yes" {% if application_submitted == 'yes' %}selected{% endif %}>Yes</option>
-                <option value="no" {% if application_submitted == 'no' %}selected{% endif %}>No</option>
+                <option value="true" {% if application_submitted == 'true' %}selected{% endif %}>Yes</option>
+                <option value="false" {% if application_submitted == 'false' %}selected{% endif %}>No</option>
             </select>
             <br><br>
 
             <!-- Dropdown to show students who are allocated a group, or not -->
             <label for="group_status">Group Status:</label>
-            <select name="group_status" id="group_status">
-                <option value="all" {% if group_status == 'all' or not group_status %}selected{% endif %}>All Students</option> <!-- Default -->
-                <option value="assigned" {% if group_status == 'assigned' %}selected{% endif %}>Assigned Students Only</option>
-                <option value="unassigned" {% if group_status == 'unassigned' %}selected{% endif %}>Unassigned Students Only</option>
+            <select name="allocated_group" id="group_status">
+                <option value="" {% if group_status == 'all' or not group_status %}selected{% endif %}>All Students</option> <!-- Default -->
+                <option value="true" {% if group_status == 'true' %}selected{% endif %}>Assigned Students Only</option>
+                <option value="false" {% if group_status == 'false' %}selected{% endif %}>Unassigned Students Only</option>
             </select>
             <br><br>
 
