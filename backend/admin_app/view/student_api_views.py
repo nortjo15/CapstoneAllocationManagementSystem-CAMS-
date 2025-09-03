@@ -19,9 +19,10 @@ from collections import defaultdict
 
 @login_required 
 def student_page(request):
-    degree_major_pairs = defaultdict(list)
+    degree_major_pairs = {}
     for major in Major.objects.all():
-        degree_major_pairs[major.degree.name].append((major.id, major.name))
+        degree_major_pairs.setdefault(major.degree.name, []).append((major.id, major.name))
+
 
     selected_majors = request.GET.getlist("major")
 

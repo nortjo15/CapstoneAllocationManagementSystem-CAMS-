@@ -40,8 +40,8 @@
             - Allows for selection of multiple majors for filtering the view
             -->
             <fieldset> 
-                <legend>Degree & Major</legend>
-                {% for degree, majors in degree_major_pairs.items %}
+            <legend>Degree & Major</legend>
+            {% for degree, majors in degree_major_pairs.items %}
                 <strong>{{ degree }}</strong><br>
                 {% for major in majors %}
                     <label>
@@ -52,7 +52,7 @@
                 {% endfor %}
                 <br>
             {% endfor %}
-            </fieldset>
+        </fieldset>
             <br><br>
 
             <label for="application_submitted">Application Submitted</label>
