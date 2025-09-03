@@ -5,6 +5,7 @@
     height: 90vh;
     gap: 10px;
     font-family: Arial, sans-serif;
+    font-size: 1.2rem
 }
 
 .panel {
@@ -22,12 +23,13 @@
 
 .list-item-btn {
     width: 100%;
-    padding: 6px 10px;
+    padding: 10px 14px;
     margin-bottom: 5px;
     border: 1px solid #999;
     background: #fff;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
+    font-size: 1.1rem;
 }
 
 .list-item-btn:hover {
@@ -41,6 +43,7 @@
     margin: 5px 0;
     background: #fff;
     display:block;
+    font-size: 1.3rem;
 }
 
 .btn-primary {
@@ -71,3 +74,4 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 10px;
 }
+
