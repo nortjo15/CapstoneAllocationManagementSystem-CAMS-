@@ -1,5 +1,31 @@
 {% extends "admin_base.html" %}
+
+{% load static %}
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'admin_app/css/groups.css' %}">
+
+<div class="container-grid">
+    <!--Left Panel: Suggested Groups List -->
+    <div class="panel">
+        <h3>Suggested Groups</h3>
+        <ul class="list" id="groups-ul"></ul>
+    </div>
+
+    <!-- Center Panel: Group Details -->
+    <div class="panel">
+        <h3 id="group-title">Select a group</h3>
+        <div id="group-meta"></div>
+        <div id="group-members"></div>
+    </div>
+
+    <!-- Right Panel: Actions -->
+    <div class="panel">
+        <h3>Actions</h3>
+        <button class="btn-primary" id="create-group-btn" disabled>Create Group</button>
+    </div>
+</div>
+
 <h1>Groups</h1>
 <p>This is the Groups page.</p>
 {% endblock %}
