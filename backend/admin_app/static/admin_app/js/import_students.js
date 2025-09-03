@@ -24,22 +24,38 @@ if (importForm) {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.success) {
-                alert(
-                    `Imported successfully! Created: ${data.created_count}, ` +
-                    `Updated: ${data.updated_count}, Skipped: ${data.skipped_count}`
-                );
-                importForm.reset();
-                if (importModal) importModal.style.display = "none";
-                fetchStudents(); // reload table with new data
-            } else {
-                // Show backend errors inline
-                if (data.error) {
-                    importFormErrors.innerHTML = `<p>${data.error}</p>`;
-                }
-                if (data.errors && data.errors.length > 0) {
+            if (data.success) 
+            {
+                // Show success inline
+                importFormErrors.innerHTML =
+                `<p style="color:green;">
+                    Imported successfully!<br>
+                    Created: ${data.created_count}, Updated: ${data.updated_count}, Skipped: ${data.skipped_count}
+                </p>`;
+    
+                if (data.errors && data.errors.length > 0)
+                {
                     importFormErrors.innerHTML +=
-                        "<ul>" +
+                    "<ul style='color:red;'>" +
+                    data.errors.map(err => `<li>${err}</li>`).join("") +
+                    "</ul>";
+                }
+
+                importForm.reset();
+
+            }
+            else 
+            {
+                // Always render errors inline
+                importFormErrors.innerHTML = "";
+                if (data.error) 
+                {
+                    importFormErrors.innerHTML += `<p style="color:red;">${data.error}</p>`;
+                }
+                if (data.errors && data.errors.length > 0) 
+                {
+                    importFormErrors.innerHTML +=
+                        "<ul style='color:red;'>" +
                         data.errors.map(err => `<li>${err}</li>`).join("") +
                         "</ul>";
                 }
@@ -55,5 +71,13 @@ if (importForm) {
 if (importCloseBtn) {
     importCloseBtn.onclick = () => {
         importModal.style.display = "none";
+        fetchStudents(); // reload table when actively closed
     };
 }
+
+window.onclick = (e) => {
+    if (e.target === importModal) {
+        importModal.style.display = "none";
+        fetchStudents(); // reload table when clicking outside
+    }
+};
