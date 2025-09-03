@@ -4,6 +4,7 @@ from admin_app.models import *
 
 class MajorSerializer(serializers.ModelSerializer):
     """Serializer for Major model (minimal fields needed for display)."""
+
     class Meta:
         model = Major
         fields = ["id", "name"] 
@@ -16,6 +17,8 @@ class NullableFloatField(serializers.FloatField):
         return super().to_internal_value(data)
 
 class StudentSerializer(serializers.ModelSerializer):
+    major = MajorSerializer(read_only=True)
+
     class Meta:
         model = Student
         fields = '__all__'
