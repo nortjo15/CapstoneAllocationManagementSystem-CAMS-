@@ -1,4 +1,5 @@
 import django_filters
+import pprint
 
 from rest_framework import generics
 from student_app.models import *
@@ -14,14 +15,23 @@ from django.shortcuts import render
 import csv
 from io import TextIOWrapper
 from admin_app.forms.student_forms import addStudentForm, importStudentForm
+from collections import defaultdict
 
 @login_required 
 def student_page(request):
+    degree_major_pairs = defaultdict(list)
+    for major in Major.objects.all():
+        degree_major_pairs[major.degree.name].append((major.id, major.name))
+
+    selected_majors = request.GET.getlist("major")
+
     return render(request, "student_view.html",
         {
             "add_form": addStudentForm(),
             "import_form": importStudentForm(),
             "filter_target_url": request.path, 
+            "degree_major_pairs": degree_major_pairs,
+            "selected_majors": selected_majors,
         })
 
 class StudentImportAPIView(APIView):

@@ -42,15 +42,16 @@
             <fieldset> 
                 <legend>Degree & Major</legend>
                 {% for degree, majors in degree_major_pairs.items %}
-                    <strong>{{ degree }}</strong><br>
-                    {% for major in majors %}
-                        <label> 
-                            <input type="checkbox" name="major" value="{{ major_id }}">
-                            {{ major }}
-                        </label><br>
-                    {% endfor %}
-                    <br>
+                <strong>{{ degree }}</strong><br>
+                {% for major in majors %}
+                    <label>
+                        <input type="checkbox" name="major" value="{{ major.0 }}"
+                            {% if major.0|stringformat:"s" in selected_majors %}checked{% endif %}>
+                        {{ major.1 }}
+                    </label><br>
                 {% endfor %}
+                <br>
+            {% endfor %}
             </fieldset>
             <br><br>
 
