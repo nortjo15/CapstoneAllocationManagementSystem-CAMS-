@@ -113,6 +113,7 @@ class SuggestedGroup(models.Model):
     suggestedgroup_id = models.AutoField(primary_key=True)
     strength = models.CharField(max_length=6, choices=STRENGTH_CHOICES)
     notes=models.TextField(null=True, blank=True)
+    name=models.CharField(max_length=50, null=True, blank=True, unique=True)
 
     def __str__(self):
         return f"SuggestedGroup {self.suggestedgroup_id} ({self.get_strength_display()})"
@@ -138,6 +139,7 @@ class FinalGroup(models.Model):
     created_by_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(null=True, blank=True)
+    name=models.CharField(max_length=50, null=True, blank=True, unique=True)
 
     def __str__(self):
         return f"FinalGroup {self.finalgroup_id} for {self.project.title}"

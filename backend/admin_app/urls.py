@@ -26,7 +26,7 @@ from .view.auth_views import register_view, login_view, logout_view, login_succe
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
 from .view.round_views_restAPI import rounds_api
-from .view.group_api_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
+from .view.group_views import *
 from .view.settings_views import settings_view
 from .view.announcements_views import *
 from admin_app.view import admin_views
@@ -74,10 +74,11 @@ urlpatterns = [
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
     #Group_views
-    path('/suggested_groups/', SuggestedGroupListCreateView.as_view()),
-    path('/suggested_members/', SuggestedGroupMemberListCreateView.as_view()),
-    path('/final_groups/', FinalGroupListCreateView.as_view()),
-    path('/final_members/', FinalGroupMemberListCreateView.as_view()),
+    path("suggested_groups/", SuggestedGroupListCreateView.as_view(), name="suggested-group-list"),
+    path("suggested_groups/<int:suggestedgroup_id>/", SuggestedGroupDetailView.as_view(), name="suggested-group-detail"),
+    path("suggested_members/", SuggestedGroupMemberListCreateView.as_view(), name="suggested-group-member-list"),
+
+    # Webpage
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views
     path('settings/', settings_view, name='settings'),

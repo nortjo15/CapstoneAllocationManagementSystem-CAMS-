@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import AdminLog
-from admin_app.serializers import StudentSerializer
+from student_app.serializers import StudentSerializer
 
 class AdminLogSerializer(serializers.ModelSerializer):
     class Meta:
