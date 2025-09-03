@@ -31,10 +31,10 @@ class StudentImportAPIView(APIView):
     parser_classes = [MultiPartParser]  # handle file upload
 
     def post(self, request, *args, **kwargs):
-        if "file" not in request.FILES:
-            return Response({"success": False, "error": "CSV file is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if "csv_file" not in request.FILES:
+            return Response({"success": False, "error": "CSV file is required."}, status=400)
 
-        csv_file = request.FILES["file"]
+        csv_file = request.FILES["csv_file"]
         data_set = TextIOWrapper(csv_file.file, encoding="utf-8")
         reader = csv.DictReader(data_set)
         reader.fieldnames = [name.strip() for name in reader.fieldnames]

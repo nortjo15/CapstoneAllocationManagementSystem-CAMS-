@@ -9,11 +9,12 @@ if (importForm) {
         importFormErrors.innerHTML = ""; // clear old errors
 
         const formData = new FormData(importForm);
+        const importUrl = importModal.dataset.importUrl; 
 
         const csrfTokenInput = importForm.querySelector("input[name='csrfmiddlewaretoken']");
         const csrfToken = csrfTokenInput ? csrfTokenInput.value : "";
 
-        fetch("/api/students/import/", {
+        fetch(importUrl, {
             method: "POST",
             body: formData,
             headers: {

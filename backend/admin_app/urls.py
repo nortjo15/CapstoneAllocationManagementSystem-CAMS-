@@ -66,9 +66,9 @@ urlpatterns = [
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
     #Student_views
     path("students/", StudentListCreateAPIView.as_view(), name="student_list"),
+    path("students/import/", StudentImportAPIView.as_view(), name="student_import"),
     path("students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
     path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
-    path("students/import/", StudentImportAPIView.as_view(), name="student_import"),
     path("viewStudents/", student_page, name="student_view"),
     
     #Project_views
