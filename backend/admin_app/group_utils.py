@@ -46,7 +46,15 @@ def have_same_project_set(student_a, student_b):
 
 # Returns True if the top-N ranked projects overlap between two students
 def overlap_in_top_n_projects(student_a, student_b, n=3):
-    prefs_a = list(ProjectPreference.objects.filter(student=student_a).order_by("rank").values_list("project_id", flat=True)[:n])
-    prefs_b = list(ProjectPreference.objects.filter(student=student_b).order_by("rank").values_list("project_id", flat=True)[:n])
-    return prefs_a == prefs_b
+    prefs_a = list(
+        ProjectPreference.objects.filter(student=student_a)
+        .order_by("rank")
+        .values_list("project_id", flat=True)[:n]
+    )
+    prefs_b = list(
+        ProjectPreference.objects.filter(student=student_b)
+        .order_by("rank")
+        .values_list("project_id", flat=True)[:n]
+    )
+    return bool(set(prefs_a) & set(prefs_b))
 
