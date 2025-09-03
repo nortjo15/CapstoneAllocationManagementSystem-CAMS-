@@ -70,16 +70,14 @@ urlpatterns = [
     path("students/<pk>/", StudentRetrieveUpdateDestroyAPIView.as_view(), name="student_detail"),
     path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
     path("viewStudents/", student_page, name="student_view"),
-    
     #Project_views
     path('projects/', ProjectListCreateView.as_view()),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
     #Group_views
-    path('api/suggested_groups/', SuggestedGroupListCreateView.as_view()),
-    path('api/suggested_members/', SuggestedGroupMemberListCreateView.as_view()),
-    path('api/final_groups/', FinalGroupListCreateView.as_view()),
-    path('api/final_members/', FinalGroupMemberListCreateView.as_view()),
-
+    path('/suggested_groups/', SuggestedGroupListCreateView.as_view()),
+    path('/suggested_members/', SuggestedGroupMemberListCreateView.as_view()),
+    path('/final_groups/', FinalGroupListCreateView.as_view()),
+    path('/final_members/', FinalGroupMemberListCreateView.as_view()),
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views
     path('settings/', settings_view, name='settings'),

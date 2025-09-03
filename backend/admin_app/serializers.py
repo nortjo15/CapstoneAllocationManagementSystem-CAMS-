@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import AdminLog
+from admin_app.serializers import StudentSerializer
 
 class AdminLogSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,15 +19,21 @@ class ProjectPreferenceSerializer(serializers.ModelSerializer):
         model = ProjectPreference
         fields = '__all__'
 
-class SuggestedGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SuggestedGroup
-        fields = '__all__'
-
+# ---- SuggestedGroup ----
 class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
+    student = StudentSerializer(read_only=True)
+
     class Meta:
         model = SuggestedGroupMember
-        fields = '__all__'
+        fields = ['id', 'student']
+
+class SuggestedGroupSerializer(serializers.ModelSerializer):
+    members = SuggestedGroupMemberSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SuggestedGroup
+        fields = ['suggestedgroup_id', 'strength', 'notes', 'members']
+# --------------------------------------------------------------------
 
 class FinalGroupSerializer(serializers.ModelSerializer):
     class Meta:
