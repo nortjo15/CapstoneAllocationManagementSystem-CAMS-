@@ -40,17 +40,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 groupTitle.textContent = `Group ${group.suggestedgroup_id}`;
                 groupMeta.innerHTML = `<p><strong>Strength:</strong> ${group.strength}</p>
                     <p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
-                groupMembers.innerHTML = "<h4>Members:</h4>";
 
+                groupMembers.innerHTML = `
+                    <h4>Members:</h4>
+                    <div class="members-container"></div>
+                `;
+
+                const membersContainer = groupMembers.querySelector(".members-container");
                 //Create a card for each member
                 group.members.forEach(m => {
                     const div = document.createElement("div");
                     div.classList.add("card");
-                    div.innerHTML = `<p>${m.student.name} (${m.student.student_id})
-                        - ${m.student.major}, CWA: ${m.student.cwa}</p>`;
+                    div.innerHTML = `
+                        <p><strong>Name:</strong> ${m.student.name}</p>
+                        <p><strong>ID:</strong> ${m.student.student_id}</p>
+                        <p><strong>CWA:</strong> ${m.student.cwa}</p>
+                    `;
 
                     //Add card to the center panel
-                    groupMembers.appendChild(div);
+                    membersContainer.appendChild(div);
                 });
 
                 createBtn.disabled = false;

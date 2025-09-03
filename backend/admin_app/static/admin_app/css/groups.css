@@ -1,7 +1,7 @@
 /* Minimal CSS for groups page styling */
 .container-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: 0.6fr 3.5fr 0.5fr;
     height: 90vh;
     gap: 10px;
     font-family: Arial, sans-serif;
@@ -40,6 +40,7 @@
     padding: 6px;
     margin: 5px 0;
     background: #fff;
+    display:block;
 }
 
 .btn-primary {
@@ -55,4 +56,18 @@
 .btn-primary:disabled {
     background: #aaa;
     cursor: not-allowed;
+}
+
+#group-members {
+    gap: 10px;
+}
+
+.members-container {
+    border-top: 2px solid #ccc;
+    margin-top: 8px;
+    padding-top: 8px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
 }
