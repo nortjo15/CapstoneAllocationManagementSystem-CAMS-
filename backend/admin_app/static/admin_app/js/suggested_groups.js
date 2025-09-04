@@ -8,28 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     //Variable to track the active group
     let activeGroupId = null
 
-    //Load suggested groups into left panel
-    fetch("/api/suggested_groups/")
-        .then(res => res.json())
-        .then(data => {
-            groupsUl.innerHTML = "";
-            data.forEach(group => {
-                const li = document.createElement("li");
-                //Create a button per group
-                li.innerHTML = `<button class="list-item-btn" data-id="${group.suggestedgroup_id}">
-                    Group ${group.suggestedgroup_id}
-                </button>`;
-
-                //Add the button to the panel
-                groupsUl.appendChild(li);
-            });
-
-            //Add handlers for the click
-            groupsUl.querySelectorAll("button").forEach(btn => {
-                btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-            });
-        });
-
     //Loading a group onto the center panel
     function loadGroup(id)
     {
@@ -71,5 +49,32 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Create group from suggested: ", activeGroupId);
             alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
         }
+    });
+
+    // Wire button to generate group suggestions
+    const generateBtn = document.getElementById("generate-suggestions-btn");
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    generateBtn.addEventListener("click", () => {
+        fetch("/api/generate_suggestions/", {
+            method: "POST",
+            headers: { "X-CSRFToken": csrfToken}
+        })
+        .then(res => res.json())
+        .then(data => {
+            //Refresh the list panel with new groups
+            groupsUl.innerHTML = "";
+            data.forEach(group => {
+                const li = document.createElement("li");
+                li.innerHTML = `<button class="list-item-btn" data-id="${group.suggested_group_id}">
+                    Group ${group.suggested_group_id}
+                    </button>`;
+                groupsUl.appendChild(li); //Create a button for each group
+            });
+
+            groupsUl.querySelectorAll("button").forEach(btn => {
+                btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+            });
+        });
     });
 });
