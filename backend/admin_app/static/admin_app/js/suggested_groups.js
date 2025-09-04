@@ -11,11 +11,15 @@ document.addEventListener("DOMContentLoaded", () => {
     //Loading a group onto the center panel
     function loadGroup(id)
     {
+        //Display consecutive numbers for groups
+        const btn = groupsUl.querySelector(`button[data-id="${id}"]`);
+        const displayNum = btn ? btn.dataset.display : id;
+
         fetch(`/api/suggested_groups/${id}/`)
             .then(res => res.json())
             .then(group => {
                 activeGroupId = group.suggestedgroup_id;
-                groupTitle.textContent = `Group ${group.suggestedgroup_id}`;
+                groupTitle.textContent = `Group ${displayNum}`;
                 groupMeta.innerHTML = `<p><strong>Strength:</strong> ${group.strength}</p>
                     <p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
 
@@ -64,10 +68,13 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             //Refresh the list panel with new groups
             groupsUl.innerHTML = "";
-            data.forEach(group => {
+            data.forEach((group, idx) => {
                 const li = document.createElement("li");
-                li.innerHTML = `<button class="list-item-btn" data-id="${group.suggested_group_id}">
-                    Group ${group.suggested_group_id}
+                li.innerHTML = 
+                    `<button class="list-item-btn" 
+                    data-id="${group.suggested_group_id}"
+                    data-display="${idx+1}">
+                    Group ${idx+1}
                     </button>`;
                 groupsUl.appendChild(li); //Create a button for each group
             });
