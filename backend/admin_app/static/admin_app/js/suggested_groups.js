@@ -21,14 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`/api/suggested_groups/${id}/`)
             .then(res => res.json())
             .then(group => {
+                // Clear active buttons, then assign to the new button
+                groupsUl.querySelectorAll("button").forEach(b => b.classList.remove("active"))
+                if (btn)
+                {
+                    btn.classList.add("active");
+                }
+
                 activeGroupId = group.suggestedgroup_id;
                 groupTitle.textContent = `Group ${displayNum}`;
-                groupMeta.innerHTML = `<p><strong>Strength:</strong> ${group.strength}</p>
-                    <p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
+                groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
+                groupMembers.innerHTML = `<div class="members-container"></div>`;
 
-                groupMembers.innerHTML = `
-                    <div class="members-container"></div>
-                `;
 
                 const membersContainer = groupMembers.querySelector(".members-container");
                 //Create a card for each member
@@ -76,17 +80,28 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(data => {
-            //Refresh the list panel with new groups
+            //Sort the groups by strength: strong -> medium -> weak
+            const order = {strong: 1, medium: 2, weak: 3};
+
+            data.sort((a, b) => {
+                return order[a.strength] - order[b.strength];
+            })
+
+            //Refresh the list panel with new groups & render
             groupsUl.innerHTML = "";
             data.forEach((group, idx) => {
                 const li = document.createElement("li");
-                li.innerHTML = 
-                    `<button class="list-item-btn" 
-                    data-id="${group.suggested_group_id}"
-                    data-display="${idx+1}">
-                    Group ${idx+1}
-                    </button>`;
-                groupsUl.appendChild(li); //Create a button for each group
+                const btn = document.createElement("button");
+
+                btn.classList.add("list-item-btn");
+                btn.dataset.id = group.suggested_group_id;
+                btn.dataset.display = idx + 1;
+                btn.textContent = `Group ${idx+1}`;
+
+                //Add Strength class to button
+                btn.classList.add(`strength-${group.strength.toLowerCase()}`);
+                li.appendChild(btn);
+                groupsUl.appendChild(li); //Create a button for each group & append it
             });
 
             groupsUl.querySelectorAll("button").forEach(btn => {
