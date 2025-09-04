@@ -80,7 +80,7 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
         if len(students) > project.capacity:
             results.append({
                 "project": project,
-                "strength": "invalid",
+                "strength": "weak",
                 "has_anti_preference": has_anti
             })
             continue 
@@ -196,19 +196,23 @@ def generate_project_only_groups(students, project_prefs, projects, top_n=1):
 def build_mutual_like_graph():
     G = nx.Graph()
 
-    # Add all students as nodes
-    for s in Student.objects.filter(allocated_group=False):
-        G.add_node(s)
+    # pre-fetch
+    students = list(Student.objects.filter(allocated_group=False))
+    id_to_student = {s.student_id: s for s in students}
 
-    # Add edge if like is mutual 
-    likes = GroupPreference.objects.filter(preference_type="like")
-    for pref in likes: 
-        if GroupPreference.objects.filter(
-            student=pref.target_student, 
-            target_student=pref.student, 
-            preference_type="like"
-        ).exists():
-            G.add_edge(pref.student, pref.target_student)
+    # Add as nodes
+    G.add_nodes_from(students)
+
+    # pre-fetch all like edges
+    likes = GroupPreference.objects.filter(preference_type="like").values_list(
+        "student_id", "target_student_id"
+    )
+    like_set = set(likes)
+
+   # Add undirected edge if mutual
+    for a, b in like_set: 
+        if (b, a) in like_set: 
+            G.add_edge(id_to_student[a], id_to_student[b])
 
     return G
 
