@@ -73,10 +73,10 @@
 .members-container {
     margin-top: 8px;
     padding-top: 8px;
-
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
+    width: 100%;
 }
 
 .group-details {

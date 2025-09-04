@@ -29,10 +29,17 @@ class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
 
 class SuggestedGroupSerializer(serializers.ModelSerializer):
     members = SuggestedGroupMemberSerializer(many=True, read_only=True)
+    project = ProjectSerializer(read_only=True)
 
     class Meta:
         model = SuggestedGroup
-        fields = ['suggestedgroup_id', 'strength', 'notes', 'members']
+        fields = [
+            'suggestedgroup_id', 
+            'strength', 
+            'notes', 
+            'has_anti_preference',
+            'project',
+            'members']
 # --------------------------------------------------------------------
 
 class FinalGroupSerializer(serializers.ModelSerializer):

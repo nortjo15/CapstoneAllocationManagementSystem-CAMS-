@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupMeta = document.getElementById("group-meta");
     const groupMembers = document.getElementById("group-members")
     const createBtn = document.getElementById("create-group-btn")
+    const projectName = document.getElementById("group-project-name")
+    const projectHost = document.getElementById("group-host")
+    const projectCapacity = document.getElementById("group-capacity")
 
     //Variable to track the active group
     let activeGroupId = null
@@ -42,6 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     membersContainer.appendChild(div);
                 });
 
+                //Update group information
+                if(group.project)
+                {
+                    projectName.innerHTML = `<p><strong>Project:</strong> ${group.project.title}</p>`
+                    projectCapacity.innerHTML = `<p><strong>Capacity:</strong> ${group.project.capacity}</p>`
+                    projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`
+                }
+            
                 createBtn.disabled = false;
             });
     }
