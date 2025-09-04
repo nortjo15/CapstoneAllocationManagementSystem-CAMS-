@@ -14,7 +14,7 @@
 - All students mutually preference each other 
 - Group size <= project capacity
 - All students have the same set of project preferences, order may differ
-- All students overlap on their top 3 probjects, order may differ
+- All students overlap on their top 3 projects, order may differ
 - Meets strong group criteria but has_anti_preference = True
 
 ## Weak Group
@@ -24,4 +24,4 @@
 
 # Capacity Constraint
 - Group size should not exceed associated project's capacity 
-- If a set of students exceeds the capacity, split into subsets 
+- If a set of students exceeds the capacity, split into subsets I w

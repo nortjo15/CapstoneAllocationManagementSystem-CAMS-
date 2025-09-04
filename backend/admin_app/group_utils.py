@@ -91,7 +91,12 @@ def classify_group(students, project_capacity=None, top_n=3):
         if identical_order:
             prefs = list(ProjectPreference.objects.filter(student=ref).order_by("rank"))
             if prefs and prefs[0].rank in [1, 2]:
-                return {"strength": "medium" if has_anti else "strong", "has_anti_preference": has_anti}
+                if project_capacity and len(students) == project_capacity:
+                    # Suggested Group Length = Project Capacity
+                    return {"strength": "medium" if has_anti else "strong", "has_anti_preference": has_anti}
+                else: 
+                    # Suggested Group Length < Project Capacity
+                    return {"strength": "medium", "has_anti_preference": has_anti}
             
         if same_set or overlap_top:
             return {"strength": "weak" if has_anti else "medium", "has_anti_preference": has_anti}
@@ -111,3 +116,55 @@ def classify_group(students, project_capacity=None, top_n=3):
             return {"strength": "weak", "has_anti_preference": has_anti}
         else: 
             return {"strength": "invalid", "has_anti_preference": has_anti}
+
+        
+# Builds an adjacency list for mutual 'like' preferences 
+# Returns a dict: {student_id: set([liked_student_ids, ...])}
+def build_likes_graph():
+    graph =  {}
+    likes = GroupPreference.objects.filter(preference_type="like")
+
+    for pref in likes: 
+        graph.setdefault(pref.student_id, set()).add(pref.target_student_id)
+
+    return graph
+
+# Obtain list of Student objects that form a mutual-like group
+def find_mutual_like_groups(graph, students):
+    # Map IDs -> Student Objects
+    id_to_student = {s.student_id: s for s in students}
+    student_ids = list(id_to_student.keys())
+
+    # from size 2 up to N
+    for r in range(2, len(student_ids) + 1):
+        for combo in combinations(student_ids, r):
+            # Check if all pairs in the combo are mutual likes 
+            is_group = True 
+            for a, b in combinations(combo, 2):
+                if not (
+                    b in graph.get(a, set()) and
+                    a in graph.get(b, set())
+                ):
+                    is_group = False 
+                    break 
+            if is_group: 
+                yield [id_to_student[sid] for sid in combo]
+
+# Generates candidate groups from mutual-like groups, classifies them, returns results
+def generate_suggestions_from_likes():
+    # Get students not in a final group
+    students = list(Student.objects.filter(allocated_groups=False))
+    graph = build_likes_graph()
+
+    suggestions = []
+
+    for group in find_mutual_like_groups(graph, students):
+        result = classify_group(group)
+        if result["strength"] != "invalid":
+            suggestions.append({
+                "students": [s.student_id for s in group],
+                "strength": result["strength"],
+                "has_anti_preference": result["has_anti_preference"],
+            })
+    
+    return suggestions
