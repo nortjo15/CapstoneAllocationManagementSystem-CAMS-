@@ -17,8 +17,22 @@
 
     <!-- Center Panel: Group Details -->
     <div class="panel">
-        <h3 id="group-title">Select a group</h3>
-        <div id="group-meta"></div>
+        <!-- Left of Center Panel -->
+        <div class="group-details">
+
+            <div class="group-info">
+                <h3 id="group-title">Select a group</h3>
+                <div id="group-meta"></div>
+            </div>
+
+             <!-- Right of Center Panel -->
+            <div class="group-extra" id="group-extra">
+                <p><strong>Project:</strong> <span id="group-project-name">N/A</span></p>
+                <p><strong>Capacity:</strong> <span id="group-capacity">N/A</span></p>
+                <p><strong>Host:</strong> <span id="group-host">N/A</span></p>
+            </div> 
+        </div>
+
         <div id="group-members"></div>
     </div>
 
@@ -28,6 +42,7 @@
         <button class="btn-primary" id="create-group-btn" disabled>Create Group</button>
     </div>
 </div>
+
 
 {% load static %}
 <script src="{% static 'admin_app/js/suggested_groups.js' %}"></script>

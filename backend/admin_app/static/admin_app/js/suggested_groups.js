@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
 
                 groupMembers.innerHTML = `
-                    <h4>Members:</h4>
                     <div class="members-container"></div>
                 `;
 
