@@ -190,18 +190,23 @@ def find_mutual_like_groups(graph, students):
 # Generates candidate groups from mutual-like groups, classifies them, returns results
 def generate_suggestions_from_likes():
     # Get students not in a final group
-    students = list(Student.objects.filter(allocated_groups=False))
+    students = list(Student.objects.filter(allocated_group=False))
     graph = build_likes_graph()
 
     suggestions = []
 
     for group in find_mutual_like_groups(graph, students):
-        result = classify_group(group)
-        if result["strength"] != "invalid":
-            suggestions.append({
-                "students": [s.student_id for s in group],
-                "strength": result["strength"],
-                "has_anti_preference": result["has_anti_preference"],
-            })
+        results = classify_group(group)
+        for result in results:
+            if result["strength"] != "invalid":
+
+                suggestions.append({
+                    "students": [s.student_id for s in group],
+                    "project": result["project"].title if result["project"] else None,
+                    "strength": result["strength"],
+                    "has_anti_preference": result["has_anti_preference"],
+                })
+
+                # Code here to actually create the SuggestedGroups later
     
     return suggestions
