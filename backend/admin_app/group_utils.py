@@ -74,55 +74,107 @@ def get_group_project_intersection(students):
 
     return set.intersection(*project_sets)
 
-# Classify a group of students as 'strong', 'medium' or 'weak'
-# Return a dict with strength & flag
-def classify_group(students, top_n=3):
+"""
+Bulk Load group preferences, project preferences and projects for a set of students
+Returns: 
+    - group_likes 
+    - group_avoids
+    - project_prefs
+    - projects
+
+Significantly reduces amount of DB querying to improve operation performance
+Uses pre-fetched data instead
+"""
+def prefetch_student_data(students):
+    student_ids = [s.student_id for s in students]
+
+    # Load Group Preferences
+    prefs = GroupPreference.objects.filter(student_id__in=student_ids)
+    group_likes, group_avoids = {}, {}
+    for p in prefs:
+        if p.preference_type == "like":
+            group_likes.setdefault(p.student_id, set()).add(p.target_student_id)
+        elif p.preference_type == "avoid":
+            group_avoids.setdefault(p.student_id, set()).add(p.target_student_id)
+
+    # Load project preferences
+    proj_prefs = ProjectPreference.objects.filter(student_id__in=student_ids).order_by("rank")
+    project_prefs = {}
+    for pp in proj_prefs:
+        project_prefs.setdefault(pp.student_id, []).append((pp.rank, pp.project_id))
+
+    # Load all projects
+    all_projects = Project.objects.all()
+    projects  = {p.project_id: p for p in all_projects}
+
+    return group_likes, group_avoids, project_prefs, projects
+
+"""
+Classify a group of students as 'strong', 'medium' or 'weak'
+Return a dict with strength & flag
+"""
+def classify_group(students, group_likes, group_avoids, project_prefs, projects, top_n=3):
     if len(students) < 2:
         raise ValueError("Groups must contain at least 2 students")
     
     has_anti = False
     mutual_like_count = 0
     pair_count = 0
-    
-    # Go through pairwise relationships
-    for a, b in combinations(students, 2):
-        pair_count += 1
-        if has_anti_preference(a, b):
-            has_anti = True
-        if are_mutual_likes(a, b):
-            mutual_like_count += 1
+    ids = [s.student_id for s in students]
 
-    # Find all projects that every student in this group has preferenced 
-    common_projects = get_group_project_intersection(students)
-    if not common_projects:
-        # No shared projects, nothing to classify 
+    # Pair by pair, check mutual like/avoid
+    for i, a in enumerate(ids):
+        for b in ids[i+1:]:
+            pair_count += 1
+            if b in group_avoids.get(a, set()) or a in group_avoids.get(b, set()):
+                has_anti = True # Found an anti-preference
+            if b in group_likes.get(a, set()) and a in group_likes.get(b, set()):
+                mutual_like_count += 1
+
+    # Common Projects
+    sets = [set(pid for _, pid in project_prefs.get(sid, [])) for sid in ids] 
+    if not sets or not all(sets):
         return [{"project": None, "strength": "invalid", "has_anti_preference": has_anti}]
-    
+    common_projects = set.intersection(*sets)
+        
     results = []
-
-    # Loop once per common project
     for project_id in common_projects:
-        project = Project.objects.get(pk=project_id)
+        project = projects.get(project_id) 
 
-        # Reject if group is larger than project capacity
+        # If group is too large, skip it 
         if len(students) > project.capacity:
             results.append({
                 "project": project,
                 "strength": "invalid",
                 "has_anti_preference": has_anti
             })
-            continue
-    
-    # --- All Mutual likes ---
-        if mutual_like_count == pair_count:
-            ref = students[0]
-            identical_order = all(have_identical_project_order(ref, s) for s in students[1:])
-            same_set = all(have_same_project_set(ref, s) for s in students[1:])
-            overlap_top = all(overlap_in_top_n_projects(ref, s, top_n) for s in students[1:])
+            continue 
+
+        if mutual_like_count == pair_count: 
+            ref_id = ids[0] # take first student as reference
+
+            # Compare ordering 
+            def prefs_as_list(sid): return [pid for _, pid in project_prefs.get(sid, [])]
+            ref_prefs = prefs_as_list(ref_id)
+
+            # For each student, compare preferences list with the prefix of ref_prefs of the same length, allowing for subset matches
+            identical_order = all(ref_prefs[:len(prefs_as_list(sid))] == prefs_as_list(sid) for sid in ids[1:])
+            # Compare projects sets (instead of order)
+            same_set = all(
+                set(ref_prefs).issubset(set(prefs_as_list(sid))) 
+                or set(prefs_as_list(sid)).issubset(set(ref_prefs)) for sid in ids[1:]
+                )
+            # Compare top 3 projects
+            overlap_top = all(
+                bool(set(ref_prefs[:top_n]) & set(prefs_as_list(sid)[:top_n]))
+                for sid in ids[1:]
+            )
 
             if identical_order:
-                pref = ProjectPreference.objects.filter(student=ref, project=project).first()
-                if pref and pref.rank in [1,2]:
+                rank_lookup = dict(project_prefs.get(ref_id, []))
+                rank = rank_lookup.get(project_id)
+                if rank in [1, 2]:
+                    # Should generate a strong group, since top 1 or 2 project
                     if len(students) == project.capacity:
                         results.append({
                             "project": project,
@@ -131,30 +183,31 @@ def classify_group(students, top_n=3):
                         })
                         continue 
                     else: 
-                        # Doesn't match capacity, medium group
+                        # Medium group for projects at preference 3 onwards
                         results.append({
                             "project": project,
                             "strength": "medium",
                             "has_anti_preference": has_anti
                         })
                         continue
-            
+
+            # Not identical order, but the top 3 projects overlap 
             if same_set or overlap_top:
                 results.append({
-                    "project": project,
+                    "project": project, 
                     "strength": "medium",
                     "has_anti_preference": has_anti
                 })
 
-        # Partial Likes or Project Overlap only
+        # No matches - fallback to weak group
         results.append({
-            "project": project,
+            "project": project, 
             "strength": "weak",
             "has_anti_preference": has_anti
         })
 
     return results
-
+    
 # Builds an undirected graph of students with mutual 'like' edges 
 def build_mutual_like_graph():
     G = nx.Graph()
