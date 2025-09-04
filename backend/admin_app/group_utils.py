@@ -1,78 +1,8 @@
 from student_app.models import Student, GroupPreference
 from admin_app.models import ProjectPreference, Project, SuggestedGroup, SuggestedGroupMember
 from itertools import combinations
+from django.db import transaction
 import networkx as nx
-
-# Contains code to retrieve student preferences 
-def get_student_project_prefs(student):
-    return list(
-        ProjectPreference.objects.filter(student=student).order_by("rank")
-    )
-
-def get_student_group_likes(student):
-    return list(
-        GroupPreference.objects.filter(student=student, preference_type="like")
-    )
-
-def get_student_group_avoids(student):
-    return list(
-        GroupPreference.objects.filter(student=student, preference_type="avoid")
-    )
-
-# Check if two students mutually prefer each other
-def are_mutual_likes(student_a, student_b):
-    return (
-        GroupPreference.objects.filter(student=student_a, target_student=student_b, preference_type="like").exists()
-        and GroupPreference.objects.filter(student=student_b, target_student=student_a, preference_type="like").exists()
-    )
-
-# See if there is an anti-preference from a->b or b->a
-def has_anti_preference(student_a, student_b):
-    return (
-        GroupPreference.objects.filter(student=student_a, target_student=student_b, preference_type="avoid").exists()
-        or GroupPreference.objects.filter(student=student_b, target_student=student_a, preference_type="avoid").exists()
-    )
-
-# Returns true if both students ranked the same projects in the same exact order
-# Includes logic to check for subsets - not all students will submit the same number of preferences
-def have_identical_project_order(student_a, student_b):
-    prefs_a = list(ProjectPreference.objects.filter(student=student_a).order_by("rank").values_list("project_id", flat=True))
-    prefs_b = list(ProjectPreference.objects.filter(student=student_b).order_by("rank").values_list("project_id", flat=True))
-    min_len = min(len(prefs_a), len(prefs_b))
-    return prefs_a[:min_len] == prefs_b[:min_len]
-
-def have_same_project_set(student_a, student_b):
-    prefs_a = set(ProjectPreference.objects.filter(student=student_a).values_list("project_id", flat=True))
-    prefs_b = set(ProjectPreference.objects.filter(student=student_b).values_list("project_id", flat=True))
-    return prefs_a.issubset(prefs_b) or prefs_b.issubset(prefs_a)
-
-# Returns True if the top-N ranked projects overlap between two students
-def overlap_in_top_n_projects(student_a, student_b, n=3):
-    prefs_a = list(
-        ProjectPreference.objects.filter(student=student_a)
-        .order_by("rank")
-        .values_list("project_id", flat=True)[:n]
-    )
-    prefs_b = list(
-        ProjectPreference.objects.filter(student=student_b)
-        .order_by("rank")
-        .values_list("project_id", flat=True)[:n]
-    )
-    return bool(set(prefs_a) & set(prefs_b))
-
-# Compute project intersection across a group
-def get_group_project_intersection(students):
-    project_sets = []
-    for s in students:
-        prefs = set(
-            ProjectPreference.objects.filter(student=s).values_list("project_id", flat=True)
-        )
-        project_sets.append(prefs)
-
-    if not project_sets:
-        return set()
-
-    return set.intersection(*project_sets)
 
 """
 Bulk Load group preferences, project preferences and projects for a set of students
@@ -134,7 +64,12 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
     # Common Projects
     sets = [set(pid for _, pid in project_prefs.get(sid, [])) for sid in ids] 
     if not sets or not all(sets):
-        return [{"project": None, "strength": "invalid", "has_anti_preference": has_anti}]
+        # These students have group preferences, but no project preferences 
+        if mutual_like_count == pair_count:
+            return [{"project": None, "strength": "medium", "has_anti_preference": has_anti}]
+        else:
+            return [{"project": None, "strength": "weak", "has_anti_preference": has_anti}]
+    
     common_projects = set.intersection(*sets)
         
     results = []
@@ -207,6 +142,55 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
         })
 
     return results
+
+"""
+Project-only grouping for students with no member preferences
+- Group students who have no mutual likes but share the same top project(s)
+- Always classified as weak
+"""
+def generate_project_only_groups(students, project_prefs, projects, top_n=1):
+    groups = []
+    project_bins = {}
+
+    for s in students:
+        prefs = project_prefs.get(s.student_id, [])
+        if not prefs:
+            continue # skip students with no preferences at all
+
+        # Take their top-N projects
+        top_projects = [pid for rank, pid in prefs if rank <= top_n]
+        for pid in top_projects:
+            project_bins.setdefault(pid, []).append(s)
+
+    # Build groups 
+    for pid, members in project_bins.items():
+        if len(members) < 2:
+            continue # Skip if less than 2 people
+        project = projects.get(pid)
+        if not project:
+            continue
+
+        sg = SuggestedGroup.objects.create(
+            strength="weak",
+            has_anti_preference=False,
+            project=project,
+        )
+        sg.name = f"project_only_{sg.suggestedgroup_id}"
+        sg.save(update_fields=["name"])
+
+        # Add members 
+        for s in members:
+            SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
+
+        groups.append({
+            "suggested_group_id": sg.suggestedgroup_id,
+            "students": [s.student_id for s in members],
+            "project": project.title,
+            "strength": "weak",
+            "has_anti_preference": False,
+        })
+
+    return groups
     
 # Builds an undirected graph of students with mutual 'like' edges 
 def build_mutual_like_graph():
@@ -229,18 +213,20 @@ def build_mutual_like_graph():
     return G
 
 # Generates candidate groups from mutual-like groups, classifies them, returns results
+@transaction.atomic
 def generate_suggestions_from_likes():
     # Get students not in a final group
     students = list(Student.objects.filter(allocated_group=False))
     graph = build_mutual_like_graph()
 
     suggestions = []
+    group_likes, group_avoids, project_prefs, projects = prefetch_student_data(students)
 
     for clique in nx.find_cliques(graph):
         if len(clique) < 2:
             continue # Skip, can't have a group of 1 student
 
-        results = classify_group(clique)
+        results = classify_group(clique, group_likes, group_avoids, project_prefs, projects)
 
         for result in results:
             if result["strength"] == "invalid":
@@ -272,5 +258,13 @@ def generate_suggestions_from_likes():
                 "strength": result["strength"],
                 "has_anti_preference": result["has_anti_preference"],
             })
+
+    # Handle students not covered by any group preferences 
+    # - They only have project preferences
+    grouped_ids = {sid for g in suggestions for sid in g["students"]}
+    remaining_students = [s for s in students if s.student_id not in grouped_ids]
+
+    project_groups = generate_project_only_groups(remaining_students, project_prefs, projects, top_n=1) 
+    suggestions.extend(project_groups)
 
     return suggestions
