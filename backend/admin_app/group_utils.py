@@ -1,6 +1,7 @@
 from student_app.models import Student, GroupPreference
-from admin_app.models import ProjectPreference, Project
+from admin_app.models import ProjectPreference, Project, SuggestedGroup, SuggestedGroupMember
 from itertools import combinations
+import networkx as nx
 
 # Contains code to retrieve student preferences 
 def get_student_project_prefs(student):
@@ -101,7 +102,7 @@ def classify_group(students, top_n=3):
 
     # Loop once per common project
     for project_id in common_projects:
-        project = Project.objects.get(pk=[project_id])
+        project = Project.objects.get(pk=project_id)
 
         # Reject if group is larger than project capacity
         if len(students) > project.capacity:
@@ -154,59 +155,69 @@ def classify_group(students, top_n=3):
 
     return results
 
-        
-# Builds an adjacency list for mutual 'like' preferences 
-# Returns a dict: {student_id: set([liked_student_ids, ...])}
-def build_likes_graph():
-    graph =  {}
+# Builds an undirected graph of students with mutual 'like' edges 
+def build_mutual_like_graph():
+    G = nx.Graph()
+
+    # Add all students as nodes
+    for s in Student.objects.filter(allocated_group=False):
+        G.add_node(s)
+
+    # Add edge if like is mutual 
     likes = GroupPreference.objects.filter(preference_type="like")
-
     for pref in likes: 
-        graph.setdefault(pref.student_id, set()).add(pref.target_student_id)
+        if GroupPreference.objects.filter(
+            student=pref.target_student, 
+            target_student=pref.student, 
+            preference_type="like"
+        ).exists():
+            G.add_edge(pref.student, pref.target_student)
 
-    return graph
-
-# Obtain list of Student objects that form a mutual-like group
-def find_mutual_like_groups(graph, students):
-    # Map IDs -> Student Objects
-    id_to_student = {s.student_id: s for s in students}
-    student_ids = list(id_to_student.keys())
-
-    # from size 2 up to N
-    for r in range(2, len(student_ids) + 1):
-        for combo in combinations(student_ids, r):
-            # Check if all pairs in the combo are mutual likes 
-            is_group = True 
-            for a, b in combinations(combo, 2):
-                if not (
-                    b in graph.get(a, set()) and
-                    a in graph.get(b, set())
-                ):
-                    is_group = False 
-                    break 
-            if is_group: 
-                yield [id_to_student[sid] for sid in combo]
+    return G
 
 # Generates candidate groups from mutual-like groups, classifies them, returns results
 def generate_suggestions_from_likes():
     # Get students not in a final group
     students = list(Student.objects.filter(allocated_group=False))
-    graph = build_likes_graph()
+    graph = build_mutual_like_graph()
 
     suggestions = []
 
-    for group in find_mutual_like_groups(graph, students):
-        results = classify_group(group)
+    for clique in nx.find_cliques(graph):
+        if len(clique) < 2:
+            continue # Skip, can't have a group of 1 student
+
+        results = classify_group(clique)
+
         for result in results:
-            if result["strength"] != "invalid":
+            if result["strength"] == "invalid":
+                continue 
 
-                suggestions.append({
-                    "students": [s.student_id for s in group],
-                    "project": result["project"].title if result["project"] else None,
-                    "strength": result["strength"],
-                    "has_anti_preference": result["has_anti_preference"],
-                })
+            # --- SAVE SuggestedGroup in the DB ---
+            sg = SuggestedGroup.objects.create(
+                strength=result["strength"],
+                has_anti_preference=result["has_anti_preference"],
+                project=result["project"],
+            )
 
-                # Code here to actually create the SuggestedGroups later
-    
+            # Assign auto-generated name
+            sg.name = f"group_{sg.suggestedgroup_id}"
+            sg.save(update_fields=["name"])
+
+            # Save members in SuggestedGroupMember
+            for s in clique:
+                SuggestedGroupMember.objects.create(
+                    suggested_group=sg,
+                    student=s
+                )
+
+            # Send dict as response
+            suggestions.append({
+                "suggested_group_id": sg.suggestedgroup_id, 
+                "students": [s.student_id for s in clique],
+                "project": result["project"].title, 
+                "strength": result["strength"],
+                "has_anti_preference": result["has_anti_preference"],
+            })
+
     return suggestions
