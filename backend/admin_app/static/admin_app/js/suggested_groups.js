@@ -33,44 +33,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
                 groupMembers.innerHTML = `<div class="members-container"></div>`;
 
-
                 const membersContainer = groupMembers.querySelector(".members-container");
                 //Create a card for each member
-                group.members.forEach(m => {
-                    const div = document.createElement("div");
-                    div.classList.add("card");
-                    div.innerHTML = `
-                        <p><strong>Name:</strong> ${m.student.name}</p>
-                        <p><strong>ID:</strong> ${m.student.student_id}</p>
-                        <p><strong>CWA:</strong> ${m.student.cwa}</p>
-                    `;
-
-                    //Add card to the center panel
-                    membersContainer.appendChild(div);
-                });
+                group.members.forEach(m => membersContainer.appendChild(renderMemberCard(m, group)));
 
                 if (group.project && group.members.length < group.project.capacity)
                 {
-                    const addDiv = document.createElement("div");
-                    addDiv.textContent = "+ Add Student";
-                    addDiv.classList.add("card", "add-student-card");
-                    addDiv.addEventListener("click", () => {
-                        //some code here
-                        alert(`Add student to group ${group.suggested_group_id}`);
-                    })
-
-                    membersContainer.appendChild(addDiv)
+                    membersContainer.appendChild(renderAddStudentCard(group))
                 }
 
-                //Update group information
-                if(group.project)
-                {
-                    projectName.innerHTML = `<p><strong>Project:</strong> ${group.project.title}</p>`
-                    projectCapacity.innerHTML = `<p><strong>Capacity:</strong> ${group.project.capacity}</p>`
-                    projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`
-                }
-            
+                //Update Group Information
+                renderProjectInfo(group);
                 createBtn.disabled = false;
+            })
+            .catch(err => {
+                console.error("Failed to load group:", err);
+                groupTitle.textContent = "Error loading group";
             });
     }
 
@@ -122,4 +100,55 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     });
+
+    function renderMemberCard(m, group) 
+    {
+        const div = document.createElement("div");
+        div.classList.add("card", "member-card");
+
+        // member details
+        div.innerHTML = `
+            <p><strong>Name:</strong> ${m.student.name}</p>
+            <p><strong>ID:</strong> ${m.student.student_id}</p>
+            <p><strong>CWA:</strong> ${m.student.cwa}</p>
+        `;
+
+        // remove button
+        const removeBtn = document.createElement("span");
+        removeBtn.classList.add("remove-btn");
+        removeBtn.innerHTML = "&times;";
+        removeBtn.title = "Remove student";
+        removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            alert(`Remove student ${m.student.student_id} from group ${group.suggestedgroup_id}`);
+        });
+
+        div.appendChild(removeBtn);
+        return div;
+    }
+
+    function renderAddStudentCard(group) 
+    {
+        const addDiv = document.createElement("div");
+        addDiv.textContent = "+ Add Student";
+        addDiv.classList.add("card", "add-student-card");
+        addDiv.addEventListener("click", () => {
+            alert(`Add student to group ${group.suggestedgroup_id}`);
+        });
+        return addDiv;
+    }
+
+    function renderProjectInfo(group) 
+    {
+        if (group.project) 
+        {
+            projectName.innerHTML = `<p><strong>Project:</strong> ${group.project.title}</p>`;
+            projectCapacity.innerHTML = `<p><strong>Capacity:</strong> ${group.project.capacity}</p>`;
+            projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
+        } else {
+            projectName.innerHTML = "";
+            projectCapacity.innerHTML = "";
+            projectHost.innerHTML = "";
+        }
+    }
 });
