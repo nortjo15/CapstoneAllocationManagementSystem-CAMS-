@@ -3,6 +3,10 @@ from django.views.generic import ListView
 from admin_app.models import *
 from admin_app.serializers import *
 from rest_framework import generics  
+from rest_framework.views import APIView
+from admin_app.group_utils import generate_suggestions_from_likes
+from rest_framework.response import Response
+from rest_framework import status
 
 # Webpage
 class GroupListView(LoginRequiredMixin, ListView):
@@ -25,3 +29,11 @@ class SuggestedGroupDetailView(generics.RetrieveAPIView):
 class SuggestedGroupMemberListCreateView(generics.ListCreateAPIView):
     queryset = SuggestedGroupMember.objects.all()
     serializer_class = SuggestedGroupMemberSerializer
+
+# GenerateSuggestions View
+class GenerateSuggestionsView(APIView):
+    def post(self, request, *args, **kwargs):
+        # Run generator
+        suggestions = generate_suggestions_from_likes()
+
+        return Response(suggestions, status=status.HTTP_201_CREATED)

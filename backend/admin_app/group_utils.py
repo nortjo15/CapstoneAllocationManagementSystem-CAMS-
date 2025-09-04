@@ -76,14 +76,8 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
     for project_id in common_projects:
         project = projects.get(project_id) 
 
-        # If group is too large, skip it 
-        if len(students) > project.capacity:
-            results.append({
-                "project": project,
-                "strength": "weak",
-                "has_anti_preference": has_anti
-            })
-            continue 
+        if not project:
+            continue
 
         if mutual_like_count == pair_count: 
             ref_id = ids[0] # take first student as reference
@@ -119,6 +113,7 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
                         continue 
                     else: 
                         # Medium group for projects at preference 3 onwards
+                        # Also catches overfill group
                         results.append({
                             "project": project,
                             "strength": "medium",
@@ -209,16 +204,20 @@ def build_mutual_like_graph():
     )
     like_set = set(likes)
 
-   # Add undirected edge if mutual
-    for a, b in like_set: 
-        if (b, a) in like_set: 
+    # Add undirected edge if mutual
+    for a, b in like_set:
+        if a in id_to_student and b in id_to_student and (b, a) in like_set:
             G.add_edge(id_to_student[a], id_to_student[b])
-
+    
     return G
 
 # Generates candidate groups from mutual-like groups, classifies them, returns results
 @transaction.atomic
 def generate_suggestions_from_likes():
+    # Clear out old suggested groups & members
+    SuggestedGroupMember.objects.all().delete()
+    SuggestedGroup.objects.all().delete()
+
     # Get students not in a final group
     students = list(Student.objects.filter(allocated_group=False))
     graph = build_mutual_like_graph()

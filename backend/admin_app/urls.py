@@ -77,8 +77,9 @@ urlpatterns = [
     path("suggested_groups/", SuggestedGroupListCreateView.as_view(), name="suggested-group-list"),
     path("suggested_groups/<int:suggestedgroup_id>/", SuggestedGroupDetailView.as_view(), name="suggested-group-detail"),
     path("suggested_members/", SuggestedGroupMemberListCreateView.as_view(), name="suggested-group-member-list"),
+    path("generate_suggestions/", GenerateSuggestionsView.as_view(), name="generate_suggestions")
 
-    # Webpage
+    # -- Webpage
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views
     path('settings/', settings_view, name='settings'),
