@@ -49,6 +49,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     membersContainer.appendChild(div);
                 });
 
+                if (group.project && group.members.length < group.project.capacity)
+                {
+                    const addDiv = document.createElement("div");
+                    addDiv.textContent = "+ Add Student";
+                    addDiv.classList.add("card", "add-student-card");
+                    addDiv.addEventListener("click", () => {
+                        //some code here
+                        alert(`Add student to group ${group.suggested_group_id}`);
+                    })
+
+                    membersContainer.appendChild(addDiv)
+                }
+
                 //Update group information
                 if(group.project)
                 {

@@ -116,3 +116,16 @@
 .group-extra {
     padding-left: 10px;
 }
+
+.add-student-card {
+    border: 2px dashed #999;
+    background: #fafafa;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-student-card:hover {
+    background: #f0f0f0;
+}
