@@ -87,6 +87,16 @@
     background-color: #1b515f;
 }
 
+.member-card .secondary-btn.has-content {
+    background-color: #28a745
+}
+
+.member-card .secondary-btn.has-content:hover 
+{
+    background-color: #186b2c
+}
+
+
 .remove-btn {
     position: absolute;
     top: 4px;

@@ -131,6 +131,13 @@ document.addEventListener("DOMContentLoaded", () => {
         notesBtn.classList.add("secondary-btn");
         notesBtn.textContent = "Notes";
         notesBtn.title = ("Open notes");
+
+        //Indicate if notes exist
+        if (m.student.notes && m.student.notes.trim() != "")
+        {
+            notesBtn.classList.add("has-content");
+        }
+
         notesBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             openNotesModal({
