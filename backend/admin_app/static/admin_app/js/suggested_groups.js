@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`/api/suggested_groups/${id}/`)
             .then(res => res.json())
             .then(group => {
+
+                console.log(group)
                 // Clear active buttons, then assign to the new button
                 groupsUl.querySelectorAll("button").forEach(b => b.classList.remove("active"))
                 if (btn)
@@ -128,12 +130,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const notesBtn = document.createElement("span");
         notesBtn.classList.add("secondary-btn");
         notesBtn.textContent = "Notes";
-        removeBtn.title = ("Open notes");
-        removeBtn.addEventListener("click", (e) => {
+        notesBtn.title = ("Open notes");
+        notesBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            //Code to open notes button
-            alert(`Open notes for ${m.student.student_id}`);
-        })
+            openNotesModal({
+                dataset: {
+                    studentId: m.student.student_id, 
+                    studentNotes: m.student.notes || ""
+                }
+            });
+        });
 
         // Preferences Button
         const prefBtn = document.createElement("span");
@@ -143,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         prefBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             //Code to open preferences modal
-        })
+        });
 
         div.appendChild(removeBtn);
         div.appendChild(notesBtn);
@@ -174,5 +180,15 @@ document.addEventListener("DOMContentLoaded", () => {
             projectCapacity.innerHTML = "";
             projectHost.innerHTML = "";
         }
+    }
+
+    //If notes form submits, reload current group
+    const notesForm = document.getElementById("notesForm");
+    if (notesForm) {
+        notesForm.addEventListener("submit", () => {
+            if (activeGroupId) {
+                setTimeout(() => loadGroup(activeGroupId), 200)
+            }
+        });
     }
 });
