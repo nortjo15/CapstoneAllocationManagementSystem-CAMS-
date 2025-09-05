@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (notesForm) {
         notesForm.addEventListener("submit", () => {
             if (activeGroupId) {
-                setTimeout(() => loadGroup(activeGroupId), 200)
+                setTimeout(() => loadGroup(activeGroupId), 100)
             }
         });
     }
