@@ -48,7 +48,9 @@ function openRemoveStudentModal(student, group) {
     const confirmBtn = document.getElementById("confirmRemoveBtn");
     const cancelBtn = document.getElementById("cancelRemoveBtn");
     
-    msg.textContent = `Remove ${student.name} (${student.student_id}) from this group?`;
+    msg.innerHTML = `Remove <span class="student-tag">${student.name} 
+        (${student.student_id})</span> from this group?`;
+        
     if (modal) modal.style.display = 'flex';
 
     //Clean Buttons

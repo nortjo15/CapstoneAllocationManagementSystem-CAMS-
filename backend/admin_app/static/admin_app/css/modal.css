@@ -115,3 +115,15 @@
 
 .btn-danger { background: #d9534f; color: white; }
 .btn-danger:hover { background: #c9302c; }
+
+/* ---------- Specific for Add / Remove Student */
+.student-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  background-color: #f0f8ff; 
+  font-weight: bold;
+  color: #007bff;
+  margin: 0 4px;
+}
