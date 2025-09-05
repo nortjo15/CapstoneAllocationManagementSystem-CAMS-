@@ -71,6 +71,21 @@
     padding-right: 25px; /* Space for remove button */
 }
 
+.member-card .secondary-btn {
+    display: inline-block;
+    margin-top: 5px;
+    margin-right: 6px;
+    padding: 5px 10px;
+    background-color: #297b8f;
+    color: #fff;
+    border-radius: 4px;
+    cursor:pointer
+}
+
+.member-card .secondary-btn:hover {
+    background-color: #1b515f;
+}
+
 .remove-btn {
     position: absolute;
     top: 4px;

@@ -120,10 +120,34 @@ document.addEventListener("DOMContentLoaded", () => {
         removeBtn.title = "Remove student";
         removeBtn.addEventListener("click", (e) => {
             e.stopPropagation();
+            //Code to remove student from group goes here
             alert(`Remove student ${m.student.student_id} from group ${group.suggestedgroup_id}`);
         });
 
+        // Notes Button
+        const notesBtn = document.createElement("span");
+        notesBtn.classList.add("secondary-btn");
+        notesBtn.textContent = "Notes";
+        removeBtn.title = ("Open notes");
+        removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            //Code to open notes button
+            alert(`Open notes for ${m.student.student_id}`);
+        })
+
+        // Preferences Button
+        const prefBtn = document.createElement("span");
+        prefBtn.classList.add("secondary-btn");
+        prefBtn.textContent = "Preferences";
+        prefBtn.title = ("Open preferences");
+        prefBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            //Code to open preferences modal
+        })
+
         div.appendChild(removeBtn);
+        div.appendChild(notesBtn);
+        div.appendChild(prefBtn);
         return div;
     }
 
