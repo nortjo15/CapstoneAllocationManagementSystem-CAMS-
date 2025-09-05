@@ -11,7 +11,7 @@ from rest_framework import status
 # Webpage
 class GroupListView(LoginRequiredMixin, ListView):
     model = SuggestedGroup
-    template_name = "suggested_groups_view.html"  
+    template_name = "students/suggested_groups_view.html"  
     context_object_name = "suggested_groups"
 
 # List + create suggested groups

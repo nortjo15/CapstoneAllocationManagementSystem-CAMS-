@@ -1,6 +1,4 @@
-/*
-Minimalist CSS implementation for the modal pop-up
-Without CSS just appends it to the bottom of the page */
+/* CSS implementation for the modal pop-ups */
 .modal {
     position: fixed;
     top: 0;

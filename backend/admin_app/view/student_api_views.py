@@ -26,7 +26,7 @@ def student_page(request):
 
     selected_majors = request.GET.getlist("major")
 
-    return render(request, "student_view.html",
+    return render(request, "students/student_view.html",
         {
             "add_form": addStudentForm(),
             "import_form": importStudentForm(),

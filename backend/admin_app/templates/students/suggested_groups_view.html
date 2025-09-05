@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'admin_app/css/modal.css' %}">
 <meta name="csrf-token" content="{{ csrf_token }}">
 
-{% include "student_create_modal.html" %}
+{% include "students/student_create_modal.html" %}
 
 <div class="container-grid">
     <!--Left Panel: Suggested Groups List -->
@@ -47,8 +47,8 @@
 
 
 {% load static %}
-<script src="{% static 'admin_app/js/suggested_groups.js' %}"></script>
-<script src="{% static 'admin_app/js/modal_function.js' %}"></script>
-<script src="{% static 'admin_app/js/add_notes.js' %}"></script>
+<script src="{% static 'admin_app/js/students/suggested_groups.js' %}"></script>
+<script src="{% static 'admin_app/js/students/modal_function.js' %}"></script>
+<script src="{% static 'admin_app/js/students/add_notes.js' %}"></script>
 
 {% endblock %}

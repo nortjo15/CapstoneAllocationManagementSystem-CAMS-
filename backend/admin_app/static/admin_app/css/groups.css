@@ -96,7 +96,6 @@
     background-color: #186b2c
 }
 
-
 .remove-btn {
     position: absolute;
     top: 4px;
@@ -164,6 +163,8 @@
 
 .add-student-card {
     border: 2px dashed #999;
+    border-color: #28a745;
+    color: #28a745;
     background: #fafafa;
     text-align: center;
     font-weight: bold;

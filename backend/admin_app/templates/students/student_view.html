@@ -90,18 +90,18 @@ tr:hover {
 </button>
 
 <!-- Include htmls -->
-{% include "student_filters.html" with filter_target_url=filter_target_url degree_major_pairs=degree_major_pairs selected_majors=selected_majors %}
-{% include 'student_create_modal.html' with form=add_form %}
-{% include 'student_importCSV.html' with form=import_form %}
-{% include 'student_table.html' %}
+{% include "students/student_filters.html" with filter_target_url=filter_target_url degree_major_pairs=degree_major_pairs selected_majors=selected_majors %}
+{% include 'students/student_create_modal.html' with form=add_form %}
+{% include 'students/student_importCSV.html' with form=import_form %}
+{% include 'students/student_table.html' %}
 
 <!-- Import Scripts -->
 {% load static %}
-<script src="{% static 'admin_app/js/modal_function.js' %}"></script>
-<script src="{% static 'admin_app/js/student_table.js' %}"></script>
-<script src="{% static 'admin_app/js/student_filters.js' %}"></script>
-<script src="{% static 'admin_app/js/add_notes.js' %}"></script>
-<script src="{% static 'admin_app/js/import_students.js' %}"></script>
-<script src="{% static 'admin_app/js/add_student.js' %}"></script>
+<script src="{% static 'admin_app/js/students/modal_function.js' %}"></script>
+<script src="{% static 'admin_app/js/students/student_table.js' %}"></script>
+<script src="{% static 'admin_app/js/students/student_filters.js' %}"></script>
+<script src="{% static 'admin_app/js/students/add_notes.js' %}"></script>
+<script src="{% static 'admin_app/js/students/import_students.js' %}"></script>
+<script src="{% static 'admin_app/js/students/add_student.js' %}"></script>
 
 {% endblock content %}
