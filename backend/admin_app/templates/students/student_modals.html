@@ -13,7 +13,9 @@
             {{ add_form.as_p }} <!-- Render fields -->
             <!-- Validation Errors display -->
             <div id="addStudentErrors" style="color:red"></div>
-            <button type="submit" id="addStudentSubmit">Save</button>
+            <div class="modal-actions">
+                <button class="btn-primary" type="submit" id="addStudentSubmit">Save</button>
+            </div>
         </form>
      </div>
  </div>
@@ -29,7 +31,9 @@
             {% csrf_token %}
             <textarea id="notesTextarea" rows="6" style="width:100%"></textarea>
             <br>
-            <button type="submit">Save</button>
+            <div class="modal-actions">
+                <button class="btn-primary" type="submit">Save</button>
+            </div>
         </form>
     </div>
  </div>

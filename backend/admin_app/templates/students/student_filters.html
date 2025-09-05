@@ -71,19 +71,17 @@
                 <option value="false" {% if group_status == 'false' %}selected{% endif %}>Unassigned Students Only</option>
             </select>
             <br><br>
-
-            <!-- 
-            Submit filters button 
-            Goes to the same page without any GET parameters
-            -->
-            <button type="submit">Filter</button>
         </form>
-
+                
         <!-- Reset button that clears all filters -->
-        <button
-            type="button"
-            id="reset-btn">
-            Reset
-        </button>
+        <div class="modal-actions">
+            <button class="btn-primary" type="submit">Filter</button>
+            <button
+                type="button"
+                class="btn-secondary"
+                id="reset-btn">
+                Reset
+            </button>
+        </div>
     </div>
 </div>  
