@@ -24,6 +24,24 @@ function openNotesModal(button)
     modal.dataset.studentId = button.dataset.studentId;
 }
 
+function openPreferenceModal(student)
+{
+    const modal = document.getElementById("preferencesModal");
+    const list = document.getElementById("preferencesList");
+
+    if (modal) modal.style.display = "flex";
+
+    //Clear old list
+    list.innerHTML = "";
+
+    //Populate ranked preferences
+    student.preferences.forEach((pref, idx) => {
+        const li = document.createElement("li");
+        li.textContent = `${idx + 1}. ${pref.project_title}`;
+        list.appendChild(li);
+    });
+}
+
 // Attach close + outside click for any modal
 function setupModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -50,3 +68,4 @@ setupModal("addStudentModal");
 setupModal("importModal");
 setupModal("filterModal");
 setupModal("notesModal");
+setupModal("preferencesModal")

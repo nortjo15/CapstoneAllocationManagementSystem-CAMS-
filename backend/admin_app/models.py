@@ -86,7 +86,7 @@ class Project(models.Model):
 # Stores information about a Student's Project Preference
 # Foreign Key to Student & Project
 class ProjectPreference(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="preferences")
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     rank = models.PositiveBigIntegerField(validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True) 

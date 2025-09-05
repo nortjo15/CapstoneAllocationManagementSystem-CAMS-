@@ -154,6 +154,22 @@ document.addEventListener("DOMContentLoaded", () => {
         prefBtn.classList.add("secondary-btn");
         prefBtn.textContent = "Preferences";
         prefBtn.title = ("Open preferences");
+
+        //Disable button if no preferences
+        if (!m.student.preferences || m.student.preferences.length == 0) 
+        {
+            prefBtn.classList.add("disabled");
+            prefBtn.style.opacity = "0.5";
+            prefBtn.style.cursor = "not-allowed";
+        }
+        else 
+        {
+            prefBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openPreferenceModal(m.student);
+            })
+        }
+
         prefBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             //Code to open preferences modal

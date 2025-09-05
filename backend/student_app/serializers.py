@@ -2,6 +2,13 @@ from rest_framework import serializers
 from student_app.models import *
 from admin_app.models import *
 
+class ProjectPreferenceNestedSerializer(serializers.ModelSerializer):
+    project_title = serializers.CharField(source="project.title", read_only=True)
+
+    class Meta:
+        model = ProjectPreference
+        fields = ["rank", "project_title"]
+
 class MajorSerializer(serializers.ModelSerializer):
     """Serializer for Major model (minimal fields needed for display)."""
 
@@ -18,6 +25,7 @@ class NullableFloatField(serializers.FloatField):
 
 class StudentSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)
+    preferences = ProjectPreferenceNestedSerializer(many=True, read_only=True) 
 
     class Meta:
         model = Student
