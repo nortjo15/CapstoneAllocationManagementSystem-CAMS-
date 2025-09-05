@@ -42,6 +42,26 @@ function openPreferenceModal(student)
     });
 }
 
+function openRemoveStudentModal(student, group) {
+    const modal = document.getElementById("removeStudentModal");
+    const msg = document.getElementById("removeStudentMessage");
+    const confirmBtn = document.getElementById("confirmRemoveBtn");
+    const cancelBtn = document.getElementById("cancelRemoveBtn");
+    
+    msg.textContent = `Remove ${student.name} (${student.student_id}) from this group?`;
+    if (modal) modal.style.display = 'flex';
+
+    //Clean Buttons
+    confirmBtn.onclick = null;
+    cancelBtn.onclick = null;
+
+    confirmBtn.onclick = () => {
+        removeStudentFromGroup(student, group);
+        modal.style.display = "none";
+    };
+    cancelBtn.onclick = () => modal.style.display = "none";
+}
+
 // Attach close + outside click for any modal
 function setupModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -69,3 +89,4 @@ setupModal("importModal");
 setupModal("filterModal");
 setupModal("notesModal");
 setupModal("preferencesModal")
+setupModal("removeStudentModal")

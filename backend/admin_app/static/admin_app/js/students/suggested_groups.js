@@ -114,4 +114,28 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    function removeStudentFromGroup(student, group) 
+    {
+        fetch(`/api/suggested_groups/${group.suggestedgroup_id}/remove_student/`, 
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ student_id: student.student_id })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to remove student");
+            return res.json();
+        })
+        .then(() => {
+            loadGroup(group.suggestedgroup_id);
+        })
+        .catch(err => console.error(err))
+    }
+
+    //expose
+    window.removeStudentFromGroup = removeStudentFromGroup;
 });

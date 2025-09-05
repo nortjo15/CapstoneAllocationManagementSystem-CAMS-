@@ -19,8 +19,7 @@ function renderMemberCard(m, group)
     removeBtn.title = "Remove student";
     removeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        //Code to remove student from group goes here
-        alert(`Remove student ${m.student.student_id} from group ${group.suggestedgroup_id}`);
+        openRemoveStudentModal(m.student, group);
     });
 
     // Notes Button

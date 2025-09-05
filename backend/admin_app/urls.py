@@ -78,6 +78,7 @@ urlpatterns = [
     path("suggested_groups/<int:suggestedgroup_id>/", SuggestedGroupDetailView.as_view(), name="suggested-group-detail"),
     path("suggested_members/", SuggestedGroupMemberListCreateView.as_view(), name="suggested-group-member-list"),
     path("generate_suggestions/", GenerateSuggestionsView.as_view(), name="generate_suggestions"),
+    path("suggested_groups/<int:pk>/remove_student/", remove_student_from_group),
     # -- Webpage
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views

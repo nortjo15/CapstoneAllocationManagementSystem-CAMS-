@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from admin_app.group_utils import generate_suggestions_from_likes
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 
 # Webpage
 class GroupListView(LoginRequiredMixin, ListView):
@@ -37,3 +39,13 @@ class GenerateSuggestionsView(APIView):
         suggestions = generate_suggestions_from_likes()
 
         return Response(suggestions, status=status.HTTP_201_CREATED)
+    
+@api_view(["POST"])
+def remove_student_from_group(request, pk):
+    group = get_object_or_404(SuggestedGroup, pk=pk)
+    student_id = request.data.get("student_id")
+    SuggestedGroupMember.objects.filter(
+        suggested_group=group,
+        student__student_id=student_id
+    ).delete()
+    return Response({"status": "removed"})
