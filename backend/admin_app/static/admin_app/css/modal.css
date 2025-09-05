@@ -88,8 +88,3 @@ Without CSS just appends it to the bottom of the page */
 .modal-list li {
   margin-bottom: 6px;
 }
-
-#importStudentForm input[type="file"] {
-    display: block;
-    margin-top: 5px;
-}
