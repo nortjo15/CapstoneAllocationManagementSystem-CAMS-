@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 activeGroupId = group.suggestedgroup_id;
-                groupTitle.textContent = `Group ${displayNum}`;
+                groupTitle.textContent = "";
                 //groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
                 groupMembers.innerHTML = `<div class="members-container"></div>`;
 
@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 //Update Group Information
                 renderProjectInfo(group);
+                //CWA Information
+                renderCWARange(group);
             })
             .catch(err => {
                 console.error("Failed to load group:", err);
@@ -190,13 +192,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (size !== capacity)
             {
                 projectCapacity.querySelector("p").style.color = "red";
-                groupSize.style.color = "red";
+                groupSize.querySelector("p").style.color = "red";
                 createBtn.disabled = true;
             }
             else 
             {
                 projectCapacity.querySelector("p").style.color = "";
-                groupSize.style.color = "";
+                groupSize.querySelector("p").style.color = "";
                 createBtn.disabled = false;
             }
         } 
@@ -205,6 +207,29 @@ document.addEventListener("DOMContentLoaded", () => {
             projectName.innerHTML = "";
             projectCapacity.innerHTML = "";
             projectHost.innerHTML = "";
+        }
+    }
+
+    function renderCWARange(group)
+    {
+        if (group.members.length > 0)
+        {
+            //Clear old CWA Range
+            const existing = document.getElementById("cwa-range");
+            if (existing) existing.remove();
+
+            const cwas = group.members.map(m => m.student.cwa).filter(c => c!= null);
+            if (cwas.length > 0)
+            {
+                const minCwa = Math.min(...cwas);
+                const maxCwa = Math.max(...cwas);
+
+                const cwaElem = document.createElement("p");
+                cwaElem.id = "cwa-range";
+                cwaElem.innerHTML = `<strong>CWA Range:</strong> ${minCwa} - ${maxCwa}`;
+
+                groupSize.appendChild(cwaElem);
+            }
         }
     }
 
