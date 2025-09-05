@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const groupsUl = document.getElementById("groups-ul");
     const groupTitle = document.getElementById("group-title");
-    const groupMeta = document.getElementById("group-meta");
+    const groupSize = document.getElementById("group-size");
     const groupMembers = document.getElementById("group-members")
     const createBtn = document.getElementById("create-group-btn")
     const projectName = document.getElementById("group-project-name")
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 activeGroupId = group.suggestedgroup_id;
                 groupTitle.textContent = `Group ${displayNum}`;
-                groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
+                //groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
                 groupMembers.innerHTML = `<div class="members-container"></div>`;
 
                 const membersContainer = groupMembers.querySelector(".members-container");
@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 //Update Group Information
                 renderProjectInfo(group);
-                createBtn.disabled = false;
             })
             .catch(err => {
                 console.error("Failed to load group:", err);
@@ -177,12 +176,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderProjectInfo(group) 
     {
+        const size = group.members.length
+        const capacity = group.project.capacity
+        groupSize.innerHTML = `<p><strong>Group Size:</strong> ${size}</p>`
+
         if (group.project) 
         {
             projectName.innerHTML = `<p><strong>Project:</strong> ${group.project.title}</p>`;
-            projectCapacity.innerHTML = `<p><strong>Capacity:</strong> ${group.project.capacity}</p>`;
+            projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
             projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
-        } else {
+
+            //See if there's a mismatch in groupSize & Capacity
+            if (size !== capacity)
+            {
+                projectCapacity.querySelector("p").style.color = "red";
+                groupSize.style.color = "red";
+                createBtn.disabled = true;
+            }
+            else 
+            {
+                projectCapacity.querySelector("p").style.color = "";
+                groupSize.style.color = "";
+                createBtn.disabled = false;
+            }
+        } 
+        else 
+        {
             projectName.innerHTML = "";
             projectCapacity.innerHTML = "";
             projectHost.innerHTML = "";
@@ -194,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (notesForm) {
         notesForm.addEventListener("submit", () => {
             if (activeGroupId) {
-                setTimeout(() => loadGroup(activeGroupId), 100)
+                setTimeout(() => loadGroup(activeGroupId), 200)
             }
         });
     }
