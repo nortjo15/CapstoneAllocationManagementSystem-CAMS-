@@ -57,7 +57,7 @@
 }
 
 .card {
-    border: 1px solid #ddd;
+    border: 1px solid #5c5b5b;
     border-radius: 4px;
     padding: 6px;
     margin: 5px 0;
@@ -69,6 +69,7 @@
 .member-card {
     position: relative;
     padding-right: 25px; /* Space for remove button */
+    padding-left: 10px;
 }
 
 .member-card .secondary-btn {
