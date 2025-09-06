@@ -5,6 +5,15 @@ function fetchStudents(params = "") {
             const tbody = document.getElementById("studentsTableBody");
             tbody.innerHTML = "";
 
+            //Display message if there's no students
+            if (data.length === 0)
+            {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="7" style="text-align:center;">No Students Found</td>`;
+                tbody.appendChild(tr);
+                return;
+            }
+
             data.forEach(student => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
