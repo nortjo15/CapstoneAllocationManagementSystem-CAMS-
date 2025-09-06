@@ -76,7 +76,13 @@ if (filterForm) {
             }
         }
 
-        fetchStudents("studentsTableBody", "?" + params.toString());
+        // decide target
+        let targetId = "studentsTableBody";
+        if (document.getElementById("studentsTableBodyModal")) {
+            targetId = "studentsTableBodyModal";
+        }
+
+        fetchStudents(targetId, "?" + params.toString());
 
         //Close modal upon success
         const filterModal = document.getElementById("filterModal");
@@ -91,6 +97,12 @@ if (resetBtn) {
         filterForm.reset();
         cwaError.textContent = "";
         if (filterBtn) filterBtn.disabled = false;
-        fetchStudents("studentsTableBody"); //Reload
+        
+        let targetId = "studentsTableBody";
+        if (document.getElementById("studentsTableBodyModal")) {
+            targetId = "studentsTableBodyModal";
+        }
+
+        fetchStudents(targetId); //Reload
     });
 }

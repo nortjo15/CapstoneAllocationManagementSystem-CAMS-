@@ -8,7 +8,7 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 
 {% include "students/student_modals.html" %}
-{% include "students/student_filters.html" %}
+{% include "students/student_filters.html" with filter_target_url=filter_target_url degree_major_pairs=degree_major_pairs selected_majors=selected_majors %}
 
 <div class="container-grid">
     <!--Left Panel: Suggested Groups List -->
