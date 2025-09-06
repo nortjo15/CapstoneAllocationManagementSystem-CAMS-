@@ -15,7 +15,8 @@ function fetchStudents(params = "") {
                     <td>${student.application_submitted ? "Yes" : "No"}</td>
                     <td>${student.allocated_group ? "Yes" : "No"}</td>
                     <td>
-                        <button class="notes-btn ${student.notes ? "btn-success" : "btn-secondary"}"
+                        <button 
+                                class="${student.notes ? "btn-primary" : "btn-secondary"}"
                                 data-student-id="${student.student_id}"
                                 data-student-notes="${student.notes || ""}"
                                 onclick="openNotesModal(this)">
