@@ -155,10 +155,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 1.1rem;
 }
 
 .student-modal th {
-    background-color: #667eea;
+    background-color: #000000;
     color: white;
 }
 
