@@ -137,7 +137,13 @@ class StudentNotesUpdateAPIView(generics.UpdateAPIView):
 class StudentFilter(filters.FilterSet):
     cwa_min = filters.NumberFilter(field_name="cwa", lookup_expr="gte")
     cwa_max = filters.NumberFilter(field_name="cwa", lookup_expr="lte")
-    major = filters.BaseInFilter(field_name="major__id", lookup_expr="in")
+
+    major = filters.ModelMultipleChoiceFilter(
+        field_name="major",
+        queryset=Major.objects.all(),
+        to_field_name="id"
+    )
+    
     application_submitted = filters.BooleanFilter(field_name="application_submitted")
     allocated_group = filters.BooleanFilter(field_name="allocated_group")
 
@@ -150,7 +156,7 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
     GET  /api/students/  → list students
     POST /api/students/ → create student
     """
-    queryset = Student.objects.all().select_related("major")
+    queryset = Student.objects.all().select_related("major").prefetch_related("preferences__project")
     serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
