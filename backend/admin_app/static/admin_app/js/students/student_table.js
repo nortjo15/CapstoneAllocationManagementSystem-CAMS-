@@ -63,3 +63,6 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
         })
         .catch(err => console.error("Failed to fetch students", err));
 }
+
+//Callable from elsewhere
+window.fetchStudents = fetchStudents;
