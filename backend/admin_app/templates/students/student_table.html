@@ -1,16 +1,32 @@
-<div class="scroll-container">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>CWA</th>
-                <th>Major</th>
-                <th>Submitted</th> <!-- Add a conditional to this -->
-                <th>Allocated</th> <!-- Add a conditional to this -->
-                <th>Notes</th>
-            </tr>
-        </thead>
-        <tbody id="studentsTableBody"></tbody>
-    </table>
+<div class="container-grid">
+    <!-- Left Panel -->
+    <div class="panel">
+        <h3>Students</h3>
+        <button class="btn-primary" onclick="openModal()">Add Student</button>
+        <button class="btn-primary" onclick="openImportModal()">Import Students</button>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="panel">
+        <div class="top-bar">
+            <button class="btn-primary" onclick="openFilterModal()">Open Filters</button>
+        </div>
+
+        <div class="scroll-container">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>CWA</th>
+                        <th>Major</th>
+                        <th>Submitted</th>
+                        <th>Allocated</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
 </div>

@@ -61,10 +61,12 @@ if (filterForm) {
         const params = new URLSearchParams();
 
         const majors = formData.getAll("major");
-        if(majors.length > 0)
-        {
-            params.append("major", majors.join(","));
-        }
+        majors.forEach(m => {
+            if (m && m.trim() !== "") 
+            {
+                params.append("major", m);
+            }
+        });
 
         for (const [key, value] of formData.entries()) 
         {

@@ -14,40 +14,6 @@
 {% endblock styles %}
 
 {% block content %}
-<div class="container-grid">
-    <!-- Left Panel -->
-    <div class="panel">
-        <h3>Students</h3>
-        <button class="btn-primary" onclick="openModal()">Add Student</button>
-        <button class="btn-primary" onclick="openImportModal()">Import Students</button>
-    </div>
-
-    <!-- Main Panel -->
-    <div class="panel">
-        <div class="top-bar">
-            <button class="btn-primary" onclick="openFilterModal()">Open Filters</button>
-        </div>
-
-        <div class="scroll-container">
-            <table class="student-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>CWA</th>
-                        <th>Major</th>
-                        <th>Submitted</th>
-                        <th>Allocated</th>
-                        <th>Notes</th>
-                    </tr>
-                </thead>
-                <tbody id="studentsTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-
 <!-- Include htmls -->
 {% include "students/student_filters.html" with filter_target_url=filter_target_url degree_major_pairs=degree_major_pairs selected_majors=selected_majors %}
 {% include 'students/student_modals.html' with form=add_form %}
