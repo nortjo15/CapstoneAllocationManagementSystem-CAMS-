@@ -95,7 +95,7 @@ if (addStudentForm) {
             alert("Student created successfully!");
             addStudentForm.reset();
             if (addStudentModal) addStudentModal.style.display = "none";
-            fetchStudents(); // reload table
+            fetchStudents("studentsTableBody"); // reload table
         })
         .catch(err => {
             console.error("Failed to create student", err);

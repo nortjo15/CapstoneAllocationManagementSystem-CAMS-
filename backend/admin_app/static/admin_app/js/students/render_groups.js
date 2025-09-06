@@ -77,7 +77,6 @@ function renderAddStudentCard(group)
     addDiv.textContent = "+ Add Student";
     addDiv.classList.add("card", "add-student-card");
     addDiv.addEventListener("click", () => {
-        //Here
         openStudentModal();
     });
     return addDiv;

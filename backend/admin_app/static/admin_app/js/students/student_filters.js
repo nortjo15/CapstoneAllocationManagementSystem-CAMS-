@@ -76,7 +76,7 @@ if (filterForm) {
             }
         }
 
-        fetchStudents("?" + params.toString());
+        fetchStudents("studentsTableBody", "?" + params.toString());
 
         //Close modal upon success
         const filterModal = document.getElementById("filterModal");
@@ -91,6 +91,6 @@ if (resetBtn) {
         filterForm.reset();
         cwaError.textContent = "";
         if (filterBtn) filterBtn.disabled = false;
-        fetchStudents(); //Reload
+        fetchStudents("studentsTableBody"); //Reload
     });
 }

@@ -1,8 +1,8 @@
-function fetchStudents(params = "") {
+function fetchStudents(targetId = "studentsTableBody", params = "") {
     fetch(`/api/students/${params}`)
         .then(res => res.json())
         .then(data => {
-            const tbody = document.getElementById("studentsTableBody");
+            const tbody = document.getElementById(targetId);
             tbody.innerHTML = "";
 
             //Display message if there's no students

@@ -71,13 +71,13 @@ if (importForm) {
 if (importCloseBtn) {
     importCloseBtn.onclick = () => {
         importModal.style.display = "none";
-        fetchStudents(); // reload table when actively closed
+        fetchStudents("studentsTableBody"); // reload table when actively closed
     };
 }
 
 window.onclick = (e) => {
     if (e.target === importModal) {
         importModal.style.display = "none";
-        fetchStudents(); // reload table when clicking outside
+        fetchStudents("studentsTableBody"); // reload table when clicking outside
     }
 };
