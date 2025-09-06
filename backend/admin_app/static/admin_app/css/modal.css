@@ -9,9 +9,21 @@
     justify-content: center; 
     align-items: center;
     background-color: rgba(0,0,0,0.4);
-    z-index: 1000;
     font-family: Arial, sans-serif;
     font-size: 1.2rem;
+}
+
+#studentModal {
+  z-index: 1000;
+}
+
+/* Other modals should appear on top */
+#notesModal,
+#preferencesModal,
+#removeStudentModal,
+#filterModal
+{
+  z-index: 1100;
 }
 
 .modal-content {
@@ -152,4 +164,34 @@
   font-weight: bold;
   color: #007bff;
   margin: 0 4px;
+}
+
+.student-modal table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+}
+
+.student-modal th,
+.student-modal td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.student-modal th {
+    background-color: #667eea;
+    color: white;
+}
+
+.student-modal tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.student-modal tr:hover {
+    background-color: #c7cdfd;
 }

@@ -8,6 +8,7 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 
 {% include "students/student_modals.html" %}
+{% include "students/student_filters.html" %}
 
 <div class="container-grid">
     <!--Left Panel: Suggested Groups List -->
@@ -47,6 +48,7 @@
 
 
 {% load static %}
+<script src="{% static 'admin_app/js/students/student_filters.js' %}"></script>
 <script src="{% static 'admin_app/js/students/student_table.js' %}"></script>
 <script src="{% static 'admin_app/js/students/render_groups.js' %}"></script>
 <script src="{% static 'admin_app/js/students/suggested_groups.js' %}"></script>
