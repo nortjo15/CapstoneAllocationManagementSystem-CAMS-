@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
     //Create button skeleton
     createBtn.addEventListener("click", () => {
         if (activeGroupId) {
-            console.log("Create group from suggested: ", activeGroupId);
             alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
         }
     });

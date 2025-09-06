@@ -17,17 +17,17 @@
     overflow: hidden;
 }
 
+.panel .btn-primary
+{
+    margin-bottom: 6px;
+    border: 1px solid #222d67;
+}
+
 .panel h3 {
     margin-top: 0;
     margin-bottom: 10px;
     padding-bottom: 5px;
     border-bottom: 2px solid #ccc;
-}
-
-.panel:first-child button.btn-primary {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
 }
 
 .top-bar {

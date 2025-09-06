@@ -24,7 +24,7 @@ function renderMemberCard(m, group)
 
     // Notes Button
     const notesBtn = document.createElement("span");
-    notesBtn.classList.add("secondary-btn");
+    notesBtn.classList.add("btn", "btn-secondary");
     notesBtn.textContent = "Notes";
     notesBtn.title = ("Open notes");
 
@@ -46,14 +46,14 @@ function renderMemberCard(m, group)
 
     // Preferences Button
     const prefBtn = document.createElement("span");
-    prefBtn.classList.add("secondary-btn");
+    prefBtn.classList.add("btn", "btn-secondary");
     prefBtn.textContent = "Preferences";
     prefBtn.title = ("Open preferences");
 
     //Disable button if no preferences
     if (!m.student.preferences || m.student.preferences.length == 0) 
     {
-        prefBtn.classList.add("disabled");
+        prefBtn.disabled = true;
         prefBtn.style.opacity = "0.5";
         prefBtn.style.cursor = "not-allowed";
     }

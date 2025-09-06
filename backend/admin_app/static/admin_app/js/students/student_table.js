@@ -29,7 +29,9 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
                 const tdNotes = document.createElement("td");
                 const notesBtn = document.createElement("button");
                 notesBtn.textContent = "Notes";
-                notesBtn.className = student.notes ? "btn-primary" : "btn-secondary";
+                notesBtn.className = student.notes 
+                    ? "btn btn-primary" 
+                    : "btn btn-secondary";
                 notesBtn.dataset.studentId = student.student_id;
                 notesBtn.dataset.studentNotes = student.notes || "";
                 notesBtn.addEventListener("click", () => openNotesModal(notesBtn));
@@ -43,7 +45,7 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
 
                 if (student.preferences && student.preferences.length > 0)
                 {
-                    prefsBtn.className = "btn-primary";
+                    prefsBtn.className = "btn btn-secondary";
                     prefsBtn.addEventListener("click", (e) => {
                         e.stopPropagation();
                         openPreferenceModal(student);
@@ -51,7 +53,7 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
                 }
                 else 
                 {
-                    prefsBtn.className = "btn-primary"; 
+                    prefsBtn.className = "btn btn-secondary"; 
                     prefsBtn.disabled = true;           
                 }
 
