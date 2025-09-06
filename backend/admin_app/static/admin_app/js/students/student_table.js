@@ -63,8 +63,3 @@ function fetchStudents(params = "") {
         })
         .catch(err => console.error("Failed to fetch students", err));
 }
-
-// Load on page load
-document.addEventListener("DOMContentLoaded", () => {
-    fetchStudents();
-})

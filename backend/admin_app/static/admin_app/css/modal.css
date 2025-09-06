@@ -68,6 +68,26 @@
     align-self: flex-end;             
 }
 
+/* For big student table modal */
+.modal.student-modal .modal-content {
+  width: 90%;             
+  height: 80%;            
+  max-width: none;        
+  display: flex;
+  flex-direction: column;
+}
+
+.modal.student-modal .scroll-container {
+  flex: 1;                
+  overflow-y: auto;    
+  padding: 8px;   
+}
+
+.modal.student-modal table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .close-btn {
     position:absolute;
     top: 10px;

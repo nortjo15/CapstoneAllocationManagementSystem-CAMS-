@@ -64,6 +64,14 @@ function openRemoveStudentModal(student, group) {
     cancelBtn.onclick = () => modal.style.display = "none";
 }
 
+//Modal for student table pop-up in groups 
+function openStudentModal()
+{
+    const modal = document.getElementById("studentModal");
+    
+    if (modal) modal.style.display = 'flex';
+}
+
 // Attach close + outside click for any modal
 function setupModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -92,3 +100,4 @@ setupModal("filterModal");
 setupModal("notesModal");
 setupModal("preferencesModal")
 setupModal("removeStudentModal")
+setupModal("studentModal")

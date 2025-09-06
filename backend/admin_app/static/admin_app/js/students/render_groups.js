@@ -77,7 +77,8 @@ function renderAddStudentCard(group)
     addDiv.textContent = "+ Add Student";
     addDiv.classList.add("card", "add-student-card");
     addDiv.addEventListener("click", () => {
-        alert(`Add student to group ${group.suggestedgroup_id}`);
+        //Here
+        openStudentModal();
     });
     return addDiv;
 }
