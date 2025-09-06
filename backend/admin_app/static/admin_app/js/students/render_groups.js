@@ -65,11 +65,6 @@ function renderMemberCard(m, group)
         })
     }
 
-    prefBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        //Code to open preferences modal
-    });
-
     div.appendChild(removeBtn);
     div.appendChild(notesBtn);
     div.appendChild(prefBtn);

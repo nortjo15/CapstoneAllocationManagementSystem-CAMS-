@@ -9,7 +9,7 @@ function fetchStudents(params = "") {
             if (data.length === 0)
             {
                 const tr = document.createElement("tr");
-                tr.innerHTML = `<td colspan="7" style="text-align:center;">No Students Found</td>`;
+                tr.innerHTML = `<td colspan="8" style="text-align:center;">No Students Found</td>`;
                 tbody.appendChild(tr);
                 return;
             }
@@ -23,16 +23,41 @@ function fetchStudents(params = "") {
                     <td>${student.major ? student.major.name : ""}</td>
                     <td>${student.application_submitted ? "Yes" : "No"}</td>
                     <td>${student.allocated_group ? "Yes" : "No"}</td>
-                    <td>
-                        <button 
-                                class="${student.notes ? "btn-primary" : "btn-secondary"}"
-                                data-student-id="${student.student_id}"
-                                data-student-notes="${student.notes || ""}"
-                                onclick="openNotesModal(this)">
-                            Notes
-                        </button>
-                    </td>
-                `;
+                    `;
+
+                //--- Notes Button ---
+                const tdNotes = document.createElement("td");
+                const notesBtn = document.createElement("button");
+                notesBtn.textContent = "Notes";
+                notesBtn.className = student.notes ? "btn-primary" : "btn-secondary";
+                notesBtn.dataset.studentId = student.student_id;
+                notesBtn.dataset.studentNotes = student.notes || "";
+                notesBtn.addEventListener("click", () => openNotesModal(notesBtn));
+                tdNotes.appendChild(notesBtn);
+                tr.appendChild(tdNotes);
+
+                //--- Preferences Button ---
+                const tdPrefs = document.createElement("td");
+                const prefsBtn = document.createElement("button");
+                prefsBtn.textContent = "Preferences";
+
+                if (student.preferences && student.preferences.length > 0)
+                {
+                    prefsBtn.className = "btn-primary";
+                    prefsBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        openPreferenceModal(student);
+                    });
+                }
+                else 
+                {
+                    prefsBtn.className = "btn-primary"; 
+                    prefsBtn.disabled = true;           
+                }
+
+                tdPrefs.appendChild(prefsBtn);
+                tr.appendChild(tdPrefs);
+
                 tbody.appendChild(tr);
             });
         })

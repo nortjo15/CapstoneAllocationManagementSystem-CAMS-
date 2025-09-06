@@ -126,8 +126,10 @@
 }
 
 .btn-primary:disabled {
-    background: #aaa;
-    cursor: not-allowed;
+    background: #aaa !important;
+    cursor: not-allowed !important;
+    color: #fff !important;
+    pointer-events: none;
 }
 
 #group-members {
