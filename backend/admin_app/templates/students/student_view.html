@@ -9,67 +9,44 @@
 {% block styles %}
 
 {% load static %}
+<link rel="stylesheet" href="{% static 'admin_app/css/students.css' %}">
 <link rel="stylesheet" href="{% static 'admin_app/css/modal.css' %}">
-
-<style> 
-table {
-    border-collapse: collapse;
-    width: 100%;
-    max-width: 800px;
-    margin: 20px auto; 
-    font-family: Arial, sans-serif; 
-}
-th, td {
-    border: 1px solid #ddd; 
-    padding: 8px 12px; 
-    text-align: left; 
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis; 
-    white-space: nowrap
-}
-th {
-    background-color: #667eea; 
-    color: white; 
-}
-tr:nth-child(even) {
-    background-color: f4f4f4;
-}
-tr:hover {
-    background-color: c7cdfd;
-}
-
-/* Minimal styling for scrollable */
-.scroll-container {
-    max-height: 500px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-}
-</style> 
 {% endblock styles %}
 
 {% block content %}
-<h1 style="text-align:center;">Student List</h1>
+<div class="container-grid">
+    <!-- Left Panel -->
+    <div class="panel">
+        <h3>Students</h3>
+        <button class="btn-primary" onclick="openModal()">Add Student</button>
+        <button class="btn-primary" onclick="openImportModal()">Import Students</button>
+    </div>
 
-<!-- Button to view filters -->
-<div style="text-align:center; margin: 15px 0;">
-  <button type="button" onclick="openFilterModal()">Open Filters</button>
+    <!-- Main Panel -->
+    <div class="panel">
+        <div class="top-bar">
+            <button class="btn-primary" onclick="openFilterModal()">Open Filters</button>
+        </div>
+
+        <div class="scroll-container">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>CWA</th>
+                        <th>Major</th>
+                        <th>Submitted</th>
+                        <th>Allocated</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
-
-<!-- Add Student, Import Students Options -->
-<br><br>
-<button
-    type="button"
-    onclick="openModal()"
-    style="margin: 10px 0;">+ Add Student
-</button> 
-
-<br>
-<button 
-    type="button"
-    onclick="openImportModal()"
-    style="margin:10px 0;">Import Students
-</button>
 
 <!-- Include htmls -->
 {% include "students/student_filters.html" with filter_target_url=filter_target_url degree_major_pairs=degree_major_pairs selected_majors=selected_majors %}
@@ -85,5 +62,4 @@ tr:hover {
 <script src="{% static 'admin_app/js/students/add_notes.js' %}"></script>
 <script src="{% static 'admin_app/js/students/import_students.js' %}"></script>
 <script src="{% static 'admin_app/js/students/add_student.js' %}"></script>
-
 {% endblock content %}

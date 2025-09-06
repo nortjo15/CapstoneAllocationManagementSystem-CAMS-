@@ -1,0 +1,77 @@
+.container-grid {
+    display: grid;
+    grid-template-columns: 0.4fr 3.5fr;
+    height: 90vh;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 1.1rem;
+}
+
+.panel {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ccc;
+}
+
+.panel:first-child button.btn-primary {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.top-bar {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.scroll-container {
+    max-height: none;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    flex: 1;
+    height: 100%;
+}
+
+.student-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+}
+
+.student-table th,
+.student-table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.student-table th {
+    background-color: #667eea;
+    color: white;
+}
+
+.student-table tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.student-table tr:hover {
+    background-color: #c7cdfd;
+}
