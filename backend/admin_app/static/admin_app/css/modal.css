@@ -116,6 +116,12 @@
 .btn-danger { background: #d9534f; color: white; }
 .btn-danger:hover { background: #c9302c; }
 
+.btn-primary:disabled
+{
+  background: #aaa !important;
+  cursor: not-allowed !important;
+}
+
 /* ---------- Specific for Add / Remove Student */
 .student-tag {
   display: inline-block;
