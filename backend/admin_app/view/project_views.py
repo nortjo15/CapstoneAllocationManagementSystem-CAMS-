@@ -9,3 +9,5 @@ class ProjectListCreateView(generics.ListCreateAPIView):
 class ProjectPreferenceListCreateView(generics.ListCreateAPIView):
     queryset = ProjectPreference.objects.all()
     serializer_class = ProjectPreferenceSerializer
+
+    
