@@ -41,6 +41,7 @@ from .view.admin_views import (
     SendApplicationSuccessView,
     SendAllocationReleasedView,
 )
+from .view.project_views import addProject, project_view
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -66,7 +67,7 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('projects/', ProjectListCreateView.as_view()),
+    path('projects/', project_view, name="project_list"),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
     #Group_views
     path('suggested/', SuggestedGroupListCreateView.as_view()),
