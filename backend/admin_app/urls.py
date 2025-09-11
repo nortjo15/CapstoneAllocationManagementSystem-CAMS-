@@ -25,7 +25,7 @@ from .view.project_views import ProjectListCreateView, ProjectPreferenceListCrea
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
-from .view.round2_views import round2_view
+from .view.round2_views import round2_view, round2_detail_view
 from .view.round_views_restAPI import rounds_api
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
@@ -85,6 +85,8 @@ urlpatterns = [
 
     #Rounds test 2
     path('rounds2/', round2_view, name='round2_view'),
+    path("rounds2/<int:pk>/", round2_detail_view, name='round2_detail'),
+
     #Announcements CRUD
     path('announcements/',              announcement_list,  name='announcement_list'),
     path('announcements/new/',          announcement_create, name='announcement_create'),

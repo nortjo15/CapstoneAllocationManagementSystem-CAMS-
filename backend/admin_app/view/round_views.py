@@ -5,9 +5,3 @@ from django.contrib.auth.decorators import login_required
 #@login_required
 def round_view(request):
    return render(request, "rounds.html")
-
-def round_list(request):
-   rounds = Round.all()
-   return render(request,
-               "rounds.html",
-               {'rounds' : rounds})

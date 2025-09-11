@@ -1,18 +1,36 @@
-{% {% extends "admin_base.html" %}%}
-{% load staticfiles %}
+{% extends "admin_base.html" %}
+{% comment %} {% load staticfiles %} {% endcomment %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}{% endblock %}</title>
+    {% comment %} <title>{% block title %}{% endblock %}</title> {% endcomment %}
 {% comment %} <link href="{% static "../static/admin_app/css/rounds.css" %}" rel="stylesheet"> {% endcomment %}
 </head>
 <body>
     <div id="content">
-        {% block content %}
-        {% endblock %}
-    </div>
-    <div id="menu_bar">
-        <h2>Second Rounds Test</h2>
+    {% block content %}
+        <div id="left-pane">
+            <h2>Rounds</h2>
+            <button>+ Create Round</button>
+            {% for round in rounds %}
+                <div class = "round-item">
+                    <a href="{% url 'admin_app:round2_detail' round.pk %}">
+                        {{ round.round_name }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="right-pane">
+            {% if selected_round %}
+                <h2>{{ selected_round.round_name }}</h2>
+                <p>ID: {{ selected_round.round_id }}</p>
+            {% else %}
+                <p>Select a round from the left to see details.</p>
+            {% endif %}
+        </div>
+    
+    {% endblock %}
     </div>
 </body>
 </html>
