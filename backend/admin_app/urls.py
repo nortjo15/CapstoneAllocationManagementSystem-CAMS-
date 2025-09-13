@@ -18,10 +18,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
-from django.urls import path
+from django.urls import path, include
 
 #Import all required views
-from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
+from .view.project_views import ProjectListCreateView
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
@@ -41,7 +41,7 @@ from .view.admin_views import (
     SendApplicationSuccessView,
     SendAllocationReleasedView,
 )
-from .view.project_views import addProject, project_view
+from .view.project_views import project_view, ProjectListCreateView
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -67,8 +67,9 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('projects/', project_view, name="project_list"),
-    path('preferences/', ProjectPreferenceListCreateView.as_view()),
+    path('projects/', ProjectListCreateView.as_view(), name='projects_api'),
+    path('projectDashboard/', project_view, name='project_dashboard'),
+   
     #Group_views
     path('suggested/', SuggestedGroupListCreateView.as_view()),
     path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
@@ -81,7 +82,7 @@ urlpatterns = [
     path('rounds/', round_view, name='round_view'),
     path('api/rounds/', rounds_api, name='rounds_api_list'),
     path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
-    path('api/projects/', rounds_api, name='projects_api'),
+    
     #Announcements CRUD
     path('announcements/',              announcement_list,  name='announcement_list'),
     path('announcements/new/',          announcement_create, name='announcement_create'),

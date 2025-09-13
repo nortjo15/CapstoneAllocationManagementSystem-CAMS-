@@ -1,0 +1,13 @@
+{% extends "admin_base.html" %}
+{% load static %}
+{% block content %}
+
+{% csrf_token %}
+<body data-projects-api-url="{% url 'api_admin:projects_api' %}">
+    <h1> Project Dashboard </h1>
+    
+    <ul id="projectList"></ul>
+    <script src="{% static 'admin_app/js/project.js' %}"></script>
+<body>
+
+{% endblock %}
