@@ -1,12 +1,18 @@
+import { setButtonLoading } from "./utils.js";
+
 const importForm = document.getElementById("studentImportForm");
 const importModal = document.getElementById("importModal");
 const importCloseBtn = importModal ? importModal.querySelector(".close-btn") : null;
 const importFormErrors = document.getElementById("importFormErrors");
 
+
 if (importForm) {
     importForm.addEventListener("submit", function (e) {
         e.preventDefault();
         importFormErrors.innerHTML = ""; // clear old errors
+
+        const submitBtn = importForm.querySelector("button[type='submit']");
+        if (submitBtn) setButtonLoading(submitBtn, true);
 
         const formData = new FormData(importForm);
         const importUrl = importModal.dataset.importUrl; 
@@ -64,6 +70,10 @@ if (importForm) {
         .catch(err => {
             console.error("Import request failed", err);
             importFormErrors.innerHTML = "<p>Request failed. Check console.</p>";
+        })
+        .finally(() => {
+            const submitBtn = importForm.querySelector("button[type='submit']");
+            if (submitBtn) setButtonLoading(submitBtn, false);
         });
     });
 }
