@@ -11,42 +11,55 @@
 {% include "students/student_modals.html" %}
 {% include "students/student_filters.html" with filter_target_url=filter_target_url degree_major_pairs=degree_major_pairs selected_majors=selected_majors %}
 
-<div class="container-grid">
-    <!--Left Panel: Suggested Groups List -->
-    <div class="panel">
-        <h3>Suggested Groups</h3>
-        <button class="btn btn-primary btn-block" id="generate-suggestions-btn">Generate Suggestions</button>
-        <hr>
-        <ul class="list" id="groups-ul"></ul>
-    </div>
+<div class="tabs">
+    <button class="tab-btn active" data-target="suggested-tab">Suggested Groups</button>
+    <button class="tab-btn" data-target="final-tab">Final Groups</button> 
+</div> 
 
-    <!-- Center Panel: Group Details -->
-    <div class="panel">
-        <!-- Left of Center Panel -->
-        <div class="group-details">
-            <div class="group-info">
-                <h3 id="group-title">Select a group</h3>
-                <div id="group-size"></div>
-            </div>
-
-             <!-- Right of Center Panel -->
-            <div class="group-extra" id="group-extra">
-                <div id="group-project-name"></div>
-                <div id="group-capacity"></div>
-                <div id="group-host"></div>
-            </div> 
+<div id="suggested-tab" class="tab-content active">
+    <div class="container-grid">
+        <!--Left Panel: Suggested Groups List -->
+        <div class="panel">
+            <h3>Suggested Groups</h3>
+            <button class="btn btn-primary btn-block" id="generate-suggestions-btn">Generate Suggestions</button>
+            <hr>
+            <ul class="list" id="groups-ul"></ul>
         </div>
 
-        <div id="group-members"></div>
-    </div>
+        <!-- Center Panel: Group Details -->
+        <div class="panel">
+            <!-- Left of Center Panel -->
+            <div class="group-details">
+                <div class="group-info">
+                    <h3 id="group-title">Select a group</h3>
+                    <div id="group-size"></div>
+                </div>
 
-    <!-- Right Panel: Actions -->
+                <!-- Right of Center Panel -->
+                <div class="group-extra" id="group-extra">
+                    <div id="group-project-name"></div>
+                    <div id="group-capacity"></div>
+                    <div id="group-host"></div>
+                </div> 
+            </div>
+
+            <div id="group-members"></div>
+        </div>
+
+        <!-- Right Panel: Actions -->
+        <div class="panel">
+            <h3>Actions</h3>
+            <button class="btn btn-primary btn-block" id="create-group-btn" disabled>Create Group</button>
+        </div>
+    </div>
+</div> 
+
+<div id="final-tab" class="tab-content">
     <div class="panel">
-        <h3>Actions</h3>
-        <button class="btn btn-primary btn-block" id="create-group-btn" disabled>Create Group</button>
-    </div>
+        <h3>Final Groups</h3>
+        <p>No final groups yet.</p>
+    </div> 
 </div>
-
 
 {% load static %}
 <script type="module" src="{% static 'admin_app/js/students/suggested_groups.js' %}"></script>
