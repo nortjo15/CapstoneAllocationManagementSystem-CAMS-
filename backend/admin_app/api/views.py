@@ -9,7 +9,11 @@ from .serializers import *
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
-    serializers_class = ProjectSerializer
+    serializer_class = ProjectSerializer
+
+class ProjectPreferencesViewSet(viewsets.ModelViewSet):
+    queryset = ProjectPreference.objects.all()
+    serializer_class = ProjectPreferenceSerializer
 
 class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.all()
@@ -18,3 +22,23 @@ class RoundViewSet(viewsets.ModelViewSet):
 class SuggestedGroupViewSet(viewsets.ModelViewSet):
     queryset = SuggestedGroup.objects.all()
     serializer_class = SuggestedGroupSerializer
+
+class SuggestedGroupMemberViewSet(viewsets.ModelViewSet):
+    queryset = SuggestedGroupMember.objects.all()
+    serializer_class = SuggestedGroupMember
+
+class FinalGroupViewSet(viewsets.ModelViewSet):
+    queryset = FinalGroup.objects.all()
+    serializer_class = FinalGroupSerializer
+
+class FinalGroupMemberViewSet(viewsets.ModelViewSet):
+    queryset = FinalGroup.objects.all()
+    serializer_class = FinalGroupMember
+
+class DegreeViewSet(viewsets.ModelViewSet):
+    queryset = Degree.objects.all()
+    serializer_class = DegreeSerializer
+
+class MajorViewSet(viewsets.ModelViewSet):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer

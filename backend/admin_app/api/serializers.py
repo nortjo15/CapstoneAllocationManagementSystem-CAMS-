@@ -41,3 +41,13 @@ class RoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Round
         fields = '__all__'
+
+class DegreeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Degree
+        fields = '__all__'
+
+class MajorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Major
+        fields = '__all__'
