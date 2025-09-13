@@ -25,8 +25,6 @@ from .view.project_views import ProjectListCreateView, ProjectPreferenceListCrea
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
-from .view.round2_views import round2_view, round2_detail_view
-from .view.round_views_restAPI import rounds_api
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
 from .view.announcements_views import (
