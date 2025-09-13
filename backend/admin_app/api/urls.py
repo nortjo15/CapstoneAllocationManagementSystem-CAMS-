@@ -8,4 +8,5 @@ from .views import *
 router = DefaultRouter()
 router.register(r'rounds', RoundViewSet, basename='rounds')
 router.register(r'projects', ProjectViewSet, basename='projects')
+router.register(r'suggested_groups', SuggestedGroupViewSet, basename='suggested_groups')
 urlpatterns = router.urls

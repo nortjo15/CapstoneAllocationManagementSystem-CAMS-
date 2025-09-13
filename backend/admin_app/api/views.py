@@ -14,3 +14,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.all()
     serializer_class = RoundSerializer
+
+class SuggestedGroupViewSet(viewsets.ModelViewSet):
+    queryset = SuggestedGroup.objects.all()
+    serializer_class = SuggestedGroupSerializer
