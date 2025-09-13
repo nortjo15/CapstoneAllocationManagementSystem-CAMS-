@@ -1,8 +1,10 @@
 import csv 
+import datetime
 import os 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from student_app.models import Student, GroupPreference 
 from admin_app.models import (
     Project,
@@ -260,8 +262,12 @@ class Command(BaseCommand):
 
                 # Convert string dates to timezone-aware datetime objects
                 try:
-                    open_date = timezone.datetime.fromisoformat(open_date_str)
-                    close_date = timezone.datetime.fromisoformat(close_date_str)
+                    naive_open_date = datetime.datetime.fromisoformat(open_date_str)
+                    naive_close_date = datetime.datetime.fromisoformat(close_date_str)
+                    open_date = timezone.make_aware(naive_open_date, timezone.get_current_timezone())
+                    close_date = timezone.make_aware(naive_close_date, timezone.get_current_timezone())
+                    # open_date = open_date_str
+                    # close_date = close_date_str
                 except ValueError:
                     self.stdout.write(self.style.ERROR(
                         f"Invalid date format for round on row {reader.line_num}. Skipping."
