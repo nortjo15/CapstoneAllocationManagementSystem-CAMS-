@@ -79,9 +79,9 @@ urlpatterns = [
 
     #Round_views
     path('rounds/', round_view, name='round_view'),
-    path('api/rounds/', rounds_api, name='rounds_api_list'),
-    path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
-    path('api/projects/', rounds_api, name='projects_api'),
+    #path('api/rounds/', rounds_api, name='rounds_api_list'),
+    #path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
+    #path('api/projects/', rounds_api, name='projects_api'),
 
     #Rounds test 2
     path('rounds2/', round2_view, name='round2_view'),

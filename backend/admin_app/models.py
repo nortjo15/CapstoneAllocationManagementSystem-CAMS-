@@ -58,7 +58,7 @@ class Round(models.Model):
         ('closed', 'Closed'),
         ('upcoming', 'Upcoming'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='upcoming')
     
     open_date = models.DateTimeField()
     close_date = models.DateTimeField()

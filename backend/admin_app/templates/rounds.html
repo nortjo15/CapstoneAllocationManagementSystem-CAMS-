@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div id="left-pane">
-            <h1>Project Rounds</h1>
+            <h1>Capstone Rounds</h1>
             <button id="create-new-round-btn">
                 + Create New Round
             </button>
@@ -20,8 +20,7 @@
 
 
         <div id="right-pane">
-            <h2 id="right-pane-title">Select a Round</h2>
-            
+            <h1 id='right-pane-title'></h1>
             <div id="round-details-view">
                 <form id="edit-round-form">
                     {% csrf_token %}
@@ -37,6 +36,10 @@
                     <div>
                         <label for="edit-close-date">Close Date</label>
                         <input type="datetime-local" id="edit-close-date">
+                    </div>
+                    <div>
+                        <label for="edit-status">temp status</label>
+                        <input type="text" id="edit-status">
                     </div>
                     <div>
                         <label for="edit-round-projects">Projects</label>
@@ -67,6 +70,10 @@
                     <div>
                         <label for="create-close-date">Close Date</label>
                         <input type="datetime-local" id="create-close-date">
+                    </div>
+                    <div>
+                        <label for="create-status">temp status</label>
+                        <input type="text" id="create-status">
                     </div>
                     <div>
                         <label for="create-round-projects">Projects</label>
