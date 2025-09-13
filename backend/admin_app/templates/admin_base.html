@@ -5,6 +5,7 @@
     <title>Admin Portal</title>
     {% block styles %}
     {% endblock %}
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div id="navigationBar">
@@ -15,7 +16,7 @@
                 <li><a href="{% url 'admin_dashboard:student_view' %}"> Students </a></li> 
                 <li><a href="endpoint for screen"> Groups </a></li> 
                 <li><a href="endpoint for screen"> Projects </a></li> 
-                <li><a href="{% url 'admin_dashboard:round2_view' %}">Rounds</a></li> 
+                <li><a href="{% url 'admin_dashboard:round_view' %}">Rounds</a></li> 
                 <li><a href="{% url 'admin_dashboard:settings' %}"> Settings </a></li> 
                 <li><a href="{% url 'admin_dashboard:email_page' %}"> Email </a></li>
             </ul>

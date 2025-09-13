@@ -10,7 +10,7 @@ body {
     flex-grow: 1;
 }
 #left-pane {
-    width: 25%;
+    width: 35%;
     padding: 20px;
     border-right: 1px solid #ccc;
     overflow-y: auto;

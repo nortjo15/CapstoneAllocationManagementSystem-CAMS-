@@ -1,12 +1,20 @@
+{% extends "admin_base.html" %}
 {% load static %}
-<!DOCTYPE html>
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
+{% endblock %}
+{% comment %} {% load static %} {% endcomment %}
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
     <title>Manage Project Rounds</title>
-</head>
+</head> {% endcomment %}
+{% block content %}
 <body>
     <div class="container">
         <div id="left-pane">
@@ -89,6 +97,9 @@
             </div>
         </div>
     </div>
+    {% load static %}
     <script src="{% static '../static/admin_app/js/round.js' %}"></script>
 </body>
-</html>
+{% endblock content %}
+
+{% comment %} </html> {% endcomment %}
