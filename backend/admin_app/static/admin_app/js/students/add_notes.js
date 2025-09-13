@@ -36,11 +36,9 @@ if (notesForm) {
                     button.dataset.studentNotes = notes;
 
                     if (notes === "") {
-                        button.classList.remove("btn-primary");
-                        button.classList.add("btn-secondary");
+                        button.classList.remove("has-content");
                     } else {
-                        button.classList.remove("btn-secondary");
-                        button.classList.add("btn-primary");
+                        button.classList.add("has-content");
                     }
                 }
             } else {

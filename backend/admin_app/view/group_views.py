@@ -27,6 +27,7 @@ class GroupListView(LoginRequiredMixin, ListView):
         context["degree_major_pairs"] = degree_major_pairs
         context["selected_majors"] = self.request.GET.getlist("major")
         context["filter_target_url"] = self.request.path
+        context["groups_page"] = True #Used to filter the table
 
         return context
 

@@ -70,7 +70,7 @@ function openStudentModal()
     const modal = document.getElementById("studentModal");
     
     if (modal) modal.style.display = 'flex';
-    fetchStudents("studentsTableBodyModal");
+    fetchStudents("studentsTableBodyModal", "?allocated_group=false");
 }
 
 // Attach close + outside click for any modal

@@ -28,7 +28,8 @@ function validateRange() {
 //Keep wtihin ranges
 function clamp(input) {
     let val = parseFloat(input.value);
-    if (!isNaN(val)) {
+    if (!isNaN(val)) 
+    {
         if (val < 0) val = 0;
         if (val > 100) val = 100;
         input.value = val;

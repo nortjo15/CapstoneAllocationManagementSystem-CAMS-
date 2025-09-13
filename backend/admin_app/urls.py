@@ -36,8 +36,8 @@ from admin_app.view.student_api_views import (
     StudentRetrieveUpdateDestroyAPIView,
     StudentNotesUpdateAPIView,
     StudentImportAPIView,
-    student_page,
 )
+from admin_app.view.student_views import student_page
 from admin_app.view.email_views import MailtoLinkView
 from .view.admin_views import (
     SendRoundStartView,

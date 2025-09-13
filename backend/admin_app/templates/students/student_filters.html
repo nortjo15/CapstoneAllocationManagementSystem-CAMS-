@@ -65,12 +65,19 @@
 
             <!-- Dropdown to show students who are allocated a group, or not -->
             <label for="group_status">Group Status:</label>
-            <select name="allocated_group" id="group_status">
-                <option value="" {% if group_status == 'all' or not group_status %}selected{% endif %}>All Students</option> <!-- Default -->
-                <option value="true" {% if group_status == 'true' %}selected{% endif %}>Assigned Students Only</option>
-                <option value="false" {% if group_status == 'false' %}selected{% endif %}>Unassigned Students Only</option>
-            </select>
-            <br><br>
+
+            {% if groups_page %}
+                <!-- Always lock to Unassigned students -->
+                <select name="allocated_group" id="group_status" disabled>
+                    <option value="false" selected>Unassigned Students Only</option>
+                </select>
+            {% else %}
+                <select name="allocated_group" id="group_status">
+                    <option value="" {% if group_status == 'all' or not group_status %}selected{% endif %}>All Students</option> <!-- Default -->
+                    <option value="true" {% if group_status == 'true' %}selected{% endif %}>Assigned Students Only</option>
+                    <option value="false" {% if group_status == 'false' %}selected{% endif %}>Unassigned Students Only</option>
+                </select>
+            {% endif %}
 
             <!-- Reset button that clears all filters -->
             <!-- Filter Button to handle submit -->
