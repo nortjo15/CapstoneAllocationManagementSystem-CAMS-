@@ -14,18 +14,17 @@ def generate_mailto_link(subject, body, audience="students", final_group_id=None
         recipients = list(
             Project.objects.exclude(host_email__isnull=True).exclude(host_email="").values_list("host_email", flat=True)
         )
-    elif audience == "final_group" and final_group_id:
-        members = FinalGroupMember.objects.filter(final_group_id=final_group_id).select_related("student")
+    elif audience == "finalised_groups":
+        # get all students part of any final group
+        members = FinalGroupMember.objects.select_related("student")
         recipients = [m.student.email for m in members if m.student.email]
     else:
         recipients = []
 
     to_emails = ";".join(recipients)
 
-    params = {
-        "subject": subject,
-        "body": body,
-    }
+    import urllib.parse
+    params = {"subject": subject, "body": body}
     query = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
 
     return f"mailto:{to_emails}?{query}"

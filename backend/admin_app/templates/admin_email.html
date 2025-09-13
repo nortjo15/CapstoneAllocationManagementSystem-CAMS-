@@ -17,18 +17,26 @@
 <br><br>
 <button onclick="sendRoundEmail()">Send Round Email via Outlook Web</button>
 
-
 <!-- Other Notifications -->
 <h3>Other Notifications</h3>
 <button onclick="sendOtherEmail('post_round_finish_industry')">Post Round Finish (Industry)</button>
 <button onclick="sendOtherEmail('post_round_finish_students')">Post Round Finish (Students)</button>
-<button onclick="sendOtherEmail('post_round_finish_finalised_groups')">Post Round Finish (Finalised Groups)</button>
+
+<br><br>
+<!-- Finalised Groups Notification -->
+<h3>Finalised Groups</h3>
+<button onclick="sendFinalisedGroupsEmail()">Post Round Finish (Finalised Groups)</button>
 
 <script>
 async function sendRoundEmail() {
     const csrftoken = getCookie('csrftoken');
     const type = document.getElementById("notificationType").value;
     const roundNum = document.getElementById("roundNum").value;
+
+    if (!roundNum) {
+        alert("Please enter a round number.");
+        return;
+    }
 
     const res = await fetch("{% url 'admin_dashboard:mailto_link' %}", {
         method: "POST",
@@ -55,6 +63,22 @@ async function sendOtherEmail(type) {
             "X-CSRFToken": csrftoken
         },
         body: JSON.stringify({ notification_type: type })
+    });
+
+    handleResponse(res);
+}
+
+async function sendFinalisedGroupsEmail() {
+    const csrftoken = getCookie('csrftoken');
+
+    // No need for input: backend finds all students in FinalGroupMember
+    const res = await fetch("{% url 'admin_dashboard:mailto_link' %}", {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({ notification_type: "post_round_finish_finalised_groups" })
     });
 
     handleResponse(res);
