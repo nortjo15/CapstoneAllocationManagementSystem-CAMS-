@@ -1,16 +1,39 @@
 {% extends "admin_base.html" %}
 {% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'admin_app/css/project.css' %}">
+{% endblock %}
 {% block content %}
+<h1> Project Dashboard </h1>
 
-{% csrf_token %}
-<body data-projects-api-url="{% url 'api_admin:projects_api' %}">
-    <h1> Project Dashboard </h1>
+<div id="project-container">
+    <p>Loading projects...</p>
+</div>
 
-    <div id="project-container">
-        <p>Loading projects...</p>
+<div id="modal-container">
+    <button id="openModalBtn">Add a new Project</button>
+    <div id='pModal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-button'>&times;</span>
+            <h2> Add a project </h2>
+            <form id='add-project-modal-form'>
+                {% csrf_token %}
+                <label for="title">Project Title:</label><br>
+                <input type="text" id="title" name="title"><br><br>
+                <label for="description">Project Description:</label><br>
+                <input type="text" id="description" name="description"><br><br>
+                <label for="capacity">Capacity:</label><br>
+                <input type="number" id="capacity" name="capacity" min="1" max="10" step="1" value="1"><br><br>  
+                <label for="hostname">Host Name:</label><br>
+                <input type="text" id="hostname" name="host_name"><br><br>
+                <label for="hostemail">Host Email:</label><br>
+                <input type="email" id="hostemail" name="host_email"><br><br>
+                <label for="hostphone">Host Phone:</label><br>
+                <input type="tel" id="hostphone" name="host_phone" pattern="[0-9]{10}"><br><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
     </div>
-    <ul id="projectList"></ul>
-    <script src="{% static 'admin_app/js/project.js' %}"></script>
-<body>
-
+</div> 
+<script src="{% static 'admin_app/js/project.js' %}"></script>
 {% endblock %}

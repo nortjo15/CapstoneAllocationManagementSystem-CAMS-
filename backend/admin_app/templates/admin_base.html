@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html> 
-    <script src="https://unpkg.com/petite-vue" defer init></script>
 <head>
+    <meta charset="UTF-8">
     <title>Admin Portal</title>
-    {% block styles %}
-    {% endblock %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin_app/css/main.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div id="navigationBar">
@@ -24,6 +25,13 @@
             </ul>
         {% endblock %}
     </div>
+    <script>
+        window.ENDPOINTS = {
+            projects: "{% url 'api_admin:projects_api' %}",
+            // Add other endpoints here as you create them
+        };
+    </script>
+    {% block scripts %}{% endblock %}
     <div v-scope id="content">
         {% block content %}{% endblock %}
     </div>

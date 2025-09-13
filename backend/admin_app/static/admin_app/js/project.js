@@ -1,22 +1,20 @@
-const projectList = document.getElementById('projectList');
 
-async function getProjectData(){
+async function getProjectData() {
     const projectContainer = document.getElementById('project-container');
-    const apiUrl = document.body.dataset.projectsApiUrl;
+    const apiUrl = window.ENDPOINTS.projects;
 
-    try{
+    try {
         const response = await fetch(apiUrl);
         const projects = await response.json();
-        //Clear loading
-        projectContainer.innerHTML = '';
+        projectContainer.innerHTML = ''; // Clear loading
 
-        if(projects.length == 0){
-            projectList.innerHTML = '<li>No Projects Found</li>';
+        if (projects.length === 0) {
+            // BUG FIX: Was 'projectList', now 'projectContainer'
+            projectContainer.innerHTML = '<li>No Projects Found</li>';
         } else {
             projects.forEach(project => {
                 const card = document.createElement('div');
                 card.classList.add('project-card');
-
                 card.innerHTML = `
                     <h3>${project.title}</h3>
                     <p>${project.description}</p>
@@ -29,15 +27,76 @@ async function getProjectData(){
                 `;
                 projectContainer.appendChild(card);
             });
-        }   
+        }
     } catch (error) {
         console.error('Error fetching data:', error);
-        projectList.innerHTML = '<li>Could not load projects</li>';
+        projectContainer.innerHTML = '<li>Could not load projects</li>';
     }
 }
 
-// 1. Call the function immediately when the page loads
-document.addEventListener('DOMContentLoaded', getProjectData);
+async function handleAddProject(event) {
+    event.preventDefault(); // Stop the page from reloading
 
-// 2. Set an interval to call the function again every 10 seconds (10000 milliseconds)
-setInterval(getProjectData, 10000);
+    const apiUrl = window.ENDPOINTS.projects;
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            getProjectData(); // Refresh the project list
+            form.reset(); // Clear the form
+            document.getElementById('pModal').style.display = 'none'; // Close the modal
+            
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to add project', errorData);
+            alert('Error: Could not add Project');
+        }
+
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial data load
+    getProjectData();
+
+    // Set an interval to refresh data every 30 seconds (30000 milliseconds)
+    setInterval(getProjectData, 30000);
+
+    // Get modal elements
+    const modal = document.getElementById('pModal');
+    const openBtn = document.getElementById('openModalBtn');
+    // BUG FIX: Use querySelector for classes, not getElementById
+    const closeBtn = document.querySelector('.close-button');
+    const addProjectForm = document.getElementById('add-project-modal-form');
+
+    // Attach event listeners
+    addProjectForm.addEventListener('submit', handleAddProject);
+
+    openBtn.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+});
