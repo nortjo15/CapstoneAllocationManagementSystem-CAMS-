@@ -72,6 +72,29 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
                 tdPrefs.appendChild(prefsBtn);
                 tr.appendChild(tdPrefs);
 
+                // Add a click event for the modal
+                if (targetId === "studentsTableBodyModal")
+                {
+                    const isAlreadyMember = window.currentMemberIds && window.currentMemberIds.has(student.student_id);
+
+                    if (isAlreadyMember)
+                    {
+                        //Greyed out & block cursor
+                        tr.style.opacity = "0.5";
+                        tr.style.cursor = "not-allowed";
+                        tr.title = "Already in this group";
+                    }
+                    else 
+                    {
+                        tr.style.cursor = "pointer";
+                        tr.addEventListener("click", () => {
+                            addStudentToGroup(student, activeGroupId);
+                            document.getElementById("studentModal").style.display = "none";
+                        });
+                    }
+                }
+
+                //Append row to the table
                 tbody.appendChild(tr);
             });
         })

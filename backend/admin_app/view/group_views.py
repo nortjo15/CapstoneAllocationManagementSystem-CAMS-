@@ -64,3 +64,21 @@ def remove_student_from_group(request, pk):
         student__student_id=student_id
     ).delete()
     return Response({"status": "removed"})
+
+@api_view(["POST"])
+def add_student_to_group(request, pk):
+    group = get_object_or_404(SuggestedGroup, pk=pk)
+    student_id = request.data.get("student_id")
+
+    if not student_id:
+        return Response({"error": "student_id is required"}, status=status.HTTP_400_BAD_REQUEST) 
+    
+    # Look up student
+    student = get_object_or_404(Student, student_id=student_id)
+
+    # Prevent duplicates
+    if SuggestedGroupMember.objects.filter(suggested_group=group, student=student).exists():
+        return Response({"status": "exists"}, status=status.HTTP_200_OK)
+
+    SuggestedGroupMember.objects.create(suggested_group=group, student=student)
+    return Response({"status": "added"}, status=status.HTTP_201_CREATED)

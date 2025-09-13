@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const projectCapacity = document.getElementById("group-capacity")
 
     //Variable to track the active group
-    let activeGroupId = null
+    window.activeGroupId = null
 
     //Loading a group onto the center panel
     function loadGroup(id)
@@ -30,7 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     btn.classList.add("active");
                 }
 
-                activeGroupId = group.suggestedgroup_id;
+                window.activeGroupId = group.suggestedgroup_id;
+                window.currentMemberIds = new Set(group.members.map(m => m.student.student_id));
+
                 groupTitle.textContent = "";
                 //groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
                 groupMembers.innerHTML = `<div class="members-container"></div>`;
@@ -135,6 +137,28 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error(err))
     }
 
+    function addStudentToGroup(student, groupId)
+    {
+        fetch(`/api/suggested_groups/${groupId}/add_student/`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({student_id: student.student_id}),
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to add student");
+            return res.json();
+        })
+        .then(() => {
+            loadGroup(groupId); //refresh group details 
+        })
+        .catch(err => console.error(err));
+    }
+
     //expose
     window.removeStudentFromGroup = removeStudentFromGroup;
+    window.addStudentToGroup = addStudentToGroup;
 });
