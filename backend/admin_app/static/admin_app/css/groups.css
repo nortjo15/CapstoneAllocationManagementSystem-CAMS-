@@ -51,6 +51,17 @@
     width: 100%;
 }
 
+.member-label {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #000;
+    padding: 0 4px;
+    margin-right: 4px;
+    font-size: 1.4rem;
+}
+
 .group-details {
     display: grid;
     grid-template-columns: 1fr 1fr; 

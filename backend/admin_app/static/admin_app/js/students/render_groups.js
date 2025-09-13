@@ -7,9 +7,9 @@ function renderMemberCard(m, group)
 
     // member details
     div.innerHTML = `
-        <p><strong>Name:</strong> ${m.student.name}</p>
-        <p><strong>ID:</strong> ${m.student.student_id}</p>
-        <p><strong>CWA:</strong> ${m.student.cwa}</p>
+        <p><span class="member-label">Name:</span> ${m.student.name}</p>
+        <p><span class="member-label">ID:</span> ${m.student.student_id}</p>
+        <p><span class="member-label">CWA:</span> ${m.student.cwa ?? "N/A"}</p>
     `;
 
     // remove button
