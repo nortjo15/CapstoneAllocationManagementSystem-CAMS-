@@ -1,21 +1,33 @@
 const projectList = document.getElementById('projectList');
 
 async function getProjectData(){
+    const projectContainer = document.getElementById('project-container');
     const apiUrl = document.body.dataset.projectsApiUrl;
 
     try{
         const response = await fetch(apiUrl);
-        const data = await response.json();
+        const projects = await response.json();
+        //Clear loading
+        projectContainer.innerHTML = '';
 
-        projectList.innerHTML = '';
-
-        if(data.length == 0){
+        if(projects.length == 0){
             projectList.innerHTML = '<li>No Projects Found</li>';
         } else {
-            data.forEach(project => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${project.title}`;
-                projectList.appendChild(listItem);
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.classList.add('project-card');
+
+                card.innerHTML = `
+                    <h3>${project.title}</h3>
+                    <p>${project.description}</p>
+                    <h4>${project.host_name}</h4>
+                    <h4>${project.host_email}</h4>
+                    <h4>${project.host_phone}</h4>
+                    <div class="card-footer">
+                        <span>Capacity: ${project.capacity}</span>
+                    </div>
+                `;
+                projectContainer.appendChild(card);
             });
         }   
     } catch (error) {

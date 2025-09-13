@@ -1,0 +1,36 @@
+#project-container {
+    display: flex; /* Aligns cards in a row */
+    flex-wrap: wrap; /* Allows cards to wrap to the next line */
+    gap: 20px; /* Adds space between cards */
+    padding: 20px 0;
+}
+
+.project-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #fff;
+    width: 300px; /* Or use flex-basis for responsive widths */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.project-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.project-card p {
+    flex-grow: 1; /* Makes the description take up available space */
+    color: #666;
+}
+
+.project-card .card-footer {
+    margin-top: 16px;
+    font-size: 0.9em;
+    color: #888;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+}

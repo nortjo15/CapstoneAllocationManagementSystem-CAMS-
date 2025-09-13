@@ -5,7 +5,10 @@
 {% csrf_token %}
 <body data-projects-api-url="{% url 'api_admin:projects_api' %}">
     <h1> Project Dashboard </h1>
-    
+
+    <div id="project-container">
+        <p>Loading projects...</p>
+    </div>
     <ul id="projectList"></ul>
     <script src="{% static 'admin_app/js/project.js' %}"></script>
 <body>
