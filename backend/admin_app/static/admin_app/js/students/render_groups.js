@@ -87,7 +87,9 @@ function renderProjectInfo(group, groupSize, projectName,
 {
     const size = group.members.length
     const capacity = group.project.capacity
+
     groupSize.innerHTML = `<p><strong>Group Size:</strong> ${size}</p>`
+    const sizeElem = groupSize.querySelector("p");
 
     if (group.project) 
     {
@@ -95,17 +97,19 @@ function renderProjectInfo(group, groupSize, projectName,
         projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
         projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
 
+        const capacityElem = projectCapacity.querySelector("p");
+
         //See if there's a mismatch in groupSize & Capacity
         if (size !== capacity)
         {
-            projectCapacity.querySelector("p").style.color = "red";
-            groupSize.querySelector("p").style.color = "red";
+            capacityElem.classList.add("text-error");
+            sizeElem.classList.add("text-error");
             createBtn.disabled = true;
         }
         else 
         {
-            projectCapacity.querySelector("p").style.color = "";
-            groupSize.querySelector("p").style.color = "";
+            capacityElem.classList.remove("text-error");
+            sizeElem.classList.remove("text-error");
             createBtn.disabled = false;
         }
     } 

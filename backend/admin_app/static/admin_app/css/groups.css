@@ -21,6 +21,16 @@
     margin: 0;
 }
 
+.text-error {
+    display: inline-block;
+    color: red; 
+    border: 1px solid red;
+    border-radius: 4px;
+    background-color: rgb(248, 223, 223); 
+    padding: 2px 4px;
+    margin: 0;    
+}
+
 .card {
     border: 1px solid #5c5b5b;
     border-radius: 4px;
