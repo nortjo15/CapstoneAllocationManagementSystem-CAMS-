@@ -1,3 +1,5 @@
+import { setButtonLoading } from "./utils.js";
+
 document.addEventListener("DOMContentLoaded", () => {
     const groupsUl = document.getElementById("groups-ul");
     const groupTitle = document.getElementById("group-title");
@@ -17,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
         //Display consecutive numbers for groups
         const btn = groupsUl.querySelector(`button[data-id="${id}"]`);
         const displayNum = btn ? btn.dataset.display : id;
+
+        //Set it to load
+        if (btn) setButtonLoading(btn, true);
 
         fetch(`/api/suggested_groups/${id}/`)
             .then(res => res.json())
@@ -55,6 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => {
                 console.error("Failed to load group:", err);
                 groupTitle.textContent = "Error loading group";
+            })
+            .finally(() => 
+            {
+                //stop spinner on this button 
+                if (btn) setButtonLoading(btn, false);
             });
     }
 
@@ -67,9 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Wire button to generate group suggestions
     const generateBtn = document.getElementById("generate-suggestions-btn");
+    generateBtn.type = "button";
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     generateBtn.addEventListener("click", () => {
+        setButtonLoading(generateBtn, true);
+
         fetch("/api/generate_suggestions/", {
             method: "POST",
             headers: { "X-CSRFToken": csrfToken}
@@ -88,8 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
             data.forEach((group, idx) => {
                 const li = document.createElement("li");
                 const btn = document.createElement("button");
+                btn.type = "button";
 
-                btn.classList.add("list-item-btn");
+                btn.classList.add("btn", "list-item-btn");
                 btn.dataset.id = group.suggested_group_id;
                 btn.dataset.display = idx + 1;
                 btn.textContent = `Group ${idx+1}`;
@@ -103,7 +117,11 @@ document.addEventListener("DOMContentLoaded", () => {
             groupsUl.querySelectorAll("button").forEach(btn => {
                 btn.addEventListener("click", () => loadGroup(btn.dataset.id));
             });
-        });
+        })
+        .catch(err => console.error("Failed to generate suggestions:", err))
+        .finally(() => {
+            setButtonLoading(generateBtn, false);
+        })
     });
 
     //If notes form submits, reload current group
