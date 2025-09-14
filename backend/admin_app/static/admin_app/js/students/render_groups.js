@@ -12,6 +12,7 @@ function renderMemberCard(m, group)
         <p><span class="member-label">Name:</span> ${m.student.name}</p>
         <p><span class="member-label">ID:</span> ${m.student.student_id}</p>
         <p><span class="member-label">CWA:</span> ${m.student.cwa ?? "N/A"}</p>
+        <p><span class="member-label">Major:</span> ${m.student.major.name ?? "N/A"}</p>  
     `;
 
     // remove button
@@ -216,7 +217,7 @@ function updateGroupUI(group)
     const projectCapacity = document.getElementById("group-capacity");
     const projectHost = document.getElementById("group-host");
     const finaliseBtn = document.getElementById("finalise-group-btn");
-    
+
     //Clear members container 
     membersContainer.innerHTML = "";
 
