@@ -154,7 +154,7 @@ function renderProjectInfo(group, groupSize, projectName,
             .then(res => res.json())
             .then(updated => {
                 console.log("Project updated:", updated);
-                loadGroup(group.suggestedgroup_id);
+                updateGroupUI(updated);
             })
             .catch(err => console.error("Failed to update project:", err));
         });
@@ -208,6 +208,33 @@ function renderCWARange(group, groupSize)
     }
 }
 
+function updateGroupUI(group)
+{
+    const membersContainer = document.querySelector("#group-members .members-container");
+    const groupSize = document.getElementById("group-size");
+    const projectName = document.getElementById("group-project-name");
+    const projectCapacity = document.getElementById("group-capacity");
+    const projectHost = document.getElementById("group-host");
+    const finaliseBtn = document.getElementById("finalise-group-btn");
+    
+    //Clear members container 
+    membersContainer.innerHTML = "";
+
+    //Re-render members
+    group.members.forEach(m => membersContainer.appendChild(renderMemberCard(m, group)));
+
+    //Add Student card if space left 
+    if (group.members.length < group.project.capacity)
+    {
+        membersContainer.appendChild(renderAddStudentCard(group));
+    }
+
+    //Re-run group info & CWA 
+    renderProjectInfo(group, groupSize, projectName, projectCapacity, projectHost, finaliseBtn);
+    renderCWARange(group, groupSize);
+}
+
+window.updateGroupUI = updateGroupUI;
 window.renderMemberCard = renderMemberCard;
 window.renderAddStudentCard = renderAddStudentCard;
 window.renderProjectInfo = renderProjectInfo;

@@ -163,8 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!res.ok) throw new Error("Failed to remove student");
             return res.json();
         })
-        .then(() => {
-            loadGroup(group.suggestedgroup_id);
+        .then(updated => {
+            updateGroupUI(updated);
         })
         .catch(err => console.error(err))
     }
@@ -184,8 +184,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!res.ok) throw new Error("Failed to add student");
             return res.json();
         })
-        .then(() => {
-            loadGroup(groupId); //refresh group details 
+        .then(updated => {
+            updateGroupUI(updated); //refresh group details 
         })
         .catch(err => console.error(err));
     }

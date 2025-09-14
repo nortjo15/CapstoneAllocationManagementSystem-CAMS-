@@ -69,7 +69,9 @@ def remove_student_from_group(request, pk):
         suggested_group=group,
         student__student_id=student_id
     ).delete()
-    return Response({"status": "removed"})
+
+    serializer = SuggestedGroupSerializer(group)
+    return Response(serializer.data)
 
 @api_view(["POST"])
 def add_student_to_group(request, pk):
@@ -84,7 +86,9 @@ def add_student_to_group(request, pk):
 
     # Prevent duplicates
     if SuggestedGroupMember.objects.filter(suggested_group=group, student=student).exists():
-        return Response({"status": "exists"}, status=status.HTTP_200_OK)
+        serializer = SuggestedGroupSerializer(group)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     SuggestedGroupMember.objects.create(suggested_group=group, student=student)
-    return Response({"status": "added"}, status=status.HTTP_201_CREATED)
+    serializer = SuggestedGroupSerializer(group)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
