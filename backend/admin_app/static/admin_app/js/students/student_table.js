@@ -1,4 +1,5 @@
-import { setButtonLoading } from "./utils";
+import { setButtonLoading } from "./utils.js";
+import { openNotesModal, openPreferenceModal } from "./modal_function.js";
 
 // Helper to compute current group capacity info
 function getGroupCapacityInfo() {
@@ -10,7 +11,7 @@ function getGroupCapacityInfo() {
     return { membersCount, capacity, spaceLeft };
 }
 
-function fetchStudents(targetId = "studentsTableBody", params = "") {
+export function fetchStudents(targetId = "studentsTableBody", params = "") {
     fetch(`/api/students/${params}`)
         .then(res => res.json())
         .then(data => {
@@ -137,7 +138,12 @@ document.addEventListener("change", (e) => {
         {
             //Disable all other checkboxes 
             checkboxes.forEach(cb => {
-                if (!cb.checked) cb.disabled = true; 
+                if (!cb.checked) 
+                {
+                    cb.disabled = true; 
+                    cb.closest("tr").style.opacity = "0.5";  
+                    cb.closest("tr").style.cursor = "not-allowed";
+                }
             }); 
         }
         else 
@@ -146,6 +152,8 @@ document.addEventListener("change", (e) => {
                 if (!window.currentMemberIds.has(cb.dataset.studentId))
                 {
                     cb.disabled = false;
+                    cb.closest("tr").style.opacity = "1"; 
+                    cb.closest("tr").style.cursor = "default";
                 }
             });
         }

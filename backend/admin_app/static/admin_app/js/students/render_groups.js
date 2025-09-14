@@ -1,3 +1,7 @@
+import 
+    { openNotesModal, openPreferenceModal, openRemoveStudentModal, openStudentModal } 
+    from "./modal_function.js";
+
 let cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 

@@ -1,20 +1,22 @@
+import { fetchStudents } from "./student_table.js";
+
 // Helpers to open modals
-function openModal() {
+export function openModal() {
     const modal = document.getElementById("addStudentModal");
     if (modal) modal.style.display = "flex";
 }
 
-function openImportModal() {
+export function openImportModal() {
     const modal = document.getElementById("importModal");
     if (modal) modal.style.display = "flex";
 }
 
-function openFilterModal() {
+export function openFilterModal() {
     const modal = document.getElementById("filterModal");
     if (modal) modal.style.display = "flex";
 }
 
-function openNotesModal(button) 
+export function openNotesModal(button) 
 {
     const modal = document.getElementById("notesModal");
     
@@ -24,7 +26,7 @@ function openNotesModal(button)
     modal.dataset.studentId = button.dataset.studentId;
 }
 
-function openPreferenceModal(student)
+export function openPreferenceModal(student)
 {
     const modal = document.getElementById("preferencesModal");
     const list = document.getElementById("preferencesList");
@@ -42,7 +44,7 @@ function openPreferenceModal(student)
     });
 }
 
-function openRemoveStudentModal(student, group) {
+export function openRemoveStudentModal(student, group) {
     const modal = document.getElementById("removeStudentModal");
     const msg = document.getElementById("removeStudentMessage");
     const confirmBtn = document.getElementById("confirmRemoveBtn");
@@ -65,7 +67,7 @@ function openRemoveStudentModal(student, group) {
 }
 
 //Modal for student table pop-up in groups 
-function openStudentModal()
+export function openStudentModal()
 {
     const modal = document.getElementById("studentModal");
     
