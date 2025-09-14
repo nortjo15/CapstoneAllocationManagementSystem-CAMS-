@@ -95,9 +95,23 @@ def add_student_to_group(request, pk):
 
 @api_view(["POST"])
 def create_manual_group(request):
-    count = SuggestedGroup.objects.filter(name__startswith="Manual Group").count() + 1
+    existing = (
+        SuggestedGroup.objects.filter(name__startswith="Manual Group")
+        .values_list("name", flat=True)
+    )
+    
+    # Extract numbers
+    numbers = []
+    for n in existing: 
+        parts = n.split(" ")
+        if len(parts) == 3 and parts[2].isdigit():
+            numbers.append(int(parts[2]))
+
+    next_num = max(numbers) + 1 if numbers else 1
+
     group = SuggestedGroup.objects.create(
-        name=f"Manual Group {count}",
-        project=None
+        name=f"Manual Group {next_num}",
+        project=None,
+        is_manual=True
     )
     return Response(SuggestedGroupSerializer(group).data)

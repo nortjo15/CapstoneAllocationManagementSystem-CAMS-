@@ -47,7 +47,8 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
             'has_anti_preference',
             'project',
             'project_id',
-            'members']
+            'members',
+            'is_manual']
 # --------------------------------------------------------------------
 
 class FinalGroupSerializer(serializers.ModelSerializer):

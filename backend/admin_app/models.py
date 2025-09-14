@@ -116,6 +116,7 @@ class SuggestedGroup(models.Model):
     name=models.CharField(max_length=50, null=True, blank=True, unique=True)
     has_anti_preference=models.BooleanField(default=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='suggested_groups', null=True)
+    is_manual = models.BooleanField(default=False)
 
     def __str__(self):
         return f"SuggestedGroup {self.suggestedgroup_id} ({self.get_strength_display()})"
