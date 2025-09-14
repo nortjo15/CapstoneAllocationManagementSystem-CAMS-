@@ -1,4 +1,5 @@
 import { setButtonLoading } from "./utils.js";
+import { updateDeleteButton } from "./group_actions.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const manualGroupsUl = document.getElementById("manual-groups-ul");
@@ -71,6 +72,31 @@ document.addEventListener("DOMContentLoaded", () => {
                     projectCapacity, projectHost, finaliseBtn);
                 //CWA Information
                 renderCWARange(group, groupSize);
+
+                //Delete button for manual groups
+                updateDeleteButton(group, csrfToken, {
+                    onDeleted: () => 
+                    {
+                        groupTitle.textContent = "Select a group";
+                        groupMembers.innerHTML = "";
+                        projectName.innerHTML = "";
+                        projectCapacity.innerHTML = "";
+                        projectHost.innerHTML = "";
+                        groupSize.innerHTML = "";
+
+                        //hide delete button
+                        const deleteBtn = document.getElementById("delete-group-btn");
+                        if (deleteBtn)
+                        {
+                            deleteBtn.style.display = "none";
+                            deleteBtn.onclick = null;
+                        }
+
+                        // Clear errors
+                        const errorBox = document.getElementById("group-errors");
+                        if (errorBox) clearError(errorBox);
+                    }
+                });
             })
             .catch(err => {
                 console.error("Failed to load group:", err);

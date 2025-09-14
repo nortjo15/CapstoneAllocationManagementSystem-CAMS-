@@ -69,8 +69,8 @@ class ManualGroupListView(generics.ListAPIView):
         return SuggestedGroup.objects.filter(is_manual=True)
     
 @api_view(["POST"])
-def remove_student_from_group(request, pk):
-    group = get_object_or_404(SuggestedGroup, pk=pk)
+def remove_student_from_group(request, suggestedgroup_id):
+    group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id)
     student_id = request.data.get("student_id")
     SuggestedGroupMember.objects.filter(
         suggested_group=group,
@@ -81,8 +81,8 @@ def remove_student_from_group(request, pk):
     return Response(serializer.data)
 
 @api_view(["POST"])
-def add_student_to_group(request, pk):
-    group = get_object_or_404(SuggestedGroup, pk=pk)
+def add_student_to_group(request, suggestedgroup_id):
+    group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id)
     student_id = request.data.get("student_id")
 
     if not student_id:
@@ -124,7 +124,7 @@ def create_manual_group(request):
     return Response(SuggestedGroupSerializer(group).data)
 
 @api_view(["DELETE"])
-def delete_manual_group(request, pk):
-    group = get_object_or_404(SuggestedGroup, pk=pk, is_manual=True)
+def delete_manual_group(request, suggestedgroup_id):
+    group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id, is_manual=True)
     group.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
