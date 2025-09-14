@@ -1,7 +1,8 @@
 import { setButtonLoading } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const groupsUl = document.getElementById("groups-ul");
+    const manualGroupsUl = document.getElementById("manual-groups-ul");
+    const suggestedGroupsUl = document.getElementById("suggested-groups-ul");
     const groupTitle = document.getElementById("group-title");
     const groupSize = document.getElementById("group-size");
     const groupMembers = document.getElementById("group-members")
@@ -27,7 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadGroup(id)
     {
         //Display consecutive numbers for groups
-        const btn = groupsUl.querySelector(`button[data-id="${id}"]`);
+    
+        const btn = document.querySelector(
+            `#manual-groups-ul button[data-id="${id}"], #suggested-groups-ul button[data-id="${id}"]`   
+        );
         const displayNum = btn ? btn.dataset.display : id;
 
         //Set it to load
@@ -39,7 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 console.log(group)
                 // Clear active buttons, then assign to the new button
-                groupsUl.querySelectorAll("button").forEach(b => b.classList.remove("active"))
+                document.querySelectorAll("#manual-groups-ul button, #suggested-groups-ul button")
+                .forEach(b => b.classList.remove("active"))
                 if (btn)
                 {
                     btn.classList.add("active");
@@ -110,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
 
                 //Refresh the list panel with new groups & render
-                groupsUl.innerHTML = "";
+                suggestedGroupsUl.innerHTML = "";
                 data.forEach((group, idx) => {
                     const li = document.createElement("li");
                     const btn = document.createElement("button");
@@ -124,10 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     //Add Strength class to button
                     btn.classList.add(`strength-${group.strength.toLowerCase()}`);
                     li.appendChild(btn);
-                    groupsUl.appendChild(li); //Create a button for each group & append it
+                    suggestedGroupsUl.appendChild(li); //Create a button for each group & append it
                 });
 
-                groupsUl.querySelectorAll("button").forEach(btn => {
+                suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
                     btn.addEventListener("click", () => loadGroup(btn.dataset.id));
                 });
             })
@@ -174,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.dataset.display = group.name; 
                 btn.textContent = group.name; 
                 li.appendChild(btn);
-                groupsUl.appendChild(li);
+                manualGroupsUl.appendChild(li);
 
                 btn.addEventListener("click", () => loadGroup(btn.dataset.id));
                 //Auto-load group

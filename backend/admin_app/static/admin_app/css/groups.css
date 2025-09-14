@@ -15,6 +15,14 @@
     overflow-y: auto;
 }
 
+.group-section-title {
+    font-size: 0.9rem;     
+    font-weight: bold;
+    margin: 6px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #ccc; 
+}
+
 .list {
     list-style: none;
     padding: 0;

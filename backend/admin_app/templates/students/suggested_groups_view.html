@@ -22,8 +22,18 @@
         <div class="panel">
             <button class="btn btn-primary btn-block" id="create-group-btn">+ Create Group</button>
             <button class="btn btn-primary btn-block" id="generate-suggestions-btn">Generate Suggestions</button>
-            <hr>
-            <ul class="list" id="groups-ul"></ul>
+
+            <div id="groups-container">
+                <div id="manual-groups-section">
+                    <div class="group-section-title">Manual Groups</div>
+                    <ul class="list" id="manual-groups-ul"></ul>
+                </div>
+            
+                <div id="suggested-groups-section">
+                    <div class="group-section-title">Suggested Groups</div>
+                    <ul class="list" id="suggested-groups-ul"></ul>
+                </div>
+            </div>
         </div>
 
         <!-- Center Panel: Group Details -->

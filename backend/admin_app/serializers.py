@@ -40,6 +40,7 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = SuggestedGroup
         fields = [
+            'name',
             'suggestedgroup_id', 
             'strength', 
             'notes', 
