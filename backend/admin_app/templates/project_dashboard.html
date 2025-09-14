@@ -18,10 +18,11 @@
             <h2> Add a project </h2>
             <form id='add-project-modal-form'>
                 {% csrf_token %}
+                <input type="hidden" id='projectId' name='id'>
                 <label for="title">Project Title:</label><br>
                 <input type="text" id="title" name="title"><br><br>
                 <label for="description">Project Description:</label><br>
-                <input type="text" id="description" name="description"><br><br>
+                <input type="textarea" id="description" name="description"><br><br>
                 <label for="capacity">Capacity:</label><br>
                 <input type="number" id="capacity" name="capacity" min="1" max="10" step="1" value="1"><br><br>  
                 <label for="hostname">Host Name:</label><br>
@@ -31,6 +32,30 @@
                 <label for="hostphone">Host Phone:</label><br>
                 <input type="tel" id="hostphone" name="host_phone" pattern="[0-9]{10}"><br><br>
                 <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
+    <div id='editProjectModal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-button'>&times;</span>
+            <h2> Editproject </h2>
+            <form id='edit-project-modal-form'>
+                {% csrf_token %}
+                <input type="hidden" id='edit-project-id' name='id'>
+                <label for="edit-project-title">Project Title:</label><br>
+                <input type="text" id="edit-project-title" name="title"><br><br>
+                <label for="edit-project-description">Project Description:</label><br>
+                <input type="textarea" id="edit-project-description" name="description"><br><br>
+                <label for="edit-project-capacity">Capacity:</label><br>
+                <input type="number" id="edit-project-capacity" name="capacity" min="1" max="10" step="1" value="1"><br><br>  
+                <label for="edit-host-name">Host Name:</label><br>
+                <input type="text" id="edit-host-name" name="host_name"><br><br>
+                <label for="edit-host-email">Host Email:</label><br>
+                <input type="email" id="edit-host-email" name="host_email"><br><br>
+                <label for="edit-host-phone">Host Phone:</label><br>
+                <input type="tel" id="edit-host-phone" name="host_phone" pattern="[0-9]{10}"><br><br>
+                <input type="submit" value="Save Changes">
             </form>
         </div>
     </div>

@@ -19,9 +19,10 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 #Import all required views
-from .view.project_views import ProjectListCreateView
+from .view.project_views import project_view, ProjectViewSet
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
@@ -41,7 +42,10 @@ from .view.admin_views import (
     SendApplicationSuccessView,
     SendAllocationReleasedView,
 )
-from .view.project_views import project_view, ProjectListCreateView
+
+
+router = DefaultRouter()
+router.register(r'projects', ProjectViewSet, basename='project')
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -67,7 +71,7 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('projects/', ProjectListCreateView.as_view(), name='projects_api'),
+    path('', include(router.urls)),
     path('projectDashboard/', project_view, name='project_dashboard'),
    
     #Group_views

@@ -1,12 +1,12 @@
 from admin_app.serializers import ProjectSerializer
 from admin_app.models import Project, ProjectPreference
 from django.shortcuts import render, redirect
-from rest_framework import generics
+from rest_framework import viewsets
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
 from django.views.generic import TemplateView
 
-class ProjectListCreateView(generics.ListCreateAPIView):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
