@@ -1,3 +1,15 @@
+import { setButtonLoading } from "./utils";
+
+// Helper to compute current group capacity info
+function getGroupCapacityInfo() {
+    const membersCount = window.currentMemberIds ? window.currentMemberIds.size : 0;
+    const capacityElem = document.querySelector("#group-capacity p");
+    const capacity = capacityElem ? parseInt(capacityElem.textContent.match(/\d+/)) : null;
+    const spaceLeft = capacity ? capacity - membersCount : Infinity;
+
+    return { membersCount, capacity, spaceLeft };
+}
+
 function fetchStudents(targetId = "studentsTableBody", params = "") {
     fetch(`/api/students/${params}`)
         .then(res => res.json())
@@ -21,7 +33,17 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
 
             data.forEach(student => {
                 const tr = document.createElement("tr");
+
+                // Build first column with a checkbox only for the modal
+                let checkBoxTd = "";
+                if (targetId === "studentsTableBodyModal")
+                {
+                    checkBoxTd = `<td><input type="checkbox" class="student-checkbox" data-student-id="${student.student_id}"></td>`;
+                }
+
+
                 tr.innerHTML = `
+                    ${checkBoxTd}
                     <td>${student.student_id}</td>
                     <td>${student.name}</td>
                     <td>${student.cwa ?? ""}</td>
@@ -72,25 +94,17 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
                 tdPrefs.appendChild(prefsBtn);
                 tr.appendChild(tdPrefs);
 
-                // Add a click event for the modal
                 if (targetId === "studentsTableBodyModal")
                 {
-                    const isAlreadyMember = window.currentMemberIds && window.currentMemberIds.has(student.student_id);
+                    const checkbox = tr.querySelector(".student-checkbox");
+                    const isAlreadyMember = window.currentMemberIds && window.currentMemberIds.has(student.student_id)
 
                     if (isAlreadyMember)
                     {
-                        //Greyed out & block cursor
+                        //Disable checkbox if already in group
+                        checkbox.disabled = true; 
                         tr.style.opacity = "0.5";
-                        tr.style.cursor = "not-allowed";
                         tr.title = "Already in this group";
-                    }
-                    else 
-                    {
-                        tr.style.cursor = "pointer";
-                        tr.addEventListener("click", () => {
-                            addStudentToGroup(student, activeGroupId);
-                            document.getElementById("studentModal").style.display = "none";
-                        });
                     }
                 }
 
@@ -103,3 +117,78 @@ function fetchStudents(targetId = "studentsTableBody", params = "") {
 
 //Callable from elsewhere
 window.fetchStudents = fetchStudents;
+
+//Track checkbox changes to enable / disable the Add Button
+document.addEventListener("change", (e) => {
+    if (e.target.classList.contains("student-checkbox"))
+    {
+        const checkboxes = document.querySelectorAll(".student-checkbox");
+        const checked = document.querySelectorAll(".student-checkbox:checked");
+        const addBtn = document.getElementById("addSelectedBtn");
+
+        if (addBtn)
+        {
+            addBtn.disabled = checked.length === 0; 
+        }
+
+        const { spaceLeft } = getGroupCapacityInfo();
+
+        if (checked.length >= spaceLeft)
+        {
+            //Disable all other checkboxes 
+            checkboxes.forEach(cb => {
+                if (!cb.checked) cb.disabled = true; 
+            }); 
+        }
+        else 
+        {
+            checkboxes.forEach(cb => {
+                if (!window.currentMemberIds.has(cb.dataset.studentId))
+                {
+                    cb.disabled = false;
+                }
+            });
+        }
+    }
+});
+
+// Handle Add Button click
+const addBtn = document.getElementById("addSelectedBtn");
+
+addBtn.addEventListener("click", (e) => 
+{
+    setButtonLoading(addBtn, true)
+    const checkboxes = document.querySelectorAll(".student-checkbox:checked");
+    if (!checkboxes.length) 
+    {
+        setButtonLoading(addBtn, false);
+        return;
+    }
+    
+    const selectedIds = Array.from(checkboxes).map(cb => cb.dataset.studentId);
+
+    Promise.all(
+        selectedIds.map(id => 
+            fetch(`/api/suggested_groups/${activeGroupId}/add_student/`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({ student_id: id }),
+            }).then(res => {
+                if (!res.ok) throw new Error("Failed to add student " + id);
+                return res.json();
+            })
+        )
+    )
+    .then(() => {
+        loadGroup(activeGroupId);
+        document.getElementById("studentModal").style.display = "none";
+    })
+    .catch(err => console.error("Error adding students:", err))
+    .finally(() => {
+        setButtonLoading(addBtn, false)
+    });
+});

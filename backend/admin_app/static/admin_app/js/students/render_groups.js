@@ -6,13 +6,14 @@ function renderMemberCard(m, group)
 {
     const div = document.createElement("div");
     div.classList.add("card", "member-card");
+    const majorName = m.student && m.student.major ? m.student.major.name : "N/A";
 
     // member details
     div.innerHTML = `
         <p><span class="member-label">Name:</span> ${m.student.name}</p>
         <p><span class="member-label">ID:</span> ${m.student.student_id}</p>
         <p><span class="member-label">CWA:</span> ${m.student.cwa ?? "N/A"}</p>
-        <p><span class="member-label">Major:</span> ${m.student.major.name ?? "N/A"}</p>  
+        <p><span class="member-label">Major:</span> ${majorName}</p>
     `;
 
     // remove button

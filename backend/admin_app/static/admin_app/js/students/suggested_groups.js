@@ -235,27 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error(err))
     }
 
-    function addStudentToGroup(student, groupId)
-    {
-        fetch(`/api/suggested_groups/${groupId}/add_student/`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify({student_id: student.student_id}),
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Failed to add student");
-            return res.json();
-        })
-        .then(updated => {
-            updateGroupUI(updated); //refresh group details 
-        })
-        .catch(err => console.error(err));
-    }
-
     function renderManualGroup(group)
     {
         //Add it to the sidebar 
@@ -275,7 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //expose
     window.removeStudentFromGroup = removeStudentFromGroup;
-    window.addStudentToGroup = addStudentToGroup;
     window.loadGroup = loadGroup;
 
     //Trigger tab:activated if SuggestedGroups is active on load 
