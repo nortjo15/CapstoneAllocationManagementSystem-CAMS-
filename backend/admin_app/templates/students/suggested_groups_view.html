@@ -20,7 +20,6 @@
     <div class="container-grid">
         <!--Left Panel: Suggested Groups List -->
         <div class="panel">
-            <h3>Suggested Groups</h3>
             <button class="btn btn-primary btn-block" id="generate-suggestions-btn">Generate Suggestions</button>
             <hr>
             <ul class="list" id="groups-ul"></ul>
@@ -62,6 +61,7 @@
 </div>
 
 {% load static %}
+<script src="{% static 'admin_app/js/students/group_tabs.js' %}"></script>
 <script type="module" src="{% static 'admin_app/js/students/suggested_groups.js' %}"></script>
 <script src="{% static 'admin_app/js/students/student_filters.js' %}"></script>
 <script src="{% static 'admin_app/js/students/student_table.js' %}"></script>

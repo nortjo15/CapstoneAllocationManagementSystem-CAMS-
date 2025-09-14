@@ -9,9 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const projectName = document.getElementById("group-project-name")
     const projectHost = document.getElementById("group-host")
     const projectCapacity = document.getElementById("group-capacity")
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    let suggestedGroupsInitialised = false;
 
     //Variable to track the active group
     window.activeGroupId = null
+
+    // When tab is activated, run logic
+    document.addEventListener("tab:activated", e => {
+        if (e.detail.tabId === "suggested-tab") 
+        {
+            initSuggestedGroups();
+        }
+    });
 
     //Loading a group onto the center panel
     function loadGroup(id)
@@ -68,70 +78,75 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    //Create button skeleton
-    createBtn.addEventListener("click", () => {
-        if (activeGroupId) {
-            alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
-        }
-    });
+    function initSuggestedGroups() 
+    {
+        if (suggestedGroupsInitialised) return; 
+        suggestedGroupsInitialised = true; 
 
-    // Wire button to generate group suggestions
-    const generateBtn = document.getElementById("generate-suggestions-btn");
-    generateBtn.type = "button";
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-    generateBtn.addEventListener("click", () => {
-        setButtonLoading(generateBtn, true);
-
-        fetch("/api/generate_suggestions/", {
-            method: "POST",
-            headers: { "X-CSRFToken": csrfToken}
-        })
-        .then(res => res.json())
-        .then(data => {
-            //Sort the groups by strength: strong -> medium -> weak
-            const order = {strong: 1, medium: 2, weak: 3};
-
-            data.sort((a, b) => {
-                return order[a.strength] - order[b.strength];
-            })
-
-            //Refresh the list panel with new groups & render
-            groupsUl.innerHTML = "";
-            data.forEach((group, idx) => {
-                const li = document.createElement("li");
-                const btn = document.createElement("button");
-                btn.type = "button";
-
-                btn.classList.add("btn", "list-item-btn");
-                btn.dataset.id = group.suggested_group_id;
-                btn.dataset.display = idx + 1;
-                btn.textContent = `Group ${idx+1}`;
-
-                //Add Strength class to button
-                btn.classList.add(`strength-${group.strength.toLowerCase()}`);
-                li.appendChild(btn);
-                groupsUl.appendChild(li); //Create a button for each group & append it
-            });
-
-            groupsUl.querySelectorAll("button").forEach(btn => {
-                btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-            });
-        })
-        .catch(err => console.error("Failed to generate suggestions:", err))
-        .finally(() => {
-            setButtonLoading(generateBtn, false);
-        })
-    });
-
-    //If notes form submits, reload current group
-    const notesForm = document.getElementById("notesForm");
-    if (notesForm) {
-        notesForm.addEventListener("submit", () => {
+        //Create button skeleton
+        createBtn.addEventListener("click", () => {
             if (activeGroupId) {
-                setTimeout(() => loadGroup(activeGroupId), 200)
+                alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
             }
         });
+
+        // Wire button to generate group suggestions
+        const generateBtn = document.getElementById("generate-suggestions-btn");
+        generateBtn.type = "button";
+
+        generateBtn.addEventListener("click", () => {
+            setButtonLoading(generateBtn, true);
+
+            fetch("/api/generate_suggestions/", {
+                method: "POST",
+                headers: { "X-CSRFToken": csrfToken}
+            })
+            .then(res => res.json())
+            .then(data => {
+                //Sort the groups by strength: strong -> medium -> weak
+                const order = {strong: 1, medium: 2, weak: 3};
+
+                data.sort((a, b) => {
+                    return order[a.strength] - order[b.strength];
+                })
+
+                //Refresh the list panel with new groups & render
+                groupsUl.innerHTML = "";
+                data.forEach((group, idx) => {
+                    const li = document.createElement("li");
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+
+                    btn.classList.add("btn", "list-item-btn");
+                    btn.dataset.id = group.suggested_group_id;
+                    btn.dataset.display = idx + 1;
+                    btn.textContent = `Group ${idx+1}`;
+
+                    //Add Strength class to button
+                    btn.classList.add(`strength-${group.strength.toLowerCase()}`);
+                    li.appendChild(btn);
+                    groupsUl.appendChild(li); //Create a button for each group & append it
+                });
+
+                groupsUl.querySelectorAll("button").forEach(btn => {
+                    btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+                });
+            })
+            .catch(err => console.error("Failed to generate suggestions:", err))
+            .finally(() => {
+                setButtonLoading(generateBtn, false);
+            })
+        });
+
+        //If notes form submits, reload current group
+        const notesForm = document.getElementById("notesForm");
+        if (notesForm) {
+            notesForm.addEventListener("submit", () => {
+                if (activeGroupId) {
+                    setTimeout(() => loadGroup(activeGroupId), 200)
+                }
+            });
+        }
     }
 
     function removeStudentFromGroup(student, group) 
@@ -179,4 +194,12 @@ document.addEventListener("DOMContentLoaded", () => {
     //expose
     window.removeStudentFromGroup = removeStudentFromGroup;
     window.addStudentToGroup = addStudentToGroup;
+
+    //Trigger tab:activated if SuggestedGroups is active on load 
+    if (document.querySelector("#suggested-tab.tab-content.active"))
+    {
+        document.dispatchEvent(new CustomEvent("tab:activated", {
+            detail: { tabId: "suggested-tab" }
+        }));
+    }
 });
