@@ -1,3 +1,6 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +12,11 @@
 <body>
   <h1>Announcements</h1>
   <p><a href="{% url 'admin_app:announcement_create' %}">+ New announcement</a></p>
+  <p><a href="{% url 'admin_app:section_list' %}">Manage sections</a></p>
+
+  {% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+
+  {# Filters form #}
 
   <form class="filters" method="get">
     <input type="text" name="q" placeholder="Search title/body/author" value="{{ request.GET.q }}">
@@ -78,3 +86,5 @@
   {% endif %}
 </body>
 </html>
+
+{% endblock %}
