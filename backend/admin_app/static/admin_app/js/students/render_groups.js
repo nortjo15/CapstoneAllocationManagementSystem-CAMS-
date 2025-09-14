@@ -1,3 +1,5 @@
+let cachedProjects = null;  
+const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
 //Helper functions for suggested_groups.js
 function renderMemberCard(m, group) 
@@ -86,76 +88,79 @@ function renderProjectInfo(group, groupSize, projectName,
     projectCapacity, projectHost, createBtn) 
 {
     const size = group.members.length
-    const capacity = group.project.capacity
 
     groupSize.innerHTML = `<p><strong>Group Size:</strong> ${size}</p>`
     const sizeElem = groupSize.querySelector("p");
 
     if (group.project) 
     {
+        const capacity = group.project.capacity
         projectName.innerHTML = "";
 
-        //Input & datalist 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = group.project.title; 
-        input.setAttribute("list", "project-list");
-        input.classList.add("project-input");
+        // Dropdown
+        const label = document.createElement("label");
+        label.innerHTML = "<strong>Project:</strong> ";
 
-        let datalist = document.getElementById("project-list");
-        if (!datalist) 
+        const select = document.createElement("select");
+        select.classList.add("project-select");
+
+        //Use cached projects if they exist
+        function populate(projects)
         {
-            datalist = document.createElement("datalist");
-            datalist.id = "project-list";
-            
-            const label = document.createElement("label");
-            label.innerHTML = "<strong>Project:</strong> ";
-            label.appendChild(input);
-            projectName.appendChild(label);
-            projectName.appendChild(datalist);
+            select.innerHTML = "";
+            projects.forEach(p => {
+                const option = document.createElement("option");
+                option.value = p.project_id;
+                option.textContent = p.title;
+                if (group.project && group.project.project_id === p.project_id)
+                {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
 
-            //Fetch all projects
+        if (cachedProjects)
+        {
+            populate(cachedProjects);
+            label.appendChild(select);
+            projectName.appendChild(label);
+        }
+        else 
+        {
             fetch("/api/project_list/")
                 .then(res => res.json())
                 .then(projects => {
-                    datalist.innerHTML = "";
-                    projects.forEach(p => {
-                        const option = document.createElement("option");
-                        option.value = p.title; 
-                        option.dataset.projectId = p.project_id; 
-                        datalist.appendChild(option);
-                    });
+                    cachedProjects = projects;
+                    populate(projects);
+                    label.appendChild(select);
+                    projectName.appendChild(label);
                 });
         }
 
-        projectName.appendChild(input)
-        projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
-        projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
-
         //Update backend selection 
-        input.addEventListener("change", () => {
-            const selected = [...datalist.options].find(o => o.value === input.value);
-            if (selected)
+        select.addEventListener("change", () => {
+            const projectId = select.value;
+
+            fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
             {
-                const projectId = selected.dataset.projectId; 
-                fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken,
-                    },
-                    body: JSON.stringify({ project_id: projectId }),
-                })
-                .then(res => res.json())
-                .then(updated => {
-                    console.log("Project updated:", updated);
-                    loadGroup(group.suggestedgroup_id);
-                })
-                .catch(err => console.error("Failed to update project:", err));
-            }
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({ project_id: projectId }),
+            })
+            .then(res => res.json())
+            .then(updated => {
+                console.log("Project updated:", updated);
+                loadGroup(group.suggestedgroup_id);
+            })
+            .catch(err => console.error("Failed to update project:", err));
         });
 
+        projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
+        projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
         const capacityElem = projectCapacity.querySelector("p");
 
         //See if there's a mismatch in groupSize & Capacity

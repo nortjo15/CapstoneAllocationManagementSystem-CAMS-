@@ -152,11 +152,22 @@
 }
 
 /* Project List Drop Down */
-.project-input {
-  padding: 4px 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  max-width: 250px;
+.project-select {
+    font-family: inherit;       
+    font-size: 1.2rem;          
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    width: 100%;
+    max-width: 250px;
+    box-sizing: border-box;
+    cursor: pointer;
+    appearance: none;           
+}
+
+.project-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 3px rgba(0,123,255,0.5);
 }

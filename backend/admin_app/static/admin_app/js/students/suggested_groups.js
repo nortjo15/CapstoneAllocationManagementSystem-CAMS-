@@ -193,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //expose
     window.removeStudentFromGroup = removeStudentFromGroup;
     window.addStudentToGroup = addStudentToGroup;
+    window.loadGroup = loadGroup;
 
     //Trigger tab:activated if SuggestedGroups is active on load 
     if (document.querySelector("#suggested-tab.tab-content.active"))
