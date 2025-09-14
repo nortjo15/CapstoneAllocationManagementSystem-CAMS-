@@ -58,7 +58,6 @@ urlpatterns = [
     path('admin/logs/', AdminLogListCreateView.as_view()),
     path("email/mailto/", MailtoLinkView.as_view(), name="mailto_link"),
     path("email/page/", admin_views.email_page, name="email_page"),
-
     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
@@ -71,7 +70,7 @@ urlpatterns = [
     path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
     path("viewStudents/", student_page, name="student_view"),
     #Project_views
-    path('projects/', ProjectListCreateView.as_view()),
+    path('project_list/', ProjectListCreateView.as_view(), name="project-list"),
     path('preferences/', ProjectPreferenceListCreateView.as_view()),
     #Group_views
     path("suggested_groups/", SuggestedGroupListCreateView.as_view(), name="suggested-group-list"),
@@ -80,6 +79,7 @@ urlpatterns = [
     path("generate_suggestions/", GenerateSuggestionsView.as_view(), name="generate_suggestions"),
     path("suggested_groups/<int:pk>/remove_student/", remove_student_from_group),
     path("suggested_groups/<int:pk>/add_student/", add_student_to_group),
+    path("suggested_groups/<int:suggestedgroup_id>/update/", SuggestedGroupUpdateView.as_view(), name="suggestedgroup-update"),
     # -- Webpage
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views
@@ -94,5 +94,4 @@ urlpatterns = [
     path('announcements/new/',          announcement_create, name='announcement_create'),
     path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
     path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
-   
 ]

@@ -85,6 +85,10 @@ button.loading::after {
     width: 100%;
     font-size: 1.2rem;
 }
+
+.btn-block + .btn-block {
+    margin-top: 8px; /* adjust as needed */
+}
 /*=========================================*/
 
 .btn.has-content {

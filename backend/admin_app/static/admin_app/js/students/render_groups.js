@@ -93,9 +93,68 @@ function renderProjectInfo(group, groupSize, projectName,
 
     if (group.project) 
     {
-        projectName.innerHTML = `<p><strong>Project:</strong> ${group.project.title}</p>`;
+        projectName.innerHTML = "";
+
+        //Input & datalist 
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = group.project.title; 
+        input.setAttribute("list", "project-list");
+        input.classList.add("project-input");
+
+        let datalist = document.getElementById("project-list");
+        if (!datalist) 
+        {
+            datalist = document.createElement("datalist");
+            datalist.id = "project-list";
+            
+            const label = document.createElement("label");
+            label.innerHTML = "<strong>Project:</strong> ";
+            label.appendChild(input);
+            projectName.appendChild(label);
+            projectName.appendChild(datalist);
+
+            //Fetch all projects
+            fetch("/api/project_list/")
+                .then(res => res.json())
+                .then(projects => {
+                    datalist.innerHTML = "";
+                    projects.forEach(p => {
+                        const option = document.createElement("option");
+                        option.value = p.title; 
+                        option.dataset.projectId = p.project_id; 
+                        datalist.appendChild(option);
+                    });
+                });
+        }
+
+        projectName.appendChild(input)
         projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
         projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
+
+        //Update backend selection 
+        input.addEventListener("change", () => {
+            const selected = [...datalist.options].find(o => o.value === input.value);
+            if (selected)
+            {
+                const projectId = selected.dataset.projectId; 
+                fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken,
+                    },
+                    body: JSON.stringify({ project_id: projectId }),
+                })
+                .then(res => res.json())
+                .then(updated => {
+                    console.log("Project updated:", updated);
+                    loadGroup(group.suggestedgroup_id);
+                })
+                .catch(err => console.error("Failed to update project:", err));
+            }
+        });
 
         const capacityElem = projectCapacity.querySelector("p");
 

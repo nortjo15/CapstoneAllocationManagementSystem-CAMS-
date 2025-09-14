@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupTitle = document.getElementById("group-title");
     const groupSize = document.getElementById("group-size");
     const groupMembers = document.getElementById("group-members")
-    const createBtn = document.getElementById("create-group-btn")
+    const finaliseBtn = document.getElementById("finalise-group-btn")
     const projectName = document.getElementById("group-project-name")
     const projectHost = document.getElementById("group-host")
     const projectCapacity = document.getElementById("group-capacity")
@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.currentMemberIds = new Set(group.members.map(m => m.student.student_id));
 
                 groupTitle.textContent = "";
-                //groupMeta.innerHTML = `<p><strong>Notes:</strong> ${group.notes || "None"}</p>`;
                 groupMembers.innerHTML = `<div class="members-container"></div>`;
 
                 const membersContainer = groupMembers.querySelector(".members-container");
@@ -63,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 //Update Group Information
                 renderProjectInfo(group, groupSize, projectName, 
-                    projectCapacity, projectHost, createBtn);
+                    projectCapacity, projectHost, finaliseBtn);
                 //CWA Information
                 renderCWARange(group, groupSize);
             })
@@ -84,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
         suggestedGroupsInitialised = true; 
 
         //Create button skeleton
-        createBtn.addEventListener("click", () => {
+        finaliseBtn.addEventListener("click", () => {
             if (activeGroupId) {
                 alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
             }
@@ -118,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     btn.type = "button";
 
                     btn.classList.add("btn", "list-item-btn");
-                    btn.dataset.id = group.suggested_group_id;
+                    btn.dataset.id = group.suggestedgroup_id;
                     btn.dataset.display = idx + 1;
                     btn.textContent = `Group ${idx+1}`;
 

@@ -150,3 +150,13 @@
 .tab-content.active {
     display: block;
 }
+
+/* Project List Drop Down */
+.project-input {
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 250px;
+}

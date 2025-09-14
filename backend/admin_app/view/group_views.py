@@ -55,6 +55,12 @@ class GenerateSuggestionsView(APIView):
 
         return Response(suggestions, status=status.HTTP_201_CREATED)
     
+# SuggestedGroupUpdate View
+class SuggestedGroupUpdateView(generics.UpdateAPIView):
+    queryset = SuggestedGroup.objects.all()
+    serializer_class = SuggestedGroupSerializer
+    lookup_field = "suggestedgroup_id"
+    
 @api_view(["POST"])
 def remove_student_from_group(request, pk):
     group = get_object_or_404(SuggestedGroup, pk=pk)

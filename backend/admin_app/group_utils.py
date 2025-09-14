@@ -178,7 +178,7 @@ def generate_project_only_groups(students, project_prefs, projects, top_n=1):
             SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
 
         groups.append({
-            "suggested_group_id": sg.suggestedgroup_id,
+            "suggestedgroup_id": sg.suggestedgroup_id,
             "students": [s.student_id for s in members],
             "project": project.title,
             "strength": "weak",
@@ -255,7 +255,7 @@ def generate_suggestions_from_likes():
 
             # Send dict as response
             suggestions.append({
-                "suggested_group_id": sg.suggestedgroup_id, 
+                "suggestedgroup_id": sg.suggestedgroup_id, 
                 "students": [s.student_id for s in clique],
                 "project": result["project"].title, 
                 "strength": result["strength"],

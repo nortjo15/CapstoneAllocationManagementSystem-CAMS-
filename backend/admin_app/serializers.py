@@ -30,6 +30,12 @@ class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
 class SuggestedGroupSerializer(serializers.ModelSerializer):
     members = SuggestedGroupMemberSerializer(many=True, read_only=True)
     project = ProjectSerializer(read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        queryset=Project.objects.all(),
+        source="project",
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         model = SuggestedGroup
@@ -39,6 +45,7 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
             'notes', 
             'has_anti_preference',
             'project',
+            'project_id',
             'members']
 # --------------------------------------------------------------------
 
