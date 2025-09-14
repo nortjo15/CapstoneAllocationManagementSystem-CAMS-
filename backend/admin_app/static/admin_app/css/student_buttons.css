@@ -51,6 +51,10 @@
     background: #c9302c;
 }
 
+#delete-group-btn {
+    display: none;
+}
+
 /* Loading */
 button.loading {
   position: relative;

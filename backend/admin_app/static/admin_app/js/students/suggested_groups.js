@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.detail.tabId === "suggested-tab") 
         {
             initSuggestedGroups();
+            initManualGroups();
         }
     });
 
@@ -169,25 +170,22 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(res => res.json())
             .then(group => {
-                //Add it to the sidebar 
-                const li = document.createElement("li");
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.classList.add("btn", "list-item-btn");
-                btn.classList.add("strength-manual");
-                btn.dataset.id = group.suggestedgroup_id;
-                btn.dataset.display = group.name; 
-                btn.textContent = group.name; 
-                li.appendChild(btn);
-                manualGroupsUl.appendChild(li);
-
-                btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-                //Auto-load group
-                loadGroup(group.suggestedgroup_id);
+                renderManualGroup(group)
             })
             .catch(err => console.error("Failed to create manual group:", err))
             .finally(() => setButtonLoading(createBtn, false));
         });
+    }
+
+    function initManualGroups()
+    {
+        fetch("/api/suggested_groups/manual/")
+            .then(res => res.json())
+            .then(groups => {
+                manualGroupsUl.innerHTML = "";
+                groups.forEach(group => renderManualGroup(group));
+            })
+            .catch(err => console.error("Failed to load manual groups:", err));
     }
 
     function removeStudentFromGroup(student, group) 
@@ -230,6 +228,23 @@ document.addEventListener("DOMContentLoaded", () => {
             updateGroupUI(updated); //refresh group details 
         })
         .catch(err => console.error(err));
+    }
+
+    function renderManualGroup(group)
+    {
+        //Add it to the sidebar 
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("btn", "list-item-btn");
+        btn.classList.add("strength-manual");
+        btn.dataset.id = group.suggestedgroup_id;
+        btn.dataset.display = group.name; 
+        btn.textContent = group.name; 
+        li.appendChild(btn);
+        manualGroupsUl.appendChild(li);
+
+        btn.addEventListener("click", () => loadGroup(btn.dataset.id));
     }
 
     //expose

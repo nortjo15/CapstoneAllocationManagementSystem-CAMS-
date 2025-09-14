@@ -60,6 +60,13 @@ class SuggestedGroupUpdateView(generics.UpdateAPIView):
     queryset = SuggestedGroup.objects.all()
     serializer_class = SuggestedGroupSerializer
     lookup_field = "suggestedgroup_id"
+
+# ManualGroups View
+class ManualGroupListView(generics.ListAPIView):
+    serializer_class = SuggestedGroupSerializer
+
+    def get_queryset(self):
+        return SuggestedGroup.objects.filter(is_manual=True)
     
 @api_view(["POST"])
 def remove_student_from_group(request, pk):
@@ -115,3 +122,9 @@ def create_manual_group(request):
         is_manual=True
     )
     return Response(SuggestedGroupSerializer(group).data)
+
+@api_view(["DELETE"])
+def delete_manual_group(request, pk):
+    group = get_object_or_404(SuggestedGroup, pk=pk, is_manual=True)
+    group.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
