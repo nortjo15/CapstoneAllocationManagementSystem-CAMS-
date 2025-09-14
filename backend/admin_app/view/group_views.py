@@ -92,3 +92,12 @@ def add_student_to_group(request, pk):
     SuggestedGroupMember.objects.create(suggested_group=group, student=student)
     serializer = SuggestedGroupSerializer(group)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(["POST"])
+def create_manual_group(request):
+    count = SuggestedGroup.objects.filter(name__startswith="Manual Group").count() + 1
+    group = SuggestedGroup.objects.create(
+        name=f"Manual Group {count}",
+        project=None
+    )
+    return Response(SuggestedGroupSerializer(group).data)

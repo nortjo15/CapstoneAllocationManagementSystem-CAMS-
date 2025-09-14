@@ -74,7 +74,7 @@ function renderMemberCard(m, group)
     return div;
 }
 
-function renderAddStudentCard(group) 
+function renderAddStudentCard() 
 {
     const addDiv = document.createElement("div");
     addDiv.textContent = "+ Add Student";
@@ -163,19 +163,23 @@ function renderProjectInfo(group, groupSize, projectName,
         projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
         projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
         const capacityElem = projectCapacity.querySelector("p");
+        const errorBox = document.getElementById("group-errors");
 
         //See if there's a mismatch in groupSize & Capacity
         if (size !== capacity)
         {
+
             capacityElem.classList.add("text-error");
             sizeElem.classList.add("text-error");
             createBtn.disabled = true;
+            showError("Invalid Group Size", errorBox)
         }
         else 
         {
             capacityElem.classList.remove("text-error");
             sizeElem.classList.remove("text-error");
             createBtn.disabled = false;
+            clearError(errorBox)
         }
     } 
     else 
@@ -235,6 +239,20 @@ function updateGroupUI(group)
     renderCWARange(group, groupSize);
 }
 
+function showError(msg, errorBox)
+{
+    errorBox.textContent = msg; 
+    errorBox.style.display = "block";
+}
+
+function clearError(errorBox)
+{
+    errorBox.textContent = "";
+    errorBox.style.display = "none";
+}
+
+window.showError = showError;
+window.clearError = clearError;
 window.updateGroupUI = updateGroupUI;
 window.renderMemberCard = renderMemberCard;
 window.renderAddStudentCard = renderAddStudentCard;

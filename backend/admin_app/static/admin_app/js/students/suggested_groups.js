@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 //Create a card for each member
                 group.members.forEach(m => membersContainer.appendChild(renderMemberCard(m, group)));
 
-                if (group.project && group.members.length < group.project.capacity)
+                if (!group.project || group.members.length < group.project.capacity)
                 {
                     membersContainer.appendChild(renderAddStudentCard(group))
                 }
@@ -146,6 +146,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+
+        //Wireing the +Create Group Button
+        const createBtn = document.getElementById("create-group-btn");
+        createBtn.type = "button";
+
+        createBtn.addEventListener("click", () => {
+            setButtonLoading(createBtn, true);
+
+            fetch("/api/suggested_groups/create_manual/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({}),
+            })
+            .then(res => res.json())
+            .then(group => {
+                //Add it to the sidebar 
+                const li = document.createElement("li");
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.classList.add("btn", "list-item-btn");
+                btn.classList.add("strength-manual");
+                btn.dataset.id = group.suggestedgroup_id;
+                btn.dataset.display = group.name; 
+                btn.textContent = group.name; 
+                li.appendChild(btn);
+                groupsUl.appendChild(li);
+
+                btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+                //Auto-load group
+                loadGroup(group.suggestedgroup_id);
+            })
+            .catch(err => console.error("Failed to create manual group:", err))
+            .finally(() => setButtonLoading(createBtn, false));
+        });
     }
 
     function removeStudentFromGroup(student, group) 
