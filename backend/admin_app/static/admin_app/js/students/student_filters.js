@@ -1,3 +1,6 @@
+import { openFilterModal } from "./modal_function.js";
+import { fetchStudents } from "./student_table.js";
+
 const filterForm = document.getElementById("studentFilterForm");
 const resetBtn = document.getElementById("reset-btn");
 const cwaMinInput = document.getElementById("cwa_min");
@@ -107,3 +110,6 @@ if (resetBtn) {
         fetchStudents(targetId); //Reload
     });
 }
+
+const openFiltersBtn = document.getElementById("openFilterBtn");
+openFiltersBtn.addEventListener("click", openFilterModal);
