@@ -1,5 +1,9 @@
 import { setButtonLoading } from "./utils.js";
 import { updateDeleteButton } from "./group_actions.js";
+import {
+    renderMemberCard, renderAddStudentCard, renderProjectInfo, renderCWARange,
+    updateGroupUI, clearError
+} from "./render_groups.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const manualGroupsUl = document.getElementById("manual-groups-ul");

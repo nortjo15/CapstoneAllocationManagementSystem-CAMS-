@@ -6,7 +6,7 @@ let cachedProjects = null;
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
 //Helper functions for suggested_groups.js
-function renderMemberCard(m, group) 
+export function renderMemberCard(m, group) 
 {
     const div = document.createElement("div");
     div.classList.add("card", "member-card");
@@ -79,7 +79,7 @@ function renderMemberCard(m, group)
     return div;
 }
 
-function renderAddStudentCard() 
+export function renderAddStudentCard() 
 {
     const addDiv = document.createElement("div");
     addDiv.textContent = "+ Add Student";
@@ -90,7 +90,7 @@ function renderAddStudentCard()
     return addDiv;
 }
 
-function renderProjectInfo(group, groupSize, projectName, 
+export function renderProjectInfo(group, groupSize, projectName, 
     projectCapacity, projectHost, createBtn) 
 {
     const size = group.members.length
@@ -205,7 +205,7 @@ function renderProjectInfo(group, groupSize, projectName,
     }
 }
 
-function renderCWARange(group, groupSize)
+export function renderCWARange(group, groupSize)
 {
     if (group.members.length > 0)
     {
@@ -228,7 +228,7 @@ function renderCWARange(group, groupSize)
     }
 }
 
-function updateGroupUI(group)
+export function updateGroupUI(group)
 {
     const membersContainer = document.querySelector("#group-members .members-container");
     const groupSize = document.getElementById("group-size");
@@ -254,22 +254,14 @@ function updateGroupUI(group)
     renderCWARange(group, groupSize);
 }
 
-function showError(msg, errorBox)
+export function showError(msg, errorBox)
 {
     errorBox.textContent = msg; 
     errorBox.style.display = "block";
 }
 
-function clearError(errorBox)
+export function clearError(errorBox)
 {
     errorBox.textContent = "";
     errorBox.style.display = "none";
 }
-
-window.showError = showError;
-window.clearError = clearError;
-window.updateGroupUI = updateGroupUI;
-window.renderMemberCard = renderMemberCard;
-window.renderAddStudentCard = renderAddStudentCard;
-window.renderProjectInfo = renderProjectInfo;
-window.renderCWARange = renderCWARange;

@@ -116,9 +116,6 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
         .catch(err => console.error("Failed to fetch students", err));
 }
 
-//Callable from elsewhere
-window.fetchStudents = fetchStudents;
-
 //Track checkbox changes to enable / disable the Add Button
 document.addEventListener("change", (e) => {
     if (e.target.classList.contains("student-checkbox"))
@@ -174,6 +171,7 @@ addBtn.addEventListener("click", (e) =>
     }
     
     const selectedIds = Array.from(checkboxes).map(cb => cb.dataset.studentId);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     Promise.all(
         selectedIds.map(id => 
