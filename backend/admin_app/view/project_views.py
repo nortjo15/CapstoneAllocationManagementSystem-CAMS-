@@ -4,7 +4,6 @@ from django.shortcuts import render, redirect
 from rest_framework import viewsets
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
-from django.views.generic import TemplateView
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()

@@ -9,7 +9,6 @@ async function getProjectData() {
         projectContainer.innerHTML = ''; // Clear loading
 
         if (projects.length === 0) {
-            // BUG FIX: Was 'projectList', now 'projectContainer'
             projectContainer.innerHTML = '<li>No Projects Found</li>';
         } else {
             projects.forEach(project => {
