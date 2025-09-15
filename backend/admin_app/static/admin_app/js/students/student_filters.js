@@ -84,7 +84,9 @@ if (filterForm) {
 
         // decide target
         let targetId = "studentsTableBody";
-        if (document.getElementById("studentsTableBodyModal")) {
+        const modal = document.getElementById("studentModal");
+        if (modal && modal.style.display === "flex")
+        {
             targetId = "studentsTableBodyModal";
         }
 
@@ -105,7 +107,8 @@ if (resetBtn) {
         if (filterBtn) filterBtn.disabled = false;
         
         let targetId = "studentsTableBody";
-        if (document.getElementById("studentsTableBodyModal")) {
+        const modal = document.getElementById("studentModal");
+        if (modal && modal.style.display === "flex") {
             targetId = "studentsTableBodyModal";
         }
 
