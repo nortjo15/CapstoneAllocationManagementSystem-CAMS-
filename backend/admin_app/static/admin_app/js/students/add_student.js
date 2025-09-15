@@ -1,3 +1,5 @@
+import { fetchStudents } from "./student_table.js";
+
 const addStudentForm = document.getElementById("addStudentForm");
 const addStudentModal = document.getElementById("addStudentModal");
 const addStudentCloseBtn = addStudentModal ? addStudentModal.querySelector(".close-btn") : null;

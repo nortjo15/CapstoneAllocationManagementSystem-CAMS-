@@ -1,5 +1,6 @@
 import { setButtonLoading } from "./utils.js";
-import { openNotesModal, openPreferenceModal } from "./modal_function.js";
+import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal } from "./modal_function.js";
+import { loadGroup } from "./suggested_groups.js";
 
 // Helper to compute current group capacity info
 function getGroupCapacityInfo() {
@@ -198,3 +199,22 @@ addBtn.addEventListener("click", (e) =>
         setButtonLoading(addBtn, false)
     });
 });
+
+const addStudentBtn = document.getElementById("addStudentBtn")
+const importStudentBtn = document.getElementById("importStudentBtn")
+
+if (addStudentBtn)
+{
+    addStudentBtn.addEventListener("click", (e) => 
+    {
+        openModal();
+    });
+}
+
+if (importStudentBtn)
+{
+    importStudentBtn.addEventListener("click", (e) => 
+    {
+        openImportModal();
+    });
+}

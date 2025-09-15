@@ -1,4 +1,5 @@
 import { fetchStudents } from "./student_table.js";
+import { removeStudentFromGroup } from "./suggested_groups.js";
 
 // Helpers to open modals
 export function openModal() {

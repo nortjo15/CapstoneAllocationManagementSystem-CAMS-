@@ -112,4 +112,4 @@ if (resetBtn) {
 }
 
 const openFiltersBtn = document.getElementById("openFilterBtn");
-openFiltersBtn.addEventListener("click", openFilterModal);
+if (openFiltersBtn) openFiltersBtn.addEventListener("click", openFilterModal);

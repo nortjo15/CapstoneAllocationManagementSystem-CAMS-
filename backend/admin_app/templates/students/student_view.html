@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="{% static 'admin_app/css/students.css' %}">
 <link rel="stylesheet" href="{% static 'admin_app/css/modal.css' %}">
 <link rel="stylesheet" href="{% static 'admin_app/css/student_buttons.css' %}">
+<meta name="csrf-token" content="{{ csrf_token }}">
 {% endblock styles %}
 
 {% block content %}
@@ -23,11 +24,11 @@
 
 <!-- Import Scripts -->
 {% load static %}
-<script src="{% static 'admin_app/js/students/modal_function.js' %}"></script>
-<script src="{% static 'admin_app/js/students/student_table.js' %}"></script>
-<script src="{% static 'admin_app/js/students/student_filters.js' %}"></script>
-<script src="{% static 'admin_app/js/students/add_notes.js' %}"></script>
+<script type="module" src="{% static 'admin_app/js/students/modal_function.js' %}"></script>
+<script type="module" src="{% static 'admin_app/js/students/student_table.js' %}"></script>
+<script type="module" src="{% static 'admin_app/js/students/student_filters.js' %}"></script>
+<script type="module" src="{% static 'admin_app/js/students/add_notes.js' %}"></script>
 <script type="module" src="{% static 'admin_app/js/students/import_students.js' %}"></script>
-<script src="{% static 'admin_app/js/students/add_student.js' %}"></script>
-<script src="{% static 'admin_app/js/students/student_page.js' %}"></script>
+<script type="module" src="{% static 'admin_app/js/students/add_student.js' %}"></script>
+<script type="module" src="{% static 'admin_app/js/students/student_page.js' %}"></script>
 {% endblock content %}

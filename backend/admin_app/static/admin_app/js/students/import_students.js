@@ -1,4 +1,5 @@
 import { setButtonLoading } from "./utils.js";
+import { fetchStudents } from "./student_table.js";
 
 const importForm = document.getElementById("studentImportForm");
 const importModal = document.getElementById("importModal");
