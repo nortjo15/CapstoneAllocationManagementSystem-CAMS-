@@ -48,6 +48,9 @@ def announcement_list(request):
 
 @staff_member_required
 def announcement_create(request):
+    if not CapstoneInformationSection.objects.exists():
+        messages.warning(request, "Please create a section before adding an announcement.")
+        return redirect("admin_app:section_create")
     if request.method == "POST":
         form = AnnouncementForm(request.POST)
         if form.is_valid():
