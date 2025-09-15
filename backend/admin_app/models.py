@@ -194,9 +194,6 @@ class CapstoneInformationSection(models.Model):
     class Meta:
         ordering = ["order", "id"]
 
-    def __str__(self):
-        return self.name
-
 # Stores actual information that is displayed on Capstone Information pages
 # Each section can have multiple pieces of content, and each piece can be pinned or have a priority
 # Content can be published, archived or in draft state
@@ -223,6 +220,3 @@ class CapstoneInformationContent(models.Model):
             models.Index(fields=["section_id", "-pinned", "priority", "-published_at"]),
             models.Index(fields=["status", "published_at", "expires_at"]),
         ]
- 
-    def __str__(self):
-        return self.title

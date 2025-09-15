@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
+from django.urls import path
 
 #Import all required views
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
@@ -30,7 +31,6 @@ from .view.settings_views import settings_view
 from .view.announcements_views import (
     announcement_list, announcement_create, announcement_edit, announcement_delete
 )
-
 from admin_app.view import admin_views
 
 from admin_app.view.email_views import MailtoLinkView
@@ -56,6 +56,7 @@ urlpatterns = [
     path("email/page/", admin_views.email_page, name="email_page"),
 
     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
+    path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
@@ -80,7 +81,6 @@ urlpatterns = [
     path('api/rounds/', rounds_api, name='rounds_api_list'),
     path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
     path('api/projects/', rounds_api, name='projects_api'),
-    
     #Announcements CRUD
     path('announcements/',              announcement_list,  name='announcement_list'),
     path('announcements/new/',          announcement_create, name='announcement_create'),
