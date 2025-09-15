@@ -202,19 +202,8 @@ addBtn.addEventListener("click", (e) =>
 
 const addStudentBtn = document.getElementById("addStudentBtn")
 const importStudentBtn = document.getElementById("importStudentBtn")
+const openFiltersBtn_s = document.getElementById("openFilterBtnStudents");
 
-if (addStudentBtn)
-{
-    addStudentBtn.addEventListener("click", (e) => 
-    {
-        openModal();
-    });
-}
-
-if (importStudentBtn)
-{
-    importStudentBtn.addEventListener("click", (e) => 
-    {
-        openImportModal();
-    });
-}
+if (addStudentBtn) addStudentBtn.addEventListener("click", openModal);
+if (importStudentBtn) importStudentBtn.addEventListener("click", openImportModal);
+if (openFiltersBtn_s) openFiltersBtn_s.addEventListener("click", openFilterModal);

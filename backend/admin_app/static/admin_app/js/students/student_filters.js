@@ -1,6 +1,8 @@
 import { openFilterModal } from "./modal_function.js";
 import { fetchStudents } from "./student_table.js";
 
+console.log("student_filters.js loaded");
+
 const filterForm = document.getElementById("studentFilterForm");
 const resetBtn = document.getElementById("reset-btn");
 const cwaMinInput = document.getElementById("cwa_min");
