@@ -44,8 +44,8 @@ from .view.admin_views import (
 )
 
 
-router = DefaultRouter()
-router.register(r'projects', ProjectViewSet, basename='project')
+# router = DefaultRouter()
+# router.register(r'projects', ProjectViewSet, basename='project')
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -71,7 +71,7 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('', include(router.urls)),
+    path('', include('admin_app.api.urls')),
     path('projectDashboard/', project_view, name='project_dashboard'),
    
     #Group_views
