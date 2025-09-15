@@ -1,4 +1,4 @@
-# admin_app/view/announcements_views.py
+# admin_app/view/informations_views.py
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,10 +7,10 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 from admin_app.models import CapstoneInformationContent, CapstoneInformationSection
-from admin_app.forms.admin_forms import AnnouncementForm
+from admin_app.forms.admin_forms import InformationForm
 
 @staff_member_required
-def announcement_list(request):
+def information_list(request):
     """Admin list with filters + search + pagination."""
     now = timezone.now()
 
@@ -40,19 +40,19 @@ def announcement_list(request):
     page = Paginator(qs, 20).get_page(request.GET.get("page"))
 
     sections = CapstoneInformationSection.objects.order_by("order", "id")
-    return render(request, "announcement_list.html", {
+    return render(request, "information_list.html", {
         "page": page,
         "items": page.object_list,
         "sections": sections,
     })
 
 @staff_member_required
-def announcement_create(request):
+def information_create(request):
     if not CapstoneInformationSection.objects.exists():
-        messages.warning(request, "Please create a section before adding an announcement.")
+        messages.warning(request, "Please create a section before adding an information section.")
         return redirect("admin_app:section_create")
     if request.method == "POST":
-        form = AnnouncementForm(request.POST)
+        form = InformationForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
             if not obj.author and request.user.is_authenticated:
@@ -60,18 +60,18 @@ def announcement_create(request):
             if not obj.published_at:
                 obj.published_at = timezone.now()
             obj.save()
-            messages.success(request, f"Announcement “{obj.title}” created.")
+            messages.success(request, f"Information section “{obj.title}” created.")
             # (Optional) call admin log helper here
-            return redirect("admin_app:announcement_list")
+            return redirect("admin_app:information_list")
     else:
-        form = AnnouncementForm()
-    return render(request, "announcement_form.html", {"form": form})
+        form = InformationForm()
+    return render(request, "information_form.html", {"form": form})
 
 @staff_member_required
-def announcement_edit(request, pk):
+def information_edit(request, pk):
     obj = get_object_or_404(CapstoneInformationContent, pk=pk)
     if request.method == "POST":
-        form = AnnouncementForm(request.POST, instance=obj)
+        form = InformationForm(request.POST, instance=obj)
         if form.is_valid():
             obj = form.save(commit=False)
             if not obj.author and request.user.is_authenticated:
@@ -81,18 +81,18 @@ def announcement_edit(request, pk):
             obj.save()
             messages.success(request, f"Updated “{obj.title}”.")
             # (Optional) call admin log helper here
-            return redirect("admin_app:announcement_list")
+            return redirect("admin_app:information_list")
     else:
-        form = AnnouncementForm(instance=obj)
-    return render(request, "announcement_form.html", {"form": form})
+        form = InformationForm(instance=obj)
+    return render(request, "information_form.html", {"form": form})
 
 @staff_member_required
-def announcement_delete(request, pk):
+def information_delete(request, pk):
     obj = get_object_or_404(CapstoneInformationContent, pk=pk)
     if request.method == "POST":
         title = obj.title
         obj.delete()
         messages.success(request, f"Deleted “{title}”.")
         # (Optional) call admin log helper here
-        return redirect("admin_app:announcement_list")
-    return render(request, "announcement_confirm_delete.html", {"obj": obj})
+        return redirect("admin_app:information_list")
+    return render(request, "information_confirm_delete.html", {"obj": obj})

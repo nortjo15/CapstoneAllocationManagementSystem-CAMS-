@@ -6,12 +6,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Announcements</title>
-  {# Optional: <link rel="stylesheet" href="{% static 'admin_app/admin.css' %}"> #}
+  <title>Information Sections</title>
+  {# <link rel="stylesheet" href="{% static 'admin_app/admin.css' %}"> #}
 </head>
 <body>
-  <h1>Announcements</h1>
-  <p><a href="{% url 'admin_app:announcement_create' %}">+ New announcement</a></p>
+  <h1>Information</h1>
+  <p><a href="{% url 'admin_app:information_create' %}">+ New information</a></p>
   <p><a href="{% url 'admin_app:section_list' %}">Manage sections</a></p>
 
   {% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
@@ -64,8 +64,8 @@
             <td>{% if a.expires_at %}{{ a.expires_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
             <td>{{ a.status }}</td>
             <td>
-              <a href="{% url 'admin_app:announcement_edit' a.id %}">Edit</a> |
-              <a href="{% url 'admin_app:announcement_delete' a.id %}">Delete</a>
+              <a href="{% url 'admin_app:information_edit' a.id %}">Edit</a> |
+              <a href="{% url 'admin_app:information_delete' a.id %}">Delete</a>
             </td>
           </tr>
         {% endfor %}
@@ -82,7 +82,7 @@
       {% endif %}
     </div>
   {% else %}
-    <p>No announcements found.</p>
+    <p>No information content found.</p>
   {% endif %}
 </body>
 </html>

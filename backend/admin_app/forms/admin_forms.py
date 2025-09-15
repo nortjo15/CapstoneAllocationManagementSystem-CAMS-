@@ -2,7 +2,7 @@ from django import forms
 from django.utils import timezone
 from admin_app.models import CapstoneInformationContent, CapstoneInformationSection
 
-class AnnouncementForm(forms.ModelForm):
+class InformationForm(forms.ModelForm):
     published_at = forms.DateTimeField(
         required=False,
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"})
