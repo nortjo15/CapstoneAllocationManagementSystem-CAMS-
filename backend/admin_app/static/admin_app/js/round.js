@@ -100,20 +100,63 @@ async function showRoundDetails(roundId) {
         document.getElementById('edit-close-date').value = formatDateForInput(round.close_date);
         document.getElementById('edit-status').value = round.status;
 
-        const editProjectsSelect = document.getElementById('edit-round-projects');
-        editProjectsSelect.innerHTML = '';
+        const editProjectsContainer = document.getElementById('edit-round-projects');
+        editProjectsContainer.innerHTML = '';
+
+        // get list of project_ids in this round
+        const roundProjectIds = round.projects.map(p => p.project_id);
+
         projects.forEach(project => {
-            const option = document.createElement('option');
-            option.value = project.project_id;
-            option.textContent = project.title;
-            if (round.projects.includes(project.project_id)) {
-                option.selected = true;
+            const label = document.createElement('label');
+            label.style.display = 'block'; // one per line
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = project.project_id;
+
+            // Pre-check if this project belongs to the round
+            if (roundProjectIds.includes(project.project_id)) {
+                checkbox.checked = true;
             }
-            editProjectsSelect.appendChild(option);
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(" " + project.title));
+            editProjectsContainer.appendChild(label);
         });
+        // const editProjectsSelect = document.getElementById('edit-round-projects');
+        // editProjectsSelect.innerHTML = '';
+
+        // // get the list of project_ids currently in this round
+        // const roundProjectIds = round.projects.map(p => p.project_id);
+
+        // projects.forEach(project => {
+        //     const option = document.createElement('option');
+        //     option.value = project.project_id;
+        //     option.textContent = project.title;
+
+        //     // Pre-select if this project is in the round
+        //     if (roundProjectIds.includes(project.project_id)) {
+        //         option.selected = true;
+        //     }
+
+        //     editProjectsSelect.appendChild(option);
+        // });
 
         rightPaneTitle.textContent = `Edit Round: ${round.round_name}`;
         showRightPane(roundDetailsView);
+
+        //testing
+        const container = document.getElementById('edit-round-projects');
+        console.log('container HTML:', container ? container.innerHTML : 'no container found');
+
+        const boxes = container ? container.querySelectorAll('input[type="checkbox"]') : [];
+        console.log('checkbox count:', boxes.length);
+
+        boxes.forEach((cb, i) => {
+        const cs = getComputedStyle(cb);
+        console.log(i, cb, 'display=', cs.display, 'visibility=', cs.visibility, 'opacity=', cs.opacity);
+        });
+
     } catch (error) {
         console.error('Error fetching round details:', error);
     }
