@@ -9,6 +9,7 @@
 <body>
   <h1>Announcements</h1>
   <p><a href="{% url 'admin_app:announcement_create' %}">+ New announcement</a></p>
+  <p><a href="{% url 'admin_app:section_list' %}">Manage sections</a></p>
 
   {% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
 

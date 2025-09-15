@@ -31,6 +31,8 @@ from .view.settings_views import settings_view
 from .view.announcements_views import (
     announcement_list, announcement_create, announcement_edit, announcement_delete
 )
+from .view.section_views import section_list, section_create, section_edit, section_delete
+
 from admin_app.view import admin_views
 
 from admin_app.view.email_views import MailtoLinkView
@@ -86,5 +88,10 @@ urlpatterns = [
     path('announcements/new/',          announcement_create, name='announcement_create'),
     path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
     path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
+    #Sections CRUD
+    path('sections/',                section_list,  name='section_list'),
+    path('sections/new/',            section_create, name='section_create'),
+    path('sections/<int:pk>/edit/',  section_edit,   name='section_edit'),
+    path('sections/<int:pk>/delete/',section_delete, name='section_delete'),
     
 ]
