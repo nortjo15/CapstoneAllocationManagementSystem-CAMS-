@@ -6,11 +6,17 @@ from .models import Student, GroupPreference
 from .serializers import StudentSerializer, GroupPreferenceSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
-from django.http import JsonResponse
-from django.db.models import Prefetch
+from django.http import JsonResponse 
+from django.db.models import Prefetch, Q
+from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from admin_app.models import (
+    CapstoneInformationSection,
+    CapstoneInformationContent,
+)
 
 
 
@@ -50,7 +56,7 @@ def student_form(request):
         majors = Major.objects.values('name')
         return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
 
-def capstone_information(request):
+def landing_page(request):
     sections = (CapstoneInformationSection.objects
                 .prefetch_related(
                     Prefetch(
@@ -61,3 +67,31 @@ def capstone_information(request):
                 ))
     return render(request, "capstone_information.html", {"sections": sections})
 
+def section_detail(request, id):
+    section = get_object_or_404(CapstoneInformationSection, id=id)
+    now = timezone.now()
+
+    qs = (
+        CapstoneInformationContent.objects
+        .select_related("section_id")
+        .filter(section_id=section, status="published")
+        .filter(
+            Q(published_at__lte=now) | Q(published_at__isnull=True),
+            Q(expires_at__gt=now)    | Q(expires_at__isnull=True),
+        )
+        .order_by("-pinned", "priority", "-published_at", "id")
+    )
+
+    page = Paginator(qs, 20).get_page(request.GET.get("page"))
+    subsections = section.subsections.order_by("order", "id")
+
+    return render(
+        request,
+        "capstone_info/section_detail.html",  # <-- matches template location above
+        {
+            "section": section,
+            "contents": page.object_list,
+            "subsections": subsections,
+            "page": page,
+        },
+    )
