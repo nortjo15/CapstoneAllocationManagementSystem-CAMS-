@@ -45,6 +45,40 @@ export function openPreferenceModal(student)
     });
 }
 
+export function openMemberPreferenceModal(student)
+{
+    const modal = document.getElementById("memberPreferenceModal");
+    const likesList = document.getElementById("memberPreferencesLikes");
+    const avoidsList = document.getElementById("memberPreferencesAvoids");
+    const avoidHeader = document.getElementById("avoidHeader");
+
+    if (modal) modal.style.display = "flex";
+
+    //Clear old lists
+    likesList.innerHTML = "";
+    avoidsList.innerHTML = "";
+    avoidHeader.style.display = "none";
+
+    student.given_preferences.forEach((pref, idx) => 
+    {
+        const li = document.createElement("li");
+        li.textContent = `${pref.target_name} (${pref.target_id})`;
+
+        if (pref.preference_type === "like") 
+        {
+            likesList.appendChild(li);
+        } 
+        else if (pref.preference_type === "avoid") 
+        {
+            avoidsList.appendChild(li);
+        }
+    });
+
+    if (avoidsList.children.length > 0) {
+        avoidHeader.style.display = "block";
+    }
+}
+
 export function openRemoveStudentModal(student, group) {
     const modal = document.getElementById("removeStudentModal");
     const msg = document.getElementById("removeStudentMessage");
@@ -120,6 +154,7 @@ setupModal("addStudentModal");
 setupModal("importModal");
 setupModal("filterModal");
 setupModal("notesModal");
-setupModal("preferencesModal")
-setupModal("removeStudentModal")
-setupModal("studentModal")
+setupModal("preferencesModal");
+setupModal("removeStudentModal");
+setupModal("studentModal");
+setupModal("memberPreferenceModal");

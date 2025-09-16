@@ -9,6 +9,24 @@ class ProjectPreferenceNestedSerializer(serializers.ModelSerializer):
         model = ProjectPreference
         fields = ["rank", "project_title"]
 
+class GroupPreferenceNestedSerializer(serializers.ModelSerializer):
+    target_id = serializers.CharField(source="target_student.student_id", read_only=True)
+    target_name = serializers.CharField(source="target_student.name", read_only=True)
+
+    class Meta:
+        model = GroupPreference
+        fields = ["preference_type", "target_id", "target_name"]
+
+
+# Recieved Preferences
+class GroupPreferenceReceivedSerializer(serializers.ModelSerializer):
+    source_id = serializers.CharField(source="student.student_id", read_only=True)
+    source_name = serializers.CharField(source="student.name", read_only=True)
+
+    class Meta:
+        model = GroupPreference
+        fields = ["preference_type", "source_id", "source_name"]
+
 class MajorSerializer(serializers.ModelSerializer):
     """Serializer for Major model (minimal fields needed for display)."""
 
@@ -26,6 +44,18 @@ class NullableFloatField(serializers.FloatField):
 class StudentSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)
     preferences = ProjectPreferenceNestedSerializer(many=True, read_only=True) 
+
+    group_preferences = GroupPreferenceNestedSerializer(
+        many=True, 
+        read_only=True, 
+        source="given_preferences"
+    )
+
+    received_group_preferences = GroupPreferenceReceivedSerializer(
+        many=True,
+        read_only=True,
+        source="received_preferences"  # what others say about this student
+    )
 
     class Meta:
         model = Student

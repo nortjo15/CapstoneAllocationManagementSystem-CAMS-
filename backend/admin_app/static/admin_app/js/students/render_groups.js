@@ -1,5 +1,5 @@
 import 
-    { openNotesModal, openPreferenceModal, openRemoveStudentModal, openStudentModal } 
+    { openNotesModal, openPreferenceModal, openRemoveStudentModal, openStudentModal, openMemberPreferenceModal } 
     from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
 
@@ -56,7 +56,7 @@ export function renderMemberCard(m, group)
     // Preferences Button
     const prefBtn = document.createElement("span");
     prefBtn.classList.add("btn", "btn-secondary");
-    prefBtn.textContent = "Preferences";
+    prefBtn.textContent = "Projects";
     prefBtn.title = ("Open preferences");
 
     //Disable button if no preferences
@@ -74,9 +74,31 @@ export function renderMemberCard(m, group)
         })
     }
 
+    // Member Preferences Button 
+    const memberPrefBtn = document.createElement("span");
+    memberPrefBtn.classList.add("btn", "btn-secondary");
+    memberPrefBtn.textContent = "Members";
+    memberPrefBtn.title = ("Open member preferences");
+
+    if (!m.student.given_preferences || m.student.given_preferences.length == 0)
+    {
+        memberPrefBtn.disabled = true;
+        memberPrefBtn.style.opacity = "0.5";
+        memberPrefBtn.style.cursor = "not-allowed";
+    }
+    else 
+    {
+        memberPrefBtn.addEventListener("click", (e) => 
+        {
+            e.stopPropagation();
+            openMemberPreferenceModal()
+        })
+    }
+
     div.appendChild(removeBtn);
     div.appendChild(notesBtn);
     div.appendChild(prefBtn);
+    div.appendChild(memberPrefBtn);
     return div;
 }
 
