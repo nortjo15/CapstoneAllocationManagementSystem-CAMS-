@@ -59,7 +59,7 @@ export function openMemberPreferenceModal(student)
     avoidsList.innerHTML = "";
     avoidHeader.style.display = "none";
 
-    student.given_preferences.forEach((pref, idx) => 
+    student.group_preferences.forEach((pref, idx) => 
     {
         const li = document.createElement("li");
         li.textContent = `${pref.target_name} (${pref.target_id})`;

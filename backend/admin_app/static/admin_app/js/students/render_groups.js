@@ -80,7 +80,7 @@ export function renderMemberCard(m, group)
     memberPrefBtn.textContent = "Members";
     memberPrefBtn.title = ("Open member preferences");
 
-    if (!m.student.given_preferences || m.student.given_preferences.length == 0)
+    if (!m.student.group_preferences || m.student.group_preferences.length == 0)
     {
         memberPrefBtn.disabled = true;
         memberPrefBtn.style.opacity = "0.5";
@@ -91,7 +91,7 @@ export function renderMemberCard(m, group)
         memberPrefBtn.addEventListener("click", (e) => 
         {
             e.stopPropagation();
-            openMemberPreferenceModal()
+            openMemberPreferenceModal(m.student)
         })
     }
 
