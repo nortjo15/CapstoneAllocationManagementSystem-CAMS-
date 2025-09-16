@@ -1,6 +1,7 @@
 import 
     { openNotesModal, openPreferenceModal, openRemoveStudentModal, openStudentModal } 
     from "./modal_function.js";
+import { loadGroup } from "./suggested_groups.js";
 
 let cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -162,12 +163,12 @@ export function renderProjectInfo(group, groupSize, projectName,
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrfToken,
             },
-            body: JSON.stringify({ project_id: projectId }),
+            body: JSON.stringify({ project_id: projectId || null }),
         })
         .then(res => res.json())
         .then(updated => {
             console.log("Project updated:", updated);
-            updateGroupUI(updated);
+            loadGroup(group.suggestedgroup_id);
         })
         .catch(err => console.error("Failed to update project:", err));
     });

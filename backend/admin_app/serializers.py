@@ -34,7 +34,8 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
         queryset=Project.objects.all(),
         source="project",
         write_only=True,
-        required=False
+        required=False,
+        allow_null=True
     )
 
     class Meta:
