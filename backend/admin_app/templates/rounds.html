@@ -5,6 +5,7 @@
 {% comment %} <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}"> {% endcomment %}
 {% endblock %}
 {% comment %} {% load static %} {% endcomment %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,8 @@
     <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
     <title>Manage Project Rounds</title>
 </head>
-<body data-projects-api-url="{% url 'api_admin:projects_api' %}">
+{% comment %} <body data-projects-api-url="{% url 'api_admin:projects_api' %}"> {% endcomment %}
+<body>
     {% csrf_token %}
 
     <div class="container">

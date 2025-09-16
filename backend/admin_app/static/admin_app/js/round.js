@@ -29,7 +29,7 @@ function formatDateForInput(isoString) {
 
 async function fetchProjects() {
     try {
-        const response = await fetch('/api/projects/');
+        const response = await fetch('/api/admin/projects/');
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -42,7 +42,7 @@ async function fetchProjects() {
 
 async function fetchRounds() {
     try {
-        const response = await fetch('/api/rounds/');
+        const response = await fetch('/api/admin/rounds/');
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -78,7 +78,7 @@ async function populateRoundsList() {
 
 async function showRoundDetails(roundId) {
     try {
-        const response = await fetch(`/api/rounds/${roundId}/`);
+        const response = await fetch(`/api/admin/rounds/${roundId}/`);
         const round = await response.json();
         const projects = await fetchProjects();
 
@@ -161,7 +161,7 @@ createRoundForm.addEventListener('submit', async function(e) {
     };
 
     try {
-        const response = await fetch('/api/rounds/', {
+        const response = await fetch('/api/admin/rounds/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newRound)
@@ -207,7 +207,7 @@ editRoundForm.addEventListener('submit', async function(e) {
     };
 
     try {
-        const response = await fetch(`/api/rounds/${roundId}/`, {
+        const response = await fetch(`/api/admin/rounds/${roundId}/`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedRound)

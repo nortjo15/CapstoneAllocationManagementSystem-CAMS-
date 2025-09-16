@@ -64,6 +64,10 @@ urlpatterns = [
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
+    
+    #Round_views
+    path('rounds/', round_view, name='round_view'),
+
     #Student_views
     path('student_view/', StudentListView.as_view(), name='student_view'),
     path('students/create/', StudentCreateView.as_view(), name='admin_student_create'),
@@ -81,8 +85,7 @@ urlpatterns = [
     #Settings_views
     path('settings/', settings_view, name='settings'),
 
-    #Round_views
-    path('rounds/', round_view, name='round_view'),
+    
     #Announcements CRUD
     path('announcements/',              announcement_list,  name='announcement_list'),
     path('announcements/new/',          announcement_create, name='announcement_create'),
