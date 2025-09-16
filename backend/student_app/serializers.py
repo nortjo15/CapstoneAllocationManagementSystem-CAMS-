@@ -1,20 +1,15 @@
 from rest_framework import serializers
-from .models import Student, GroupPreference
-from admin_app.models import ProjectPreference
+from .models import Student
+from admin_app.models import Project
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
 
-class GroupPreferenceSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroupPreference
-        fields = '__all__'
-
-class ProjectPreferenceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProjectPreference
+        model = Project
         fields = '__all__'
 
 #Production endpoints
