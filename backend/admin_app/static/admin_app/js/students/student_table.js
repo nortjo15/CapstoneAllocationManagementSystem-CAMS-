@@ -2,6 +2,8 @@ import { setButtonLoading } from "./utils.js";
 import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal } from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
 
+window.selectedStudentIds = new Set();
+
 // Helper to compute current group capacity info
 function getGroupCapacityInfo() {
     const membersCount = window.currentMemberIds ? window.currentMemberIds.size : 0;
@@ -57,6 +59,19 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                         : "" }
                 `;
 
+                // Restore checked state if student ID is in selectedStudentIds 
+                if (targetId === "studentsTableBodyModal")
+                {
+                    const checkbox = tr.querySelector(".student-checkbox");
+                    if (checkbox)
+                    {
+                        if (window.selectedStudentIds && window.selectedStudentIds.has(student.student_id.toString()))
+                        {
+                            checkbox.checked = true;
+                        }
+                    }
+                }
+
                 //--- Notes Button ---
                 const tdNotes = document.createElement("td");
                 const notesBtn = document.createElement("button");
@@ -111,8 +126,14 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                 }
 
                 //Append row to the table
-                tbody.appendChild(tr);
+                tbody.appendChild(tr);   
             });
+
+            //Enforce Capacity Rules
+            if (targetId === "studentsTableBodyModal") 
+            {
+                enforceCapacityRules();
+            }    
         })
         .catch(err => console.error("Failed to fetch students", err));
 }
@@ -121,42 +142,53 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
 document.addEventListener("change", (e) => {
     if (e.target.classList.contains("student-checkbox"))
     {
-        const checkboxes = document.querySelectorAll(".student-checkbox");
-        const checked = document.querySelectorAll(".student-checkbox:checked");
-        const addBtn = document.getElementById("addSelectedBtn");
+        //maintain state globally so filtering restores it
+        const id = e.target.dataset.studentId; 
 
-        if (addBtn)
+        if (e.target.checked)
         {
-            addBtn.disabled = checked.length === 0; 
-        }
-
-        const { spaceLeft } = getGroupCapacityInfo();
-
-        if (checked.length >= spaceLeft)
-        {
-            //Disable all other checkboxes 
-            checkboxes.forEach(cb => {
-                if (!cb.checked) 
-                {
-                    cb.disabled = true; 
-                    cb.closest("tr").style.opacity = "0.5";  
-                    cb.closest("tr").style.cursor = "not-allowed";
-                }
-            }); 
+            window.selectedStudentIds.add(id.toString());
         }
         else 
         {
-            checkboxes.forEach(cb => {
-                if (!window.currentMemberIds.has(cb.dataset.studentId))
-                {
-                    cb.disabled = false;
-                    cb.closest("tr").style.opacity = "1"; 
-                    cb.closest("tr").style.cursor = "default";
-                }
-            });
+            window.selectedStudentIds.delete(id.toString());
         }
+
+        enforceCapacityRules();
     }
 });
+
+//Enforces Group Capacity rules 
+export function enforceCapacityRules() 
+{
+    const checkboxes = document.querySelectorAll(".student-checkbox");
+    const totalSelected = window.selectedStudentIds.size; 
+    const addBtn = document.getElementById("addSelectedBtn");
+
+    if (addBtn) {
+        addBtn.disabled = totalSelected === 0; 
+    }
+
+    const { spaceLeft } = getGroupCapacityInfo();
+
+    if (totalSelected >= spaceLeft) {
+        checkboxes.forEach(cb => {
+            if (!cb.checked && !window.currentMemberIds.has(cb.dataset.studentId)) {
+                cb.disabled = true; 
+                cb.closest("tr").style.opacity = "0.5";  
+                cb.closest("tr").style.cursor = "not-allowed";
+            }
+        }); 
+    } else {
+        checkboxes.forEach(cb => {
+            if (!window.currentMemberIds.has(cb.dataset.studentId)) {
+                cb.disabled = false;
+                cb.closest("tr").style.opacity = "1"; 
+                cb.closest("tr").style.cursor = "default";
+            }
+        });
+    }
+}
 
 // Handle Add Button click
 const addBtn = document.getElementById("addSelectedBtn");
@@ -164,14 +196,14 @@ const addBtn = document.getElementById("addSelectedBtn");
 addBtn.addEventListener("click", (e) => 
 {
     setButtonLoading(addBtn, true)
-    const checkboxes = document.querySelectorAll(".student-checkbox:checked");
-    if (!checkboxes.length) 
+    const selectedIds = Array.from(window.selectedStudentIds);
+    if (!selectedIds.length) 
     {
         setButtonLoading(addBtn, false);
         return;
     }
     
-    const selectedIds = Array.from(checkboxes).map(cb => cb.dataset.studentId);
+    
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     Promise.all(
@@ -193,6 +225,7 @@ addBtn.addEventListener("click", (e) =>
     .then(() => {
         loadGroup(activeGroupId);
         document.getElementById("studentModal").style.display = "none";
+        window.selectedStudentIds.clear(); 
     })
     .catch(err => console.error("Error adding students:", err))
     .finally(() => {

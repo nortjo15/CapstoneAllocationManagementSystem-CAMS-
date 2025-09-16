@@ -86,6 +86,10 @@ function setupModal(modalId) {
     if (closeBtn) {
         closeBtn.onclick = () => {
             modal.style.display = "none";
+            if (modalId == "studentModal")
+            {
+                window.selectedStudentIds.clear(); 
+            }
         };
     }
 
@@ -93,6 +97,10 @@ function setupModal(modalId) {
     window.addEventListener("click", (e) => {
         if (e.target === modal) {
             modal.style.display = "none";
+            if (modalId == "studentModal")
+            {
+                window.selectedStudentIds.clear(); 
+            }
         }
     });
 }

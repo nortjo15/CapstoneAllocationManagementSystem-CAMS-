@@ -178,7 +178,7 @@ export function removeStudentFromGroup(student, group)
         return res.json();
     })
     .then(updated => {
-        updateGroupUI(updated);
+        loadGroup(updated.suggestedgroup_id)
     })
     .catch(err => console.error(err))
 }
