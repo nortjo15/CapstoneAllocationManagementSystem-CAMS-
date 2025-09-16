@@ -87,7 +87,7 @@ def section_detail(request, id):
 
     return render(
         request,
-        "capstone_info/section_detail.html",  # <-- matches template location above
+        "section_detail.html",
         {
             "section": section,
             "contents": page.object_list,

@@ -1,5 +1,4 @@
 {% extends "student_base.html" %}
-{% load humanize %}
 {% block content %}
 
 <nav>
@@ -24,35 +23,16 @@
 
   <section aria-label="Section contents">
     <h2>Contents</h2>
-
     {% if contents %}
       <div>
         {% for item in contents %}
           <article>
-            <h3>
-              {% if item.pinned %}[Pinned] {% endif %}{{ item.title }}
-            </h3>
-
+            <h3>{% if item.pinned %}[Pinned] {% endif %}{{ item.title }}</h3>
             <div>
-              {% if item.published_at %}
-                <small>
-                  <strong>Published:</strong> {{ item.published_at }}
-                </small><br>
-              {% endif %}
-
-              {% if item.expires_at %}
-                <small>
-                  <strong>Expires:</strong> {{ item.expires_at }} · {{ item.expires_at|naturaltime }}
-                </small><br>
-              {% endif %}
-
-              <small><strong>Author:</strong> {{ item.author }}</small><br>
-              <small><strong>Priority:</strong> {{ item.priority }}</small>
+              {% if item.published_at %}<small>Published: {{ item.published_at }}</small><br>{% endif %}
+              <small>Author: {{ item.author }}</small>
             </div>
-
-            <div>
-              {{ item.body|linebreaks }}
-            </div>
+            <div>{{ item.body|linebreaks }}</div>
           </article>
           <hr>
         {% endfor %}
