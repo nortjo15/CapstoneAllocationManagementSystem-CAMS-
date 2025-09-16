@@ -171,35 +171,21 @@ async function showCreateForm() {
     projects.forEach(project => {
         const option = document.createElement('input');
         option.type = 'checkbox';
-        //option.value = 'project.id';
-        //option.title = 'project.title';
+        option.name = 'projects';
         option.id = project.project_id;
+        option.value = project.project_id;
+        option.value = project.project_id;
         const label = document.createElement('label');
         label.htmlFor = project.project_id;
         label.textContent = project.title;
         createProjectsSelect.appendChild(option);
         createProjectsSelect.appendChild(label);
     });
-    // projects.forEach(project => {
-    //     const label = document.createElement('label');
-    //     label.style.display = 'block'; // one per line
+}
 
-    //     const checkbox = document.createElement('input');
-    //     checkbox.type = 'checkbox';
-
-    //     label.appendChild(checkbox);
-    //     label.appendChild(document.createTextNode(" " + project.title));
-    //     createProjectsSelect.appendChild(label);
-    // });
-
-    //old
-    // createProjectsSelect.innerHTML = '';
-    // projects.forEach(project => {
-    //     const option = document.createElement('option');
-    //     option.value = project.project_id;
-    //     option.textContent = project.title;
-    //     createProjectsSelect.appendChild(option);
-    // });
+async function getSelectedProjects() {
+    
+    return checkboxes;
 }
 
 createRoundForm.addEventListener('submit', async function(e) {
@@ -208,15 +194,20 @@ createRoundForm.addEventListener('submit', async function(e) {
     const roundName = document.getElementById('create-round-name').value;
     const openDate = document.getElementById('create-open-date').value;
     const closeDate = document.getElementById('create-close-date').value;
-    const selectedProjects = [...document.getElementById('create-round-projects').options]
-        .filter(option => option.selected)
-        .map(option => option.value);
+
+    let selectedProjects = Array.from(
+        document.querySelectorAll('#create-round-projects input[type="checkbox"]:checked')
+    ).map(cb => parseInt(cb.value));
+
+    console.log("test");
+    console.log(selectedProjects);
+    console.log("test");
 
     const newRound = {
         round_name: roundName,
         open_date: openDate,
         close_date: closeDate,
-        projects: selectedProjects
+        project_ids: selectedProjects
     };
 
     try {
@@ -226,7 +217,7 @@ createRoundForm.addEventListener('submit', async function(e) {
             body: JSON.stringify(newRound)
         });
         if (response.ok) {
-            //('Round created successfully!', 'success');
+            console.log('Round created successfully!', 'success');
             createRoundForm.reset();
             populateRoundsList(); 
             rightPaneTitle.textContent = 'Select a Round';
@@ -242,17 +233,10 @@ createRoundForm.addEventListener('submit', async function(e) {
     }
 });
 
+
+
+
 editRoundForm.addEventListener('submit', async function(e) {
-
-    //to add later!
-    //function getSelectedProjects() {
-    //     const checkboxes = document.querySelectorAll('#edit-round-projects input[type="checkbox"]:checked');
-    //     return Array.from(checkboxes).map(cb => parseInt(cb.value));
-    // }
-
-    // // Example usage:
-    // const selectedProjectIds = getSelectedProjects();
-    // console.log(selectedProjectIds); // [1, 3, 7]
     e.preventDefault();
     const roundId = document.getElementById('edit-round-id').value;
     const roundName = document.getElementById('edit-round-name').value;
