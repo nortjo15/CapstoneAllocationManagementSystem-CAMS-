@@ -142,6 +142,12 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
 
+    # Use lightweight serializer for GET requests
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return StudentListSerializer   
+        return StudentSerializer          
+
 class StudentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
     GET     /api/students/<pk>/  → retrieve

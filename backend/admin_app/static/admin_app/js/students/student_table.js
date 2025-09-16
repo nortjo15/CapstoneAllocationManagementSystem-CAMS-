@@ -94,18 +94,23 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                 const prefsBtn = document.createElement("button");
                 prefsBtn.textContent = "Preferences";
 
-                if (student.preferences && student.preferences.length > 0)
+                if (student.has_preferences)
                 {
                     prefsBtn.className = "btn btn-secondary";
-                    prefsBtn.addEventListener("click", (e) => {
+                    prefsBtn.addEventListener("click", (e) => 
+                    {
                         e.stopPropagation();
-                        openPreferenceModal(student);
+
+                        //Get the full student before opening modal
+                        fetch(`/api/students/${student.student_id}/`)
+                            .then(res => res.json())
+                            .then(fullStudent => openPreferenceModal(fullStudent))
                     });
                 }
                 else 
                 {
                     prefsBtn.className = "btn btn-secondary"; 
-                    prefsBtn.disabled = true;           
+                    prefsBtn.disabled = true;
                 }
 
                 tdPrefs.appendChild(prefsBtn);

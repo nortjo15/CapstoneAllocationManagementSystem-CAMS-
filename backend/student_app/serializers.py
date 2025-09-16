@@ -40,6 +40,26 @@ class NullableFloatField(serializers.FloatField):
         if data in ("", None):
             return None
         return super().to_internal_value(data)
+    
+class StudentListSerializer(serializers.ModelSerializer):
+    major = MajorSerializer(read_only=True)
+    has_preferences = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Student
+        fields = [
+            "student_id",
+            "name",
+            "cwa",
+            "major",
+            "application_submitted",
+            "allocated_group",
+            "notes",
+            "has_preferences"
+        ]
+
+    def get_has_preferences(self, obj):
+        return obj.preferences.count() > 0
 
 class StudentSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)
