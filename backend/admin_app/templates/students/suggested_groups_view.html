@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="{% static 'admin_app/css/groups.css' %}">
 <link rel="stylesheet" href="{% static 'admin_app/css/modal.css' %}">
 <link rel="stylesheet" href="{% static 'admin_app/css/student_buttons.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 <meta name="csrf-token" content="{{ csrf_token }}">
 
 {% include "students/student_modals.html" %}
@@ -76,6 +77,7 @@
 </div>
 
 {% load static %}
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script type="module" src="{% static 'admin_app/js/students/group_tabs.js' %}"></script>
 <script type="module" src="{% static 'admin_app/js/students/suggested_groups.js' %}"></script>
 <script type="module" src="{% static 'admin_app/js/students/student_filters.js' %}"></script>

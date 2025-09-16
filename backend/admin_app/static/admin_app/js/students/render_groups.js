@@ -138,6 +138,12 @@ export function renderProjectInfo(group, groupSize, projectName,
         populate(cachedProjects);
         label.appendChild(select);
         projectName.appendChild(label);
+
+        new Choices(select, {
+        searchEnabled: true,
+        itemSelectText: '',
+        shouldSort: false
+        });
     }
     else 
     {
@@ -148,6 +154,12 @@ export function renderProjectInfo(group, groupSize, projectName,
                 populate(projects);
                 label.appendChild(select);
                 projectName.appendChild(label);
+
+                new Choices(select, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false
+                });
             });
     }
 
