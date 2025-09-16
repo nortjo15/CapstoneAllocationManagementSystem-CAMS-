@@ -125,9 +125,12 @@ class StudentFilter(filters.FilterSet):
     application_submitted = filters.BooleanFilter(field_name="application_submitted")
     allocated_group = filters.BooleanFilter(field_name="allocated_group")
 
+    # Filter by student_id (substring match)
+    student_id = filters.CharFilter(field_name="student_id", lookup_expr="icontains")
+
     class Meta:
         model = Student
-        fields = ["cwa_min", "cwa_max", "major", "application_submitted", "allocated_group"]
+        fields = ["cwa_min", "cwa_max", "major", "application_submitted", "allocated_group", "student_id"]
 
 class StudentListCreateAPIView(generics.ListCreateAPIView):
     """

@@ -240,3 +240,60 @@ const openFiltersBtn_s = document.getElementById("openFilterBtnStudents");
 if (addStudentBtn) addStudentBtn.addEventListener("click", openModal);
 if (importStudentBtn) importStudentBtn.addEventListener("click", openImportModal);
 if (openFiltersBtn_s) openFiltersBtn_s.addEventListener("click", openFilterModal);
+
+// Function to apply filters and search the student table 
+function applyFiltersAndSearch(targetId, searchVal= "")
+{
+    const form = document.getElementById("studentFilterForm");
+    const params = new URLSearchParams();
+
+    //Collect filter form data
+    if (form)
+    {
+        const formData = new FormData(form);
+        for (const [key, value] of formData.entries())
+        {
+            if (value && value.trim() !== "" && key !== "major")
+            {
+                params.append(key, value);
+            }
+        }
+        //Multi-value majors 
+        const majors = formData.getAll("major");
+        majors.forEach(m => 
+        {
+            if (m && m.trim() != "") params.append("major", m);
+        });
+    }
+
+    //Add search param
+    if (searchVal)
+    {
+        params.append("student_id", searchVal);
+    }
+
+    fetchStudents(targetId, "?" + params.toString());
+}
+
+
+// Search by Student ID 
+const studentIdSearch = document.getElementById("studentIdSearch");
+if (studentIdSearch)
+{
+    studentIdSearch.addEventListener("input", (e) => 
+    {
+        const searchVal = e.target.value.trim();
+        applyFiltersAndSearch("studentsTableBody", searchVal);
+    });
+}
+
+// Search by Student ID (modal)
+const studentIdSearchModal = document.getElementById("studentIdSearchModal");
+if (studentIdSearchModal) 
+{
+    studentIdSearchModal.addEventListener("input", (e) => 
+    {
+        const searchVal = e.target.value.trim();
+        applyFiltersAndSearch("studentsTableBodyModal", searchVal);
+    });
+}
