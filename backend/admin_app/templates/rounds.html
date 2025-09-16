@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}"> {% endcomment %}
 {% endblock %}
 {% comment %} {% load static %} {% endcomment %}
 {% comment %} <!DOCTYPE html>
@@ -51,11 +51,17 @@
                     </div>
                     <div>
                         <!-- <label for="edit-round-projects">Projects</label> -->
-                         <span>Projects</span>
+                        <span>Projects</span>
                         <div id="edit-round-projects"></div>
                         <!-- <select id="edit-round-projects" multiple size="10">
                         </select> -->
                     </div>
+
+                    <div>
+                        <input type="checkbox" id="option1" name="preferences" value="option1_value">
+                        <label for="option1">Option 1</label>
+                    </div>
+
                     <div>
                         <button type="submit">
                             Save Changes
@@ -86,8 +92,11 @@
                         <input type="text" id="create-status">
                     </div>
                     <div>
-                        <label for="create-round-projects">Projects</label>
-                        <select multiple id="create-round-projects">
+                        
+                        <span>Projects</span>
+                        <div id="create-round-projects"></div>
+                        {% comment %} <label for="create-round-projects">Projects</label> {% endcomment %}
+                        {% comment %} <select multiple id="create-round-projects"> {% endcomment %}
                         </select>
                     </div>
                     <div>

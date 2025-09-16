@@ -32,12 +32,19 @@ form div {
     margin-bottom: 15px;
 }
 label {
-    display: block;
+    display: inline-flex;
     margin-bottom: 5px;
     font-weight: bold;
 }
+
+label input[type="checkbox"] {
+    width: auto; /* make sure checkbox isn’t stretched */
+    margin-right: 5px; /* optional spacing */
+}
+
 input, select, button, textarea {
-    width: 100%;
+    width: auto;
+    /* width: 100%; */
     padding: 8px;
     box-sizing: border-box;
     border: 1px solid #ccc;

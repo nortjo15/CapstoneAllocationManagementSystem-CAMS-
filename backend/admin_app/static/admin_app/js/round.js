@@ -167,13 +167,39 @@ async function showCreateForm() {
     showRightPane(createRoundView);
     const projects = await fetchProjects();
     const createProjectsSelect = document.getElementById('create-round-projects');
-    createProjectsSelect.innerHTML = '';
+    //const roundProjectIds = round.projects.map(p => p.project_id);
     projects.forEach(project => {
-        const option = document.createElement('option');
-        option.value = project.project_id;
-        option.textContent = project.title;
+        const option = document.createElement('input');
+        option.type = 'checkbox';
+        //option.value = 'project.id';
+        //option.title = 'project.title';
+        option.id = project.project_id;
+        const label = document.createElement('label');
+        label.htmlFor = project.project_id;
+        label.textContent = project.title;
         createProjectsSelect.appendChild(option);
+        createProjectsSelect.appendChild(label);
     });
+    // projects.forEach(project => {
+    //     const label = document.createElement('label');
+    //     label.style.display = 'block'; // one per line
+
+    //     const checkbox = document.createElement('input');
+    //     checkbox.type = 'checkbox';
+
+    //     label.appendChild(checkbox);
+    //     label.appendChild(document.createTextNode(" " + project.title));
+    //     createProjectsSelect.appendChild(label);
+    // });
+
+    //old
+    // createProjectsSelect.innerHTML = '';
+    // projects.forEach(project => {
+    //     const option = document.createElement('option');
+    //     option.value = project.project_id;
+    //     option.textContent = project.title;
+    //     createProjectsSelect.appendChild(option);
+    // });
 }
 
 createRoundForm.addEventListener('submit', async function(e) {
@@ -217,6 +243,16 @@ createRoundForm.addEventListener('submit', async function(e) {
 });
 
 editRoundForm.addEventListener('submit', async function(e) {
+
+    //to add later!
+    //function getSelectedProjects() {
+    //     const checkboxes = document.querySelectorAll('#edit-round-projects input[type="checkbox"]:checked');
+    //     return Array.from(checkboxes).map(cb => parseInt(cb.value));
+    // }
+
+    // // Example usage:
+    // const selectedProjectIds = getSelectedProjects();
+    // console.log(selectedProjectIds); // [1, 3, 7]
     e.preventDefault();
     const roundId = document.getElementById('edit-round-id').value;
     const roundName = document.getElementById('edit-round-name').value;
