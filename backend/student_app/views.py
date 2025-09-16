@@ -12,6 +12,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from student_app.forms import ProjectApplicationForm
+
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
@@ -20,12 +21,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-def student_application_view(request):
-    if request.method == 'POST':
-        form = ProjectApplicationForm(request.POST, request.FILES)
-        if form.is_Valid():
-            student = form.save()   
-            return render(request, 'Success.html', {'student': student})
+# def student_application_view(request):
+#     if request.method == 'POST':
+#         form = ProjectApplicationForm(request.POST, request.FILES)
+#         if form.is_Valid():
+#             student = form.save()   
+#             return render(request, 'Success.html', {'student': student})
+
+def student_form_view(request):
+    return render(request, "student_form.html")
+    
 def project_view(request):
     return render(request, "project_information.html")
 
