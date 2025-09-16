@@ -21,13 +21,15 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls), #Default Admin
 
-    # Endpoints 
-    path('api/projects/', include(('admin_app.urls', 'admin_app'), namespace='api_projects')),
-
     # Actual webpages for admin dashboard & student facing end
     path('admin-dashboard/', include(('admin_app.urls', 'admin_app'), namespace='admin_dashboard')),
-    path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
+    path('students/', include(('student_app.urls', 'student_app'), namespace='students')),
+    #APIs for student and Admin
+    path('api/admin/', include('admin_app.api.urls', namespace='api_admin')),
+    path('api/student/', include('student_app.urls', namespace='api_student')),
     path('api/', include('admin_app.api.urls')),
+
+    path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
     # Root URL viewCan 
     path('', include(('student_app.urls', 'student_app'), namespace='root')),
 ]
