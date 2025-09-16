@@ -36,18 +36,17 @@ class FinalGroupMemberSerializer(serializers.ModelSerializer):
         model = FinalGroupMember
         fields = '__all__'
 
-# class RoundSerializer(serializers.ModelSerializer):
-#     projects = ProjectSerializer(many=True, read_only=True)
-#     class Meta:
-#         model = Round
-#         fields = '__all__'
-
 class RoundSerializer(serializers.ModelSerializer):
     project_ids = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Project.objects.all(),
         write_only=True
     )
+    projects = ProjectSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Round
+        fields = '__all__'
 
     def create(self, validated_data):
         project_ids = validated_data.pop('project_ids', [])
@@ -55,10 +54,20 @@ class RoundSerializer(serializers.ModelSerializer):
         round_instance.projects.set(project_ids)
         return round_instance
     
-    projects = ProjectSerializer(many=True, read_only=True)
-    class Meta:
-        model = Round
-        fields = '__all__'
+    
+    def update(self, instance, validated_data):
+        project_ids = validated_data.pop('project_ids', None)
+
+        # update regular fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # update many-to-many if provided
+        if project_ids is not None:
+            instance.projects.set(project_ids)
+
+        return instance
 
 class DegreeSerializer(serializers.ModelSerializer):
     class Meta:

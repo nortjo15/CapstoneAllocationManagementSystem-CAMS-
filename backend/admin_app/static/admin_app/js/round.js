@@ -52,18 +52,6 @@ async function fetchRounds() {
         console.error('Problem fetching rounds:', error);
     }  
 }
-// async function fetchRound(round_id) {
-//     try {
-//         const response = await fetch(`/api/rounds/${round_id}/`);
-//         if(!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//         const round = await response.json();
-//         return round;
-//     } catch (error) {
-//         console.error('Problem fetching rounds:', error);
-//     }  
-// }
 
 async function populateRoundsList() {
     try {
@@ -100,62 +88,29 @@ async function showRoundDetails(roundId) {
         document.getElementById('edit-close-date').value = formatDateForInput(round.close_date);
         document.getElementById('edit-status').value = round.status;
 
-        const editProjectsContainer = document.getElementById('edit-round-projects');
-        editProjectsContainer.innerHTML = '';
+        const editProjectsSelect = document.getElementById('edit-round-projects');
+        editProjectsSelect.innerHTML = '';
 
-        // get list of project_ids in this round
         const roundProjectIds = round.projects.map(p => p.project_id);
 
         projects.forEach(project => {
+            const option = document.createElement('input');
+            option.type = 'checkbox';
+            option.name = 'projects';
+            option.id = project.project_id;
+            option.value = project.project_id;
             const label = document.createElement('label');
-            label.style.display = 'block'; // one per line
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = project.project_id;
-
-            // Pre-check if this project belongs to the round
+            label.htmlFor = project.project_id;
+            label.textContent = project.title;
             if (roundProjectIds.includes(project.project_id)) {
-                checkbox.checked = true;
+                option.checked = true;
             }
-
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(" " + project.title));
-            editProjectsContainer.appendChild(label);
+            editProjectsSelect.appendChild(option);
+            editProjectsSelect.appendChild(label);
         });
-        // const editProjectsSelect = document.getElementById('edit-round-projects');
-        // editProjectsSelect.innerHTML = '';
-
-        // // get the list of project_ids currently in this round
-        // const roundProjectIds = round.projects.map(p => p.project_id);
-
-        // projects.forEach(project => {
-        //     const option = document.createElement('option');
-        //     option.value = project.project_id;
-        //     option.textContent = project.title;
-
-        //     // Pre-select if this project is in the round
-        //     if (roundProjectIds.includes(project.project_id)) {
-        //         option.selected = true;
-        //     }
-
-        //     editProjectsSelect.appendChild(option);
-        // });
 
         rightPaneTitle.textContent = `Edit Round: ${round.round_name}`;
         showRightPane(roundDetailsView);
-
-        //testing
-        const container = document.getElementById('edit-round-projects');
-        console.log('container HTML:', container ? container.innerHTML : 'no container found');
-
-        const boxes = container ? container.querySelectorAll('input[type="checkbox"]') : [];
-        console.log('checkbox count:', boxes.length);
-
-        boxes.forEach((cb, i) => {
-        const cs = getComputedStyle(cb);
-        console.log(i, cb, 'display=', cs.display, 'visibility=', cs.visibility, 'opacity=', cs.opacity);
-        });
 
     } catch (error) {
         console.error('Error fetching round details:', error);
@@ -167,13 +122,11 @@ async function showCreateForm() {
     showRightPane(createRoundView);
     const projects = await fetchProjects();
     const createProjectsSelect = document.getElementById('create-round-projects');
-    //const roundProjectIds = round.projects.map(p => p.project_id);
     projects.forEach(project => {
         const option = document.createElement('input');
         option.type = 'checkbox';
         option.name = 'projects';
         option.id = project.project_id;
-        option.value = project.project_id;
         option.value = project.project_id;
         const label = document.createElement('label');
         label.htmlFor = project.project_id;
@@ -198,10 +151,7 @@ createRoundForm.addEventListener('submit', async function(e) {
     let selectedProjects = Array.from(
         document.querySelectorAll('#create-round-projects input[type="checkbox"]:checked')
     ).map(cb => parseInt(cb.value));
-
-    console.log("test");
     console.log(selectedProjects);
-    console.log("test");
 
     const newRound = {
         round_name: roundName,
@@ -243,16 +193,17 @@ editRoundForm.addEventListener('submit', async function(e) {
     const openDate = document.getElementById('edit-open-date').value;
     const closeDate = document.getElementById('edit-close-date').value;
     const status = document.getElementById('edit-status').value;
-    const selectedProjects = [...document.getElementById('edit-round-projects').options]
-        .filter(option => option.selected)
-        .map(option => option.value);
+
+    let selectedProjects = Array.from(
+        document.querySelectorAll('#edit-round-projects input[type="checkbox"]:checked')
+    ).map(cb => parseInt(cb.value));
 
     const updatedRound = {
         round_name: roundName,
         open_date: openDate,
         close_date: closeDate,
         status: status,
-        projects: selectedProjects
+        project_ids: selectedProjects
     };
 
     try {
