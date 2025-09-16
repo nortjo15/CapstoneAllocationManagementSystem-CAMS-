@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html> 
-    <script src="https://unpkg.com/petite-vue" defer init></script>
 <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'student_app/css/studentMain.css' %}">
+    {% block extra_css %}{% endblock %}
     <title>Student Portal</title>
 </head>
 <body>
@@ -10,13 +12,20 @@
             <h1>Capstone Allocation</h1>
             <ul>
                 <li><a href="{% url 'students:student_form' %}"> Make Application </a></li> <!--Temporary link to student form, will be moved to rounds later-->
-                <li><a href={% url 'students:capstone_information' %}> Capstone Information </a></li> 
-                <li><a href="endpoint for screen"> Project Information </a></li>
+                <li><a href="{% url 'students:capstone_information' %}"> Capstone Information </a></li> 
+                <li><a href="{% url 'students:project_information' %}"> Project Information </a></li>
                 <li><a href="endpoint for screen"> Industry Round </a></li> 
                 <li><a href="endpoint for screen"> Internal Round </a></li> 
             </ul>
         {% endblock %}
     </div>
+     <script>
+        window.ENDPOINTS = {
+            projects: "{% url 'api_student:project-list' %}",
+            // Add other endpoints here as you create them
+        };
+    </script>
+    {% block scripts %}{% endblock %}
     <div v-scope id="content">
         {% block content %}{% endblock %}
     </div>

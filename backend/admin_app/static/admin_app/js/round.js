@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function fetchProjects() {
-        const response = await fetch('/api/projects/');
+        const apiUrl = document.body.dataset.projectsApiUrl;
+        const response = await fetch(apiUrl);
         if (!response.ok) {
             console.error('Failed to fetch projects');
             return [];
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             projects.forEach(project => {
                 const option = document.createElement('option');
                 option.value = project.project_id;
-                option.textContent = project.title;
+                option.textContent = `${project.title}`;
                 if (round.projects.includes(project.project_id)) {
                     option.selected = true;
                 }
