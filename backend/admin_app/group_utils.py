@@ -259,7 +259,7 @@ def generate_suggestions_from_likes():
             suggestions.append({
                 "suggestedgroup_id": sg.suggestedgroup_id, 
                 "students": [s.student_id for s in clique],
-                "project": result["project"].title, 
+                "project": result["project"].title if result["project"] else None, 
                 "strength": result["strength"],
                 "has_anti_preference": result["has_anti_preference"],
             })
