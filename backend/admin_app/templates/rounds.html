@@ -13,9 +13,10 @@
     {% load static %}
     <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
     <title>Manage Project Rounds</title>
-</head> {% endcomment %}
-{% block content %}
+</head>
 <body>
+    {% csrf_token %}
+
     <div class="container">
         <div id="left-pane">
             <h1>Capstone Rounds</h1>

@@ -18,10 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 #Import all required views
-from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
+from .view.project_views import project_view, ProjectViewSet
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
@@ -40,6 +41,10 @@ from .view.admin_views import (
     SendApplicationSuccessView,
     SendAllocationReleasedView,
 )
+
+
+# router = DefaultRouter()
+# router.register(r'projects', ProjectViewSet, basename='project')
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -65,8 +70,9 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('projects/', ProjectListCreateView.as_view()),
-    path('preferences/', ProjectPreferenceListCreateView.as_view()),
+    path('', include('admin_app.api.urls')),
+    path('projectDashboard/', project_view, name='project_dashboard'),
+   
     #Group_views
     path('suggested/', SuggestedGroupListCreateView.as_view()),
     path('suggested/members/', SuggestedGroupMemberListCreateView.as_view()),
@@ -77,7 +83,6 @@ urlpatterns = [
 
     #Round_views
     path('rounds/', round_view, name='round_view'),
-
     #Announcements CRUD
     path('announcements/',              announcement_list,  name='announcement_list'),
     path('announcements/new/',          announcement_create, name='announcement_create'),

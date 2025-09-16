@@ -1,0 +1,14 @@
+{% extends "student_base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'student_app/css/studentProject.css' %}">
+{% endblock %}
+{% block content %}
+
+<h1> Projects <h1>
+<div id="project-container">
+    <p>Loading projects...</p>
+</div>
+
+<script src="{% static 'student_app/js/studentProject.js' %}"></script>
+{% endblock %}

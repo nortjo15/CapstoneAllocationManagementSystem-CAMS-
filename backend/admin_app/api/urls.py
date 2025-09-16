@@ -5,9 +5,11 @@
 from rest_framework.routers import DefaultRouter
 from .views import *
 
+app_name = 'api_admin'
+
 router = DefaultRouter()
 router.register(r'rounds', RoundViewSet, basename='rounds')
-router.register(r'projects', ProjectViewSet, basename='projects')
+router.register(r'projects', ProjectViewSet, basename='project')
 router.register(r'suggested_groups', SuggestedGroupViewSet, basename='suggested_groups')
 router.register(r'project_preferences', ProjectPreferencesViewSet, basename='project_preferences')
 router.register(r'suggested_group_member', SuggestedGroupMemberViewSet, basename='suggested_group_member')

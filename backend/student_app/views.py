@@ -1,35 +1,26 @@
-from rest_framework import generics, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import viewsets
 from django.shortcuts import render
-from .models import Student, GroupPreference
-from .serializers import StudentSerializer, GroupPreferenceSerializer
+from .models import Student
+from admin_app.models import Project
+from .serializers import StudentSerializer, ProjectSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 
-
-
-class StudentListCreateView(generics.ListCreateAPIView):
+class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
-class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
-    lookup_field = 'student_id'
-
-class GroupPreferenceListCreateView(generics.ListCreateAPIView):
-    queryset = GroupPreference.objects.all()
-    serializer_class = GroupPreferenceSerializer
-
-class ProjectListCreateView(generics.ListCreateAPIView):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+def project_view(request):
+    return render(request, "project_information.html")
 
 def student_form(request):
     if request.method =='POST':
