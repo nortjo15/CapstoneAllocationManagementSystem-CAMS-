@@ -126,7 +126,7 @@ class StudentFilter(filters.FilterSet):
     allocated_group = filters.BooleanFilter(field_name="allocated_group")
 
     # Filter by student_id (substring match)
-    student_id = filters.CharFilter(field_name="student_id", lookup_expr="icontains")
+    student_id = filters.CharFilter(field_name="student_id", lookup_expr="istartswith")
 
     class Meta:
         model = Student

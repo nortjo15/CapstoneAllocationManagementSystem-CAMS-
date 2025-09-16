@@ -10,15 +10,18 @@
     <div class="panel">
         <div class="top-bar">
             <button id="openFilterBtnStudents" class="btn btn-primary">Open Filters</button>
+            <input
+            type="text"
+            id="studentIdSearch"
+            placeholder="Search by Student ID..."
+            class="student-search"
+            inputmode="numeric"
+            pattern="\d"
+            maxlength="8"
+            >
         </div>
 
         <div class="scroll-container">
-            <input 
-                type="text"
-                id="studentIdSearch"
-                placeholder="Search by Student ID..."
-                class="student-search"
-            />
             <table class="student-table">
                 <thead>
                     <tr>
