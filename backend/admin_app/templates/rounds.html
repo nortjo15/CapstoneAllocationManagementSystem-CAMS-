@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
     <title>Manage Project Rounds</title>
 </head>
-<body>
+<body data-projects-api-url="{% url 'api_admin:projects_api' %}">
     {% csrf_token %}
 
     <div class="container">
