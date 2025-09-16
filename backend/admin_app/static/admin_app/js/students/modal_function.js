@@ -71,8 +71,12 @@ export function openRemoveStudentModal(student, group) {
 export function openStudentModal()
 {
     const modal = document.getElementById("studentModal");
-    
     if (modal) modal.style.display = 'flex';
+
+    //Reset filters when re-opening student modal
+    const filterForm = document.getElementById("studentFilterForm");
+    if (filterForm) filterForm.reset();
+
     fetchStudents("studentsTableBodyModal", "?allocated_group=false");
 }
 
@@ -90,6 +94,9 @@ function setupModal(modalId) {
             {
                 window.selectedStudentIds.clear(); 
             }
+
+            const form = modal.querySelector("form");
+            if (form) form.reset();
         };
     }
 
@@ -101,6 +108,9 @@ function setupModal(modalId) {
             {
                 window.selectedStudentIds.clear(); 
             }
+
+            const form = modal.querySelector("form");
+            if (form) form.reset();
         }
     });
 }
