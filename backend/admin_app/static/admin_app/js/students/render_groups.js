@@ -215,6 +215,8 @@ export function renderProjectInfo(group, groupSize, projectName,
         });
     });
 
+    const errorBox = document.getElementById("group-errors");
+
     if (group.project) 
     {
         const capacity = group.project.capacity
@@ -222,7 +224,6 @@ export function renderProjectInfo(group, groupSize, projectName,
         projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> ${capacity}</p>`;
         projectHost.innerHTML = `<p><strong>Host:</strong> ${group.project.host_name}</p>`;
         const capacityElem = projectCapacity.querySelector("p");
-        const errorBox = document.getElementById("group-errors");
 
         //See if there's a mismatch in groupSize & Capacity
         if (size !== capacity)
@@ -238,14 +239,14 @@ export function renderProjectInfo(group, groupSize, projectName,
             sizeElem.classList.remove("text-error");
             clearError(errorBox, "Invalid Group Size");
         }
-
-        updateFinaliseButton(errorBox, createBtn);
     } 
     else 
     {
         projectCapacity.innerHTML = `<p><strong>Project Capacity:</strong> </p>`;
         projectHost.innerHTML = `<p><strong>Host:</strong> </p>`;
     }
+
+    updateFinaliseButton(errorBox, createBtn, group);
 }
 
 export function renderCWARange(group, groupSize)
@@ -308,10 +309,11 @@ export function clearError(errorBox, msg = null)
     }
 }
 
-export function updateFinaliseButton(errorBox, finaliseBtn) 
+export function updateFinaliseButton(errorBox, finaliseBtn, group=null) 
 {
     const hasErrors = errorBox.querySelector("ul")?.children.length > 0;
-    finaliseBtn.disabled = hasErrors;
+    const noProject = group ? !group.project : false;
+    finaliseBtn.disabled = hasErrors || noProject;
 }
 
 export function checkAntiPreferences(group)
@@ -381,7 +383,7 @@ export function applyAntiPreferenceUI(group, finaliseBtn)
         clearError(errorBox, "Member Anti-Preference");
     }
 
-    updateFinaliseButton(errorBox, finaliseBtn);
+    updateFinaliseButton(errorBox, finaliseBtn, group);
 }
 
 // render_groups.js
