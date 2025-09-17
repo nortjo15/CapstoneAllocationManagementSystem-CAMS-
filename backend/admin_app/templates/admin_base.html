@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
+    crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" 
+    crossorigin="anonymous"></script>
 <head>
     <meta charset="UTF-8">
     <title>Admin Portal</title>
@@ -8,32 +15,47 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <div id="navigationBar">
-        {% block navigationBar %}
-            <ul>
-                <li><a href="{% url 'admin_dashboard:login' %}"> Login </a></li> 
-                <li><a href="{% url 'admin_dashboard:logout' %}"> Logout </a></li> 
-                <li><a href="{% url 'admin_dashboard:student_view' %}"> Students </a></li> 
-                <li><a href="endpoint for screen"> Groups </a></li> 
-                <li><a href="{% url 'admin_dashboard:project_dashboard'%}"> Projects </a></li> 
-                <li><a href="{% url 'admin_dashboard:round_view' %}"> Round form </a></li> 
-                <li><a href="{% url 'admin_dashboard:settings' %}"> Settings </a></li> 
-                <li><a href="{% url 'admin_dashboard:email_page' %}"> Email </a></li>
-                <li><a href="{% url 'admin_app:information_list' %}"> Information Sections </a></li>
-
-
-
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:student_view' %}">Students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="endpoint for screen">Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:project_dashboard' %}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:round_view' %}">Round form</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:settings' %}">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:email_page' %}">Email</a>
+                </li>
             </ul>
-        {% endblock %}
-    </div>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin_dashboard:logout' %}">Logout</a>
+                </li>
+    </nav>
     <script>
         window.ENDPOINTS = {
             projects: "{% url 'api_admin:project-list' %}",
+            rounds: "{% url 'api_admin:round-list' %}",
             // Add other endpoints here as you create them
         };
     </script>
     {% block scripts %}{% endblock %}
-    <div v-scope id="content">
+    <div id="content">
         {% block content %}{% endblock %}
     </div>
 </body>

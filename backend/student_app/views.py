@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from django.shortcuts import render
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, ProjectSerializer
+from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse 
@@ -12,10 +12,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from admin_app.models import (
-    CapstoneInformationSection,
-    CapstoneInformationContent,
-)
+from django.views.decorators.http import require_GET
+from django.http import HttpResponse
+
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -25,27 +24,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
+class MajorViewSet(viewsets.ModelViewSet):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer
+
+def student_form_view(request):
+    return render(request, "student_form.html")
+    
 def project_view(request):
     return render(request, "project_information.html")
 
-def student_form(request):
-    if request.method =='POST':
-        studentID = request.POST.get("studentID")
-        # projects = request.POST.getlist('projects[]')
-        Student.objects.filter(student_id=studentID).update(
-            cwa = request.POST.get("cwa"),
-            major = request.POST.get("major"),
-            application_submitted=True,
-            email = request.POST.get("email"),
-            resume = request.POST.get("filename")
-        )
-        print("Form data received: ", data)
-        return JsonResponse({"received_data" : data})
-    else: 
-        students = Student.objects.values('name')
-        projects = Project.objects.values('title')
-        majors = Major.objects.values('name')
-        return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
+@require_GET #Only respond to get requests
+def autocomplete_users(request):
+    #extracts query from URL
+    query = request.GET.get('q', '')
+    #limit matches to 10
+    results = Student.objects.filter(name__icontains=query)[:10]
+    return JsonResponse([{'student_id': u.student_id, 'name': u.name} for u in results], safe=False)
 
 def landing_page(request):
     sections = (CapstoneInformationSection.objects
