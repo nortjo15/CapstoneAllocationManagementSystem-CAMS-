@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Student
-from admin_app.models import Project
+from student_app.models import Student
+from admin_app.models import Project, Major
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,11 @@ class StudentSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
+        fields = '__all__'
+
+class MajorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Major
         fields = '__all__'
 
 #Production endpoints

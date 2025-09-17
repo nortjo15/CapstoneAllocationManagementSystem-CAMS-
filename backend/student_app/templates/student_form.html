@@ -3,6 +3,7 @@
 </head>
 
 {% extends "student_base.html" %}
+{% load static %}
 {% block content %}
 <body>
     <h1>Project Application form</h1>
@@ -20,6 +21,9 @@
             <input type="email" id="email" name="email"><br><br>
             <!-- Major -->
             <label for="major">Select your major from the dropdown menu provided.</label><br><br>
+            <select name="major" id="major" require>
+                <option value=""> loading Majors... </option> 
+            </select><br><br>
             <!-- CWA -->
             <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
             <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa"><br><br>
@@ -45,6 +49,7 @@
             <label for="terms">Agree to Terms</label><br><br>
         </form>
     </div>
+    <script src="{% static 'student_app/js/form.js' %}"></script>
     {% comment %} <form enctype="multipart/form-data" id="Application-form">
         {% csrf_token %}
         {{ form.non_field_errors }}

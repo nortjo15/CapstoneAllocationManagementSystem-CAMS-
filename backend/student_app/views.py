@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from django.shortcuts import render
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, ProjectSerializer
+from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse
@@ -21,38 +21,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-# def student_application_view(request):
-#     if request.method == 'POST':
-#         form = ProjectApplicationForm(request.POST, request.FILES)
-#         if form.is_Valid():
-#             student = form.save()   
-#             return render(request, 'Success.html', {'student': student})
+class MajorViewSet(viewsets.ModelViewSet):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer
 
 def student_form_view(request):
     return render(request, "student_form.html")
     
 def project_view(request):
     return render(request, "project_information.html")
-
-def student_form(request):
-    if request.method =='POST':
-        studentID = request.POST.get("studentID")
-        # projects = request.POST.getlist('projects[]')
-        Student.objects.filter(student_id=studentID).update(
-            cwa = request.POST.get("cwa"),
-            major = request.POST.get("major"),
-            application_submitted=True,
-            email = request.POST.get("email"),
-            resume = request.POST.get("filename")
-        )
-        print("Form data received: ", data)
-        return JsonResponse({"received_data" : data})
-    else: 
-        form = ProjectApplicationForm()
-
-    projects = Project.objects.all().values('project_id', 'title')
-    students = Student.objects.all().order_by('name').values('student_id', 'name')
-    return render(request, 'student_application.html', {'form':form, 'projects': projects, 'students': students})
 
 @require_GET #Only respond to get requests
 def autocomplete_users(request):
