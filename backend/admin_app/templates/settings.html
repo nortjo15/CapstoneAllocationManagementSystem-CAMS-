@@ -5,7 +5,62 @@
     <p>Manage your account settings here.</p>
 
     <button onclick="showPopup()">Generate sign-up link</button>
-    <button onclick="showPopup()">Change Password</button>
+    <button onclick="showPopup1()">Change Password</button>
+
+    <!-- Admin Log Section -->
+    <div style="margin-top: 40px;">
+        <h2>Admin Activity Log</h2>
+        {% if admin_logs %}
+            <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #e9ecef;">
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">User</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Action</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Target</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Timestamp</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in admin_logs %}
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.user.username }}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    <span style="background-color: 
+                                        {% if log.action == 'CREATE' %}#d4edda
+                                        {% elif log.action == 'EDIT' %}#fff3cd
+                                        {% elif log.action == 'DELETE' %}#f8d7da
+                                        {% elif log.action == 'LOGIN' %}#cce5ff
+                                        {% else %}#e2e3e5{% endif %}; 
+                                        padding: 2px 6px; border-radius: 3px; font-size: 0.85em;">
+                                        {{ log.get_action_display }}
+                                    </span>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    {% if log.target %}
+                                        {{ log.target }}
+                                    {% else %}
+                                        <em>No target</em>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    {% if log.notes %}
+                                        {{ log.notes|truncatechars:50 }}
+                                    {% else %}
+                                        <em>No notes</em>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="color: #6c757d; font-style: italic;">No admin logs found.</p>
+        {% endif %}
+    </div>
 
     <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5);">
         <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
@@ -29,16 +84,14 @@
 
     <script>
     function showPopup() {
-    document.getElementById('customModal').style.display = 'block';
+        document.getElementById('customModal').style.display = 'block';
+    }
+    function showPopup1() {
+        document.getElementById('customModal1').style.display = 'block';
     }
     function closePopup() {
-    document.getElementById('customModal').style.display = 'none';
-    }
-    function showPopup() {
-    document.getElementById('customModal1').style.display = 'block';
-    }
-    function closePopup() {
-    document.getElementById('customModal1').style.display = 'none';
+        document.getElementById('customModal').style.display = 'none';
+        document.getElementById('customModal1').style.display = 'none';
     }
     </script>
 {% endblock %}
