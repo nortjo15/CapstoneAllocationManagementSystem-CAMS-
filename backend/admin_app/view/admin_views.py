@@ -12,6 +12,9 @@ from student_app.models import Student
 from admin_app import email_service
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
+from admin_app.models import Project
+
+
 
 class AdminLogListCreateView(generics.ListCreateAPIView):
     queryset = AdminLog.objects.all()
@@ -66,8 +69,10 @@ class SendAllocationReleasedView(APIView):
         return Response({"ok": True, "sent": sent})
     
 
+
 @login_required
-@user_passes_test(lambda u: u.is_staff)  # only admins can access
+@user_passes_test(lambda u: u.is_staff)  # only staff/admins can access
 def email_page(request):
-    """Render the Email Notifications page"""
-    return render(request, "admin_email.html")
+    """Render the Email Notifications page with projects for industry emails"""
+    projects = Project.objects.all()
+    return render(request, "admin_email.html", {"projects": projects})
