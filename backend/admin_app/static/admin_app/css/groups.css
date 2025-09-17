@@ -256,3 +256,10 @@
     font-size: 1rem;
     line-height: 1.4;
 }
+
+#group-errors ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    text-align: center;
+}

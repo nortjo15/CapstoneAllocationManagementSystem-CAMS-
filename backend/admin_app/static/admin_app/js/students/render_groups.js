@@ -192,6 +192,9 @@ export function renderProjectInfo(group, groupSize, projectName,
     {
         const projectId = select.value;
 
+        group.project = cachedProjects.find(p => p.project_id == projectId) || null;
+        renderProjectInfo(group, groupSize, projectName, projectCapacity, projectHost, createBtn);
+
         fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
             method: "PATCH",
@@ -224,16 +227,16 @@ export function renderProjectInfo(group, groupSize, projectName,
 
             capacityElem.classList.add("text-error");
             sizeElem.classList.add("text-error");
-            createBtn.disabled = true;
             showError("Invalid Group Size", errorBox)
         }
         else 
         {
             capacityElem.classList.remove("text-error");
             sizeElem.classList.remove("text-error");
-            createBtn.disabled = false;
-            clearError(errorBox)
+            clearError(errorBox, "Invalid Group Size");
         }
+
+        updateFinaliseButton(errorBox, createBtn);
     } 
     else 
     {
@@ -265,16 +268,47 @@ export function renderCWARange(group, groupSize)
     }
 }
 
-export function showError(msg, errorBox)
+export function showError(msg, errorBox) 
 {
-    errorBox.textContent = msg; 
+    const ul = errorBox.querySelector("ul") || errorBox.appendChild(document.createElement("ul"));
+
+    const exists = Array.from(ul.children).some(li => li.textContent === msg);
+    if (exists) return;
+
+    const li = document.createElement("li");
+    li.textContent = msg;
+    li.classList.add("error-item");
+    ul.appendChild(li);
     errorBox.style.display = "block";
 }
 
-export function clearError(errorBox)
+export function clearError(errorBox, msg = null) 
 {
-    errorBox.textContent = "";
-    errorBox.style.display = "none";
+    const ul = errorBox.querySelector("ul");
+    if (!ul) return;
+
+    if (msg) 
+    {
+        // Remove only specific error
+        ul.querySelectorAll("li").forEach(li => {
+            if (li.textContent === msg) li.remove();
+        });
+    } 
+    else 
+    {
+        // Remove all errors
+        ul.innerHTML = "";
+    }
+
+    if (!ul.children.length) {
+        errorBox.style.display = "none";
+    }
+}
+
+export function updateFinaliseButton(errorBox, finaliseBtn) 
+{
+    const hasErrors = errorBox.querySelector("ul")?.children.length > 0;
+    finaliseBtn.disabled = hasErrors;
 }
 
 export function checkAntiPreferences(group)
@@ -338,11 +372,11 @@ export function applyAntiPreferenceUI(group, finaliseBtn)
         });
 
         showError("Member Anti-Preference", errorBox);
-        finaliseBtn.disabled = true;
     }
     else 
     {
-        clearError(errorBox);
-        finaliseBtn.disabled = false;
+        clearError(errorBox, "Member Anti-Preference");
     }
+
+    updateFinaliseButton(errorBox, finaliseBtn);
 }
