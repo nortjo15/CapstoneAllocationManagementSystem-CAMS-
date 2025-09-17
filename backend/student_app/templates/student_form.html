@@ -29,10 +29,21 @@
             <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa"><br><br>
             <!-- Project Preferences -->
             <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
+            <select name="project" id="project" require>
+                <option value=""> loading Projects... </option> 
+            </select><br><br>
+            <ul id="preference-list"></ul>
+            <input type="hidden" name="project-preferences" id="project-preferences-input">
             <!-- preferred Group Preferences -->
-            <label>Please choose 0 or 5 students you would prefer working with</label>
+            <label>Please choose 0 or 5 students you would prefer working with</label><br>
+            <input type="text" id="user-search" placeholder="Search Students..."><br>
+            <ul id="autocomplete-results"></ul><br>
+            <ul id="preferred-list"></ul>
+            <input type="hidden" name="preferred-students" id="preferred-input">
             <!-- avoided Group Preferences -->
             <label>Please choose 0 or 5 students you would like to avoid working with</label>
+            <ul id="avoided-list"></ul>
+            <input type="hidden" name="avoided-students" id="avoided-input">
             <!-- Resume -->
             <p>When uploading your resume, ensure the file is named using the format "lastname-firstname_resume_year" for example, "Doe-Jane_resume_2025" 
                 and that it is in PDF format only.</p>
@@ -50,35 +61,7 @@
         </form>
     </div>
     <script src="{% static 'student_app/js/form.js' %}"></script>
-    {% comment %} <form enctype="multipart/form-data" id="Application-form">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-
-        <div>
-            {{ form.major.label_tag }} {{ form.major }}
-            {{ form.major.errors }}
-        </div>
-
-        <select id="project-dropdown">
-            <option value="">-- Select a project --</option>
-            {% for project in projects %}
-                <option value="{{ project.project_id }}">{{ project.title }}</option>
-            {% endfor %}
-        </select>
-
-        <ul id="preference-list"></ul>
-        <input type="hidden" name="project-preferences" id="project-preferences-input">
-
-        <input type="text" id="user-search" placeholder="Search Students...">
-        <ul id="autocomplete-results"></ul>
-
-        <ul id="preferred-list"></ul>
-        <ul id="avoided-list"></ul>
-
-        <input type="hidden" name="preferred-students" id="preferred-input">
-        <input type="hidden" name="avoided-students" id="avoided-input">
-    
-        <script>
+        {% comment %} <script>
             const dropdown = document.getElementById('project-dropdown');
             const list = document.getElementById('preference-list');
             const hiddenInput = document.getElementById('project-preferences-input');
@@ -159,7 +142,7 @@
                 hiddenInput.value = JSON.stringify(projectPreferences);
             }
         </script>
-    </form> {% endcomment %}
+    </form>  {% endcomment %}
     {% comment %} <div v-scope>
         <form name="student_form" action="{% url 'students:student_form' %}" method= "post">
             {% csrf_token %}
