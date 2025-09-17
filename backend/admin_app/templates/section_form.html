@@ -1,0 +1,35 @@
+{% extends "admin_base.html" %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Section</title>
+</head>
+<body>
+  <h1>Section</h1>
+
+  {% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+  {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+
+  <form method="post">{% csrf_token %}
+    <div class="field">
+      <label for="{{ form.name.id_for_label }}">Name</label>
+      {{ form.name }} {{ form.name.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.parent_section.id_for_label }}">Parent section</label>
+      {{ form.parent_section }} {{ form.parent_section.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.order.id_for_label }}">Order</label>
+      {{ form.order }} {{ form.order.errors }}
+    </div>
+    <div class="actions">
+      <button type="submit">Save</button>
+      <a href="{% url 'admin_app:section_list' %}">Back to list</a>
+    </div>
+  </form>
+</body>
+</html>
+
+{% endblock %}

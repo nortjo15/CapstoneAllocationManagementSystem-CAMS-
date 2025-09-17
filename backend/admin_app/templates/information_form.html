@@ -3,11 +3,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Announcement</title>
-  {# Optional: <link rel="stylesheet" href="{% static 'admin_app/admin.css' %}"> #}
+  <title>Information</title>
+  {# <link rel="stylesheet" href="{% static 'admin_app/admin.css' %}"> #}
 </head>
 <body>
-  <h1>Announcement</h1>
+  <h1>Information</h1>
 
   {% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
   {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
@@ -60,7 +60,7 @@
 
     <div class="actions">
       <button type="submit">Save</button>
-      <a href="{% url 'admin_app:announcement_list' %}">Back to list</a>
+      <a href="{% url 'admin_app:information_list' %}">Back to list</a>
     </div>
   </form>
 </body>

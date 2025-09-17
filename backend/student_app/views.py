@@ -5,13 +5,17 @@ from admin_app.models import Project
 from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
-from django.db.models import Prefetch
+from django.http import JsonResponse 
+from django.db.models import Prefetch, Q
+from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from student_app.forms import ProjectApplicationForm
+from django.utils import timezone
+from admin_app.models import (
+    CapstoneInformationSection,
+    CapstoneInformationContent,
+)
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -39,7 +43,7 @@ def autocomplete_users(request):
     results = Student.objects.filter(name__icontains=query)[:10]
     return JsonResponse([{'student_id': u.student_id, 'name': u.name} for u in results], safe=False)
 
-def capstone_information(request):
+def landing_page(request):
     sections = (CapstoneInformationSection.objects
                 .prefetch_related(
                     Prefetch(
@@ -50,3 +54,31 @@ def capstone_information(request):
                 ))
     return render(request, "capstone_information.html", {"sections": sections})
 
+def section_detail(request, id):
+    section = get_object_or_404(CapstoneInformationSection, id=id)
+    now = timezone.now()
+
+    qs = (
+        CapstoneInformationContent.objects
+        .select_related("section_id")
+        .filter(section_id=section, status="published")
+        .filter(
+            Q(published_at__lte=now) | Q(published_at__isnull=True),
+            Q(expires_at__gt=now)    | Q(expires_at__isnull=True),
+        )
+        .order_by("-pinned", "priority", "-published_at", "id")
+    )
+
+    page = Paginator(qs, 20).get_page(request.GET.get("page"))
+    subsections = section.subsections.order_by("order", "id")
+
+    return render(
+        request,
+        "section_detail.html",
+        {
+            "section": section,
+            "contents": page.object_list,
+            "subsections": subsections,
+            "page": page,
+        },
+    )
