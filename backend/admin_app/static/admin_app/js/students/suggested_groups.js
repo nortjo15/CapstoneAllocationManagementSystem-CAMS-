@@ -2,7 +2,7 @@ import { setButtonLoading } from "./utils.js";
 import { updateDeleteButton } from "./group_actions.js";
 import {
     renderMemberCard, renderAddStudentCard, renderProjectInfo, renderCWARange,
-    clearError, applyAntiPreferenceUI
+    clearError, applyAntiPreferenceUI, updateGroupUI
 } from "./render_groups.js";
 
 const manualGroupsUl = document.getElementById("manual-groups-ul");
@@ -164,8 +164,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 export function removeStudentFromGroup(student, group) 
 {
-    fetch(`/api/suggested_groups/${group.suggestedgroup_id}/remove_student/`, 
-    {
+    group.members = group.members.filter(m => m.student.student_id !== student.student_id);
+    updateGroupUI(group, finaliseBtn);
+
+    fetch(`/api/suggested_groups/${group.suggestedgroup_id}/remove_student/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -178,9 +180,14 @@ export function removeStudentFromGroup(student, group)
         return res.json();
     })
     .then(updated => {
-        loadGroup(updated.suggestedgroup_id)
+        updateGroupUI(updated, finaliseBtn);
     })
-    .catch(err => console.error(err))
+    .catch(err => 
+    {
+        console.error("Failed to remove student:", err);
+        // reload from backend if error
+        loadGroup(group.suggestedgroup_id);
+    });
 }
 
 //Loading a group onto the center panel

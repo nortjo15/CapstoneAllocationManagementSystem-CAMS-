@@ -2,6 +2,7 @@ import
     { openNotesModal, openPreferenceModal, openRemoveStudentModal, openStudentModal, openMemberPreferenceModal } 
     from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
+import { updateDeleteButton } from "./group_actions.js";
 
 let cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -193,7 +194,7 @@ export function renderProjectInfo(group, groupSize, projectName,
         const projectId = select.value;
 
         group.project = cachedProjects.find(p => p.project_id == projectId) || null;
-        renderProjectInfo(group, groupSize, projectName, projectCapacity, projectHost, createBtn);
+        updateGroupUI(group, createBtn);
 
         fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
@@ -379,4 +380,62 @@ export function applyAntiPreferenceUI(group, finaliseBtn)
     }
 
     updateFinaliseButton(errorBox, finaliseBtn);
+}
+
+// render_groups.js
+export function updateGroupUI(group, finaliseBtn) {
+    const groupTitle = document.getElementById("group-title");
+    const groupSize = document.getElementById("group-size");
+    const groupMembers = document.getElementById("group-members");
+    const projectName = document.getElementById("group-project-name");
+    const projectCapacity = document.getElementById("group-capacity");
+    const projectHost = document.getElementById("group-host");
+    const errorBox = document.getElementById("group-errors");
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    // keep global state in sync
+    window.activeGroupId = group.suggestedgroup_id;
+    window.currentMemberIds = new Set(group.members.map(m => m.student.student_id));
+
+    // clear title and member container
+    groupTitle.textContent = "";
+    groupMembers.innerHTML = `<div class="members-container"></div>`;
+    const membersContainer = groupMembers.querySelector(".members-container");
+
+    // render each member
+    group.members.forEach(m => membersContainer.appendChild(renderMemberCard(m, group)));
+
+    // add student card if space left
+    if (!group.project || group.members.length < group.project.capacity) {
+        membersContainer.appendChild(renderAddStudentCard(group));
+    }
+
+    // update group info + project details
+    renderProjectInfo(group, groupSize, projectName, projectCapacity, projectHost, finaliseBtn);
+    // render CWA range
+    renderCWARange(group, groupSize);
+    // delete button handling for manual groups
+    updateDeleteButton(group, csrfToken, {
+        onDeleted: () => {
+            groupTitle.textContent = "Select a group";
+            groupMembers.innerHTML = "";
+            projectName.innerHTML = "";
+            projectCapacity.innerHTML = "";
+            projectHost.innerHTML = "";
+            groupSize.innerHTML = "";
+
+            // hide delete button
+            const deleteBtn = document.getElementById("delete-group-btn");
+            if (deleteBtn) {
+                deleteBtn.style.display = "none";
+                deleteBtn.onclick = null;
+            }
+
+            // clear errors
+            if (errorBox) clearError(errorBox);
+        }
+    });
+
+    // anti-preference highlighting
+    applyAntiPreferenceUI(group, finaliseBtn);
 }
