@@ -50,6 +50,15 @@
     font-size: 1.4rem;
 }
 
+.modal-content h4 {
+  margin-top: 4px;
+  margin-bottom: 4px; 
+}
+
+.modal-content ul.modal-list {
+  margin-top: 0; 
+}
+
 /* Styling for input boxes */
 .modal-content input[type="text"],
 .modal-content input[type="number"],

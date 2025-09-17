@@ -11,6 +11,7 @@ export function renderMemberCard(m, group)
 {
     const div = document.createElement("div");
     div.classList.add("card", "member-card");
+    div.dataset.studentId = m.student.student_id;
     const majorName = m.student && m.student.major ? m.student.major.name : "N/A";
 
     // member details
@@ -76,7 +77,8 @@ export function renderMemberCard(m, group)
 
     // Member Preferences Button 
     const memberPrefBtn = document.createElement("span");
-    memberPrefBtn.classList.add("btn", "btn-secondary");
+    memberPrefBtn.classList.add("btn", "btn-secondary", "member-pref-btn");
+    memberPrefBtn.dataset.studentId = m.student.student_id;
     memberPrefBtn.textContent = "Members";
     memberPrefBtn.title = ("Open member preferences");
 
@@ -263,32 +265,6 @@ export function renderCWARange(group, groupSize)
     }
 }
 
-export function updateGroupUI(group)
-{
-    const membersContainer = document.querySelector("#group-members .members-container");
-    const groupSize = document.getElementById("group-size");
-    const projectName = document.getElementById("group-project-name");
-    const projectCapacity = document.getElementById("group-capacity");
-    const projectHost = document.getElementById("group-host");
-    const finaliseBtn = document.getElementById("finalise-group-btn");
-
-    //Clear members container 
-    membersContainer.innerHTML = "";
-
-    //Re-render members
-    group.members.forEach(m => membersContainer.appendChild(renderMemberCard(m, group)));
-
-    //Add Student card if space left 
-    if (!group.project || group.members.length < group.project.capacity)
-    {
-        membersContainer.appendChild(renderAddStudentCard(group));
-    }
-
-    //Re-run group info & CWA 
-    renderProjectInfo(group, groupSize, projectName, projectCapacity, projectHost, finaliseBtn);
-    renderCWARange(group, groupSize);
-}
-
 export function showError(msg, errorBox)
 {
     errorBox.textContent = msg; 
@@ -299,4 +275,74 @@ export function clearError(errorBox)
 {
     errorBox.textContent = "";
     errorBox.style.display = "none";
+}
+
+export function checkAntiPreferences(group)
+{
+    const memberIds = new Set(group.members.map(m => m.student.student_id));
+    const conflicts = [];
+
+    for (const m of group.members)
+    {
+        if (!m.student.group_preferences) continue;
+
+        // Go through each student and check their anti prefs
+        for (const pref of m.student.group_preferences)
+        {
+            if (pref.preference_type == "avoid" && memberIds.has(pref.target_id))
+            {
+                conflicts.push({ from: m.student.student_id, to: pref.target_id });
+            }
+        }
+    }
+
+    return conflicts;
+}
+
+export function applyAntiPreferenceUI(group, finaliseBtn)
+{
+    const conflicts = checkAntiPreferences(group);
+    const errorBox = document.getElementById("group-errors");
+
+    // Remove existing highlight
+    document.querySelectorAll(".member-card.conflict").forEach(el =>
+        el.classList.remove("conflict")
+    );
+    document.querySelectorAll(".member-pref-btn.btn-danger").forEach(el => {
+        el.classList.remove("btn-danger");
+        el.classList.add("btn-secondary");
+    });
+
+    if (conflicts.length > 0) 
+    {
+        conflicts.forEach(conf => 
+        {
+            // highlight both cards
+            [conf.from, conf.to].forEach(id => {
+                const card = document.querySelector(
+                    `.member-card[data-student-id="${id}"]`
+                );
+                if (card) card.classList.add("conflict");
+            });
+
+            // make only the 'from' button danger
+            const btn = document.querySelector(
+                `.member-pref-btn[data-student-id="${conf.from}"]`
+            );
+
+            if (btn) 
+            {
+                btn.classList.remove("btn-secondary");
+                btn.classList.add("btn-danger");
+            }
+        });
+
+        showError("Member Anti-Preference", errorBox);
+        finaliseBtn.disabled = true;
+    }
+    else 
+    {
+        clearError(errorBox);
+        finaliseBtn.disabled = false;
+    }
 }

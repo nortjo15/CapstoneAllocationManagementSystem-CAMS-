@@ -75,6 +75,11 @@
     margin-right: 6px;
 }
 
+.member-card.conflict {
+  border: 2px solid red;
+  background-color: #ffe5e5;
+}
+
 .members-container {
     margin-top: 8px;
     padding-top: 8px;

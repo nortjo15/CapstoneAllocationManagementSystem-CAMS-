@@ -2,7 +2,7 @@ import { setButtonLoading } from "./utils.js";
 import { updateDeleteButton } from "./group_actions.js";
 import {
     renderMemberCard, renderAddStudentCard, renderProjectInfo, renderCWARange,
-    updateGroupUI, clearError
+    clearError, applyAntiPreferenceUI
 } from "./render_groups.js";
 
 const manualGroupsUl = document.getElementById("manual-groups-ul");
@@ -254,6 +254,10 @@ export function loadGroup(id)
                     if (errorBox) clearError(errorBox);
                 }
             });
+
+            // Anti preference check
+            applyAntiPreferenceUI(group, finaliseBtn);
+            
         })
         .catch(err => {
             console.error("Failed to load group:", err);
