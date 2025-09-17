@@ -39,10 +39,129 @@ def prefetch_student_data(students):
 
     return group_likes, group_avoids, project_prefs, projects
 
+def classify_group(students, group_likes, group_avoids, project_prefs, projects, top_n=3):
+    """
+    Classify a group of students as 'strong', 'medium', or 'weak'.
+
+    Rules:
+    - Strong:
+        * All members mutually like each other
+        * No anti-preferences (downgrade to medium if any)
+        * All members have identical project preference ordering
+        * Associated project is in top 2 preferences
+        * Group size == project capacity
+    - Medium:
+        * Same as strong but:
+            - Group size < project capacity, OR
+            - There is an anti-preference, OR
+            - Associated project rank >= 3
+        * OR project order differs but sets overlap (subset or top-3 overlap)
+        * OR all mutual likes exist but no project preferences
+    - Weak:
+        * Students share the same top project but no mutual likes
+        * OR some mutual likes but no common project
+    """
+
+    if len(students) < 2:
+        raise ValueError("Groups must contain at least 2 students")
+
+    ids = [s.student_id for s in students]
+
+    # --- Pairwise check for mutual likes and anti-preferences ---
+    pair_count = 0
+    mutual_like_count = 0
+    has_anti = False
+    for i, a in enumerate(ids):
+        for b in ids[i+1:]:
+            pair_count += 1
+            if b in group_avoids.get(a, set()) or a in group_avoids.get(b, set()):
+                has_anti = True
+            if b in group_likes.get(a, set()) and a in group_likes.get(b, set()):
+                mutual_like_count += 1
+
+    all_mutual_likes = (mutual_like_count == pair_count)
+
+    # --- Build each student's project preference set ---
+    def prefs_as_list(sid):
+        # Returns projects in preference order, lowest rank first
+        return [pid for _, pid in sorted(project_prefs.get(sid, []), key=lambda x: x[0])]
+
+    sets = [set(prefs_as_list(sid)) for sid in ids]
+
+    # Case: no project prefs for this group
+    if not sets or not all(sets):
+        if all_mutual_likes:
+            return [{
+                "project": None,
+                "strength": "medium",
+                "has_anti_preference": has_anti
+            }]
+        else:
+            return [{
+                "project": None,
+                "strength": "weak",
+                "has_anti_preference": has_anti
+            }]
+
+    # --- Common projects across all members ---
+    common_projects = set.intersection(*sets)
+    results = []
+
+    for project_id in common_projects:
+        project = projects.get(project_id)
+        if not project:
+            continue
+
+        # Reference ordering from first student
+        ref_id = ids[0]
+        ref_prefs = prefs_as_list(ref_id)
+        rank_lookup = {pid: rank for rank, pid in project_prefs.get(ref_id, [])}
+        rank = rank_lookup.get(project_id)
+
+        # Order and set checks
+        identical_order = all(ref_prefs == prefs_as_list(sid) for sid in ids[1:])
+        same_set = all(set(ref_prefs) == set(prefs_as_list(sid)) for sid in ids[1:])
+        overlap_top = all(
+            bool(set(ref_prefs[:top_n]) & set(prefs_as_list(sid)[:top_n]))
+            for sid in ids[1:]
+        )
+
+        # --- Apply classification rules ---
+        if all_mutual_likes:
+            # Strong candidate
+            if (
+                not has_anti and
+                identical_order and
+                rank is not None and rank <= 2 and
+                len(students) == project.capacity
+            ):
+                strength = "strong"
+            else:
+                # Downgrade from strong to medium if any strong condition fails
+                if (
+                    has_anti or
+                    (rank is not None and rank >= 3) or
+                    len(students) < project.capacity or
+                    same_set or overlap_top
+                ):
+                    strength = "medium"
+                else:
+                    strength = "weak"
+        else:
+            # Not all mutual likes → only weak
+            strength = "weak"
+
+        results.append({
+            "project": project,
+            "strength": strength,
+            "has_anti_preference": has_anti
+        })
+
+    return results
+
 """
 Classify a group of students as 'strong', 'medium' or 'weak'
 Return a dict with strength & flag
-"""
 def classify_group(students, group_likes, group_avoids, project_prefs, projects, top_n=3):
     if len(students) < 2:
         raise ValueError("Groups must contain at least 2 students")
@@ -137,7 +256,7 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
         })
 
     return results
-
+"""
 """
 Project-only grouping for students with no member preferences
 - Group students who have no mutual likes but share the same top project(s)
