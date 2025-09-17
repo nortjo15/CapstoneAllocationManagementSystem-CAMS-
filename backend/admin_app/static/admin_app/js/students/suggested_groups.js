@@ -4,6 +4,7 @@ import {
     renderMemberCard, renderAddStudentCard, renderProjectInfo, renderCWARange,
     clearError, applyAntiPreferenceUI, updateGroupUI
 } from "./render_groups.js";
+import { openCreateGroupModal } from "./modal_function.js";
 
 const manualGroupsUl = document.getElementById("manual-groups-ul");
 const suggestedGroupsUl = document.getElementById("suggested-groups-ul");
@@ -71,10 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error("Failed to load suggested groups:", err));
 
         // --- Finalise button skeleton ---
-        finaliseBtn.addEventListener("click", () => {
-            if (activeGroupId) {
-                alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
-            }
+        finaliseBtn.addEventListener("click", () => 
+        {
+            openCreateGroupModal();
         });
 
         // --- Generate button wiring ---

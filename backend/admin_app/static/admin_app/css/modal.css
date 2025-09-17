@@ -22,7 +22,8 @@
 #preferencesModal,
 #removeStudentModal,
 #filterModal,
-#memberPreferenceModal
+#memberPreferenceModal,
+#createGroupModal
 {
   z-index: 1100;
 }

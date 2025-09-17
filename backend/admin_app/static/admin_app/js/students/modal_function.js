@@ -114,6 +114,13 @@ export function openStudentModal()
     fetchStudents("studentsTableBodyModal", "?allocated_group=false");
 }
 
+// Modal for creating a final gruop
+export function openCreateGroupModal()
+{
+    const modal = document.getElementById("createGroupModal");
+    if (modal) modal.style.display = "flex";
+}
+
 // Attach close + outside click for any modal
 function setupModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -158,3 +165,4 @@ setupModal("preferencesModal");
 setupModal("removeStudentModal");
 setupModal("studentModal");
 setupModal("memberPreferenceModal");
+setupModal("createGroupModal");

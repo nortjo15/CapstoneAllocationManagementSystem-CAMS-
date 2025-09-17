@@ -63,15 +63,33 @@
 
 <!-- Modal to confirm removal of a student -->
 <div id="removeStudentModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>Remove Student</h2>
-        <p id="removeStudentMessage"></p>
-        <div class="modal-actions">
-            <button id="confirmRemoveBtn" class="btn btn-danger">Yes</button>
-            <button id="cancelRemoveBtn" class="btn btn-secondary">No</button>
-        </div>
+  <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>Remove Student</h2>
+      <p id="removeStudentMessage"></p>
+      <div class="modal-actions">
+          <button id="confirmRemoveBtn" class="btn btn-danger">Yes</button>
+          <button id="cancelRemoveBtn" class="btn btn-secondary">No</button>
+      </div>
+  </div>
+</div>
+
+<!-- Modal to Confirm Creation of a Group -->
+<div id="createGroupModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span> 
+    <h2>Create Group</h2> 
+
+    <label for="groupNameInput"><strong>Group Name:</strong></label>
+    <input id="groupNameInput" type="text" class="form-control" placeholder="Enter group name" />
+
+    <label for="groupNotesInput"><strong>Notes:</strong></label>
+    <textarea id="groupNotesInput" class="form-control" placeholder="Enter notes"></textarea>
+    
+    <div class="modal-actions">
+      <button id="confirmGroupBtn" class="btn btn-primary">Confirm</button>
     </div>
+  </div>
 </div>
 
 <!-- Modal for Groups -->
