@@ -36,6 +36,17 @@ class SuggestedGroupListCreateView(generics.ListCreateAPIView):
     queryset = SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major")
     serializer_class = SuggestedGroupSerializer
 
+class SuggestedGroupLiteListView(generics.ListAPIView):
+    serializer_class = SuggestedGroupLiteSerializer
+
+    def get_queryset(self):
+        return (
+            SuggestedGroup.objects
+            .select_related("project")
+            .prefetch_related("members__student__major")
+            .filter(is_manual=False)   # only auto groups
+        )
+
 # Retrieve one suggested group by ID
 class SuggestedGroupDetailView(generics.RetrieveAPIView):
     serializer_class = SuggestedGroupSerializer

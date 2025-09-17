@@ -31,19 +31,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    function renderSuggestedGroups(groups) 
+    {
+        const order = {strong: 1, medium: 2, weak: 3};
+        groups.sort((a, b) => order[a.strength] - order[b.strength]);
+
+        suggestedGroupsUl.innerHTML = "";
+        groups.forEach((group, idx) => {
+            const li = document.createElement("li");
+            const btn = document.createElement("button");
+            btn.type = "button";
+
+            btn.classList.add("btn", "list-item-btn");
+            btn.dataset.id = group.suggestedgroup_id;
+            btn.dataset.display = idx + 1;
+            btn.textContent = `Group ${idx+1}`;
+            btn.classList.add(`strength-${group.strength.toLowerCase()}`);
+
+            li.appendChild(btn);
+            suggestedGroupsUl.appendChild(li);
+        });
+
+        suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
+            btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+        });
+    }
+
     function initSuggestedGroups() 
     {
         if (suggestedGroupsInitialised) return; 
         suggestedGroupsInitialised = true; 
 
-        //Create button skeleton
+        // --- Load existing auto-suggested groups on page reload ---
+        fetch("/api/suggested_groups/auto/")
+            .then(res => res.json())
+            .then(data => {
+                renderSuggestedGroups(data);
+            })
+            .catch(err => console.error("Failed to load suggested groups:", err));
+
+        // --- Finalise button skeleton ---
         finaliseBtn.addEventListener("click", () => {
             if (activeGroupId) {
                 alert(`This will create FinalGroup from SuggestedGroup ${activeGroupId}`);
             }
         });
 
-        // Wire button to generate group suggestions
+        // --- Generate button wiring ---
         const generateBtn = document.getElementById("generate-suggestions-btn");
         generateBtn.type = "button";
 
@@ -52,56 +86,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             fetch("/api/generate_suggestions/", {
                 method: "POST",
-                headers: { "X-CSRFToken": csrfToken}
+                headers: { "X-CSRFToken": csrfToken }
             })
             .then(res => res.json())
             .then(data => {
-                //Sort the groups by strength: strong -> medium -> weak
-                const order = {strong: 1, medium: 2, weak: 3};
-
-                data.sort((a, b) => {
-                    return order[a.strength] - order[b.strength];
-                })
-
-                //Refresh the list panel with new groups & render
-                suggestedGroupsUl.innerHTML = "";
-                data.forEach((group, idx) => {
-                    const li = document.createElement("li");
-                    const btn = document.createElement("button");
-                    btn.type = "button";
-
-                    btn.classList.add("btn", "list-item-btn");
-                    btn.dataset.id = group.suggestedgroup_id;
-                    btn.dataset.display = idx + 1;
-                    btn.textContent = `Group ${idx+1}`;
-
-                    //Add Strength class to button
-                    btn.classList.add(`strength-${group.strength.toLowerCase()}`);
-                    li.appendChild(btn);
-                    suggestedGroupsUl.appendChild(li); //Create a button for each group & append it
-                });
-
-                suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
-                    btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-                });
+                const autoGroups = data.filter(g => !g.is_manual);
+                renderSuggestedGroups(autoGroups); 
             })
             .catch(err => console.error("Failed to generate suggestions:", err))
             .finally(() => {
                 setButtonLoading(generateBtn, false);
-            })
+            });
         });
 
-        //If notes form submits, reload current group
+        // --- Notes form reload ---
         const notesForm = document.getElementById("notesForm");
         if (notesForm) {
             notesForm.addEventListener("submit", () => {
                 if (activeGroupId) {
-                    setTimeout(() => loadGroup(activeGroupId), 200)
+                    setTimeout(() => loadGroup(activeGroupId), 200);
                 }
             });
         }
 
-        //Wireing the +Create Group Button
+        // --- Create manual group button wiring ---
         const createBtn = document.getElementById("create-group-btn");
         createBtn.type = "button";
 
@@ -118,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(res => res.json())
             .then(group => {
-                renderManualGroup(group)
+                renderManualGroup(group);
             })
             .catch(err => console.error("Failed to create manual group:", err))
             .finally(() => setButtonLoading(createBtn, false));
