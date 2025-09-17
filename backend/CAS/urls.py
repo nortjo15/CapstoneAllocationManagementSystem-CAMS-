@@ -27,6 +27,9 @@ urlpatterns = [
     #APIs for student and Admin
     path('api/admin/', include('admin_app.api.urls', namespace='api_admin')),
     path('api/student/', include('student_app.urls', namespace='api_student')),
+
+    #root view
+    path('', include(('student_app.urls', 'student_app'), namespace='root')),
 ]
 
 # During development, add URL path to serve resume & CV files. 
