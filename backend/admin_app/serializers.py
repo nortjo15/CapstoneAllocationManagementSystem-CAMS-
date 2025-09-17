@@ -9,9 +9,16 @@ class AdminLogSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProjectSerializer(serializers.ModelSerializer):
+    is_assigned = serializers.SerializerMethodField()
+
     class Meta:
         model = Project
         fields = '__all__'
+        extra_fields = ['is_assigned']
+
+    def get_is_assigned(self, obj):
+        # True if this  project has at least one FinalGroup
+        return obj.final_groups.exists()
 
 class ProjectPreferenceSerializer(serializers.ModelSerializer):
     class Meta:

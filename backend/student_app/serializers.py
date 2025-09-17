@@ -17,7 +17,6 @@ class GroupPreferenceNestedSerializer(serializers.ModelSerializer):
         model = GroupPreference
         fields = ["preference_type", "target_id", "target_name"]
 
-
 # Recieved Preferences
 class GroupPreferenceReceivedSerializer(serializers.ModelSerializer):
     source_id = serializers.CharField(source="student.student_id", read_only=True)

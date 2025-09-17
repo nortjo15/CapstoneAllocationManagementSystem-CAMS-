@@ -149,6 +149,14 @@ export function renderProjectInfo(group, groupSize, projectName,
             const option = document.createElement("option");
             option.value = p.project_id;
             option.textContent = p.title;
+
+            //Disable if project is already assigned to a FinalGroup
+            if (p.is_assigned)
+            {
+                option.disabled = true;
+                option.textContent += " (Assigned)";
+            }
+
             if (group.project && group.project.project_id === p.project_id)
             {
                 option.selected = true;
