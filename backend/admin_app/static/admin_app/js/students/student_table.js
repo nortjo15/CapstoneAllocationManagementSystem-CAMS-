@@ -1,5 +1,5 @@
 import { setButtonLoading } from "./utils.js";
-import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal } from "./modal_function.js";
+import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal, openMemberPreferenceModal } from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
 
 window.selectedStudentIds = new Set();
@@ -92,7 +92,7 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                 //--- Preferences Button ---
                 const tdPrefs = document.createElement("td");
                 const prefsBtn = document.createElement("button");
-                prefsBtn.textContent = "Preferences";
+                prefsBtn.textContent = "Project Prefs";
 
                 if (student.has_preferences)
                 {
@@ -115,6 +115,34 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
 
                 tdPrefs.appendChild(prefsBtn);
                 tr.appendChild(tdPrefs);
+
+                // -- Member Preferences Button
+                const tdMemberPrefs = document.createElement("td");
+                const memberPrefsBtn = document.createElement("button");
+                memberPrefsBtn.textContent = "Team Prefs";
+
+                if (student.has_teamPref)
+                {
+                    memberPrefsBtn.className = "btn btn-secondary";
+                    memberPrefsBtn.addEventListener("click", (e) => 
+                    {
+                        e.stopPropagation();
+
+                        //Get full student before opening modal
+                        fetch(`/api/students/${student.student_id}`)
+                            .then(res => res.json())
+                            .then(fullStudent => openMemberPreferenceModal(fullStudent))
+                    })
+                }
+                else 
+                {
+                    memberPrefsBtn.className = "btn btn-secondary";
+                    memberPrefsBtn.disabled = true;
+                }
+
+                tdMemberPrefs.appendChild(memberPrefsBtn);
+                tr.appendChild(tdMemberPrefs)
+
 
                 if (targetId === "studentsTableBodyModal")
                 {

@@ -44,7 +44,8 @@ class NullableFloatField(serializers.FloatField):
     
 class StudentListSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)
-    has_preferences = serializers.SerializerMethodField()
+    has_preferences = serializers.BooleanField(read_only=True)
+    has_teamPref = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Student
@@ -56,11 +57,9 @@ class StudentListSerializer(serializers.ModelSerializer):
             "application_submitted",
             "allocated_group",
             "notes",
-            "has_preferences"
+            "has_preferences",
+            "has_teamPref",
         ]
-
-    def get_has_preferences(self, obj):
-        return obj.preferences.count() > 0
 
 class StudentSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)

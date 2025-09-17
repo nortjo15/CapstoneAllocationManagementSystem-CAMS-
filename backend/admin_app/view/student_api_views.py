@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 import csv
 from io import TextIOWrapper
+from django.db.models import Exists, OuterRef
 
 class StudentImportAPIView(APIView):
     """
@@ -137,10 +138,31 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
     GET  /api/students/  → list students
     POST /api/students/ → create student
     """
-    queryset = Student.objects.all().select_related("major").prefetch_related("preferences__project")
-    serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
+
+    def get_queryset(self):
+        qs = (
+            Student.objects.all()
+            .select_related("major")
+            .annotate(
+                has_preferences=Exists(
+                    ProjectPreference.objects.filter(student=OuterRef("pk"))
+                ),
+                has_teamPref=Exists(
+                    GroupPreference.objects.filter(student=OuterRef("pk"))
+                ),
+            )
+        )
+       
+        # Pre-fetch
+        if self.request.method != "GET":
+            qs = qs.prefetch_related(
+                "preferences__project",
+                "given_preferences__target_student",
+                "received_preferences__student",
+                )
+        return qs
 
     # Use lightweight serializer for GET requests
     def get_serializer_class(self):
@@ -155,5 +177,14 @@ class StudentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     PATCH   /api/students/<pk>/  → partial update
     DELETE  /api/students/<pk>/  → delete
     """
-    queryset = Student.objects.all().select_related("major")
+    queryset = (
+        Student.objects.all()
+        .select_related("major")
+        .prefetch_related(
+            "preferences__project",
+            "given_preferences__target_student",
+            "received_preferences__student",
+        )
+    )
+    
     serializer_class = StudentSerializer

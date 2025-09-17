@@ -33,7 +33,7 @@ class GroupListView(LoginRequiredMixin, ListView):
 
 # List + create suggested groups
 class SuggestedGroupListCreateView(generics.ListCreateAPIView):
-    queryset = SuggestedGroup.objects.all()
+    queryset = SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major")
     serializer_class = SuggestedGroupSerializer
 
 # Retrieve one suggested group by ID
@@ -78,7 +78,7 @@ class ManualGroupListView(generics.ListAPIView):
     serializer_class = SuggestedGroupLiteSerializer
 
     def get_queryset(self):
-        return SuggestedGroup.objects.filter(is_manual=True)
+        return SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major").filter(is_manual=True)
     
 @api_view(["POST"])
 def remove_student_from_group(request, suggestedgroup_id):
@@ -88,6 +88,13 @@ def remove_student_from_group(request, suggestedgroup_id):
         suggested_group=group,
         student__student_id=student_id
     ).delete()
+
+    group = (
+        SuggestedGroup.objects
+        .select_related("project")
+        .prefetch_related("members__student__major")
+        .get(pk=group.pk)
+    )
 
     serializer = SuggestedGroupLiteSerializer(group)
     return Response(serializer.data)
@@ -102,6 +109,13 @@ def add_student_to_group(request, suggestedgroup_id):
     
     # Look up student
     student = get_object_or_404(Student, student_id=student_id)
+
+    group = (
+        SuggestedGroup.objects
+        .select_related("project")
+        .prefetch_related("members__student__major")
+        .get(pk=group.pk)
+    )
 
     # Prevent duplicates
     if SuggestedGroupMember.objects.filter(suggested_group=group, student=student).exists():
