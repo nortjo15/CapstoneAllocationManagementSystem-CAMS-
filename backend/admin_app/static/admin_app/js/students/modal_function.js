@@ -1,5 +1,6 @@
 import { fetchStudents } from "./student_table.js";
 import { removeStudentFromGroup } from "./suggested_groups.js";
+import { finaliseGroup } from "./final_group.js";
 
 // Helpers to open modals
 export function openModal() {
@@ -115,10 +116,19 @@ export function openStudentModal()
 }
 
 // Modal for creating a final gruop
-export function openCreateGroupModal()
+export function openCreateGroupModal(groupId)
 {
     const modal = document.getElementById("createGroupModal");
     if (modal) modal.style.display = "flex";
+
+    const confirmBtn = document.getElementById("confirmGroupBtn");
+    confirmBtn.onclick = () => {
+        const name = document.getElementById("groupNameInput").value.trim();
+        const notes = document.getElementById("groupNotesInput").value.trim();
+
+        finaliseGroup(groupId, name, notes);
+        modal.style.display = "none";
+    }
 }
 
 // Attach close + outside click for any modal

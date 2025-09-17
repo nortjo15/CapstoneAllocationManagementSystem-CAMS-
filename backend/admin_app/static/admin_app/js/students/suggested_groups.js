@@ -74,7 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // --- Finalise button skeleton ---
         finaliseBtn.addEventListener("click", () => 
         {
-            openCreateGroupModal();
+            if (activeGroupId)
+            {
+                openCreateGroupModal(activeGroupId);
+            }
         });
 
         // --- Generate button wiring ---
