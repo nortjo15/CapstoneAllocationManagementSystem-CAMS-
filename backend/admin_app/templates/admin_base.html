@@ -20,20 +20,18 @@
                 <li><a href="{% url 'admin_dashboard:settings' %}"> Settings </a></li> 
                 <li><a href="{% url 'admin_dashboard:email_page' %}"> Email </a></li>
                 <li><a href="{% url 'admin_app:information_list' %}"> Information Sections </a></li>
-
-
-
             </ul>
         {% endblock %}
     </div>
     <script>
         window.ENDPOINTS = {
             projects: "{% url 'api_admin:project-list' %}",
+            rounds: "{% url 'api_admin:round-list' %}",
             // Add other endpoints here as you create them
         };
     </script>
     {% block scripts %}{% endblock %}
-    <div v-scope id="content">
+    <div id="content">
         {% block content %}{% endblock %}
     </div>
 </body>

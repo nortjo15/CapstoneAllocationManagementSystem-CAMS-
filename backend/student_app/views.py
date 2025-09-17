@@ -12,10 +12,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from admin_app.models import (
-    CapstoneInformationSection,
-    CapstoneInformationContent,
-)
+from django.views.decorators.http import require_GET
+from django.http import HttpResponse
+
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()

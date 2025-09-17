@@ -44,10 +44,6 @@ from .view.admin_views import (
     SendAllocationReleasedView,
 )
 
-
-# router = DefaultRouter()
-# router.register(r'projects', ProjectViewSet, basename='project')
-
 app_name = 'admin_app'
 urlpatterns = [
     #Auth_views
@@ -71,7 +67,6 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('', include('admin_app.api.urls')),
     path('projectDashboard/', project_view, name='project_dashboard'),
    
     #Group_views
@@ -86,7 +81,6 @@ urlpatterns = [
     path('rounds/', round_view, name='round_view'),
     path('api/rounds/', rounds_api, name='rounds_api_list'),
     path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
-    path('api/projects/', rounds_api, name='projects_api'),
     
     #Information CRUD
     path('information/',              information_list,  name='information_list'),
@@ -98,5 +92,7 @@ urlpatterns = [
     path('sections/new/',            section_create, name='section_create'),
     path('sections/<int:pk>/edit/',  section_edit,   name='section_edit'),
     path('sections/<int:pk>/delete/',section_delete, name='section_delete'),
-    
+
+    #api endpoint
+    path('', include('admin_app.api.urls')),
 ]
