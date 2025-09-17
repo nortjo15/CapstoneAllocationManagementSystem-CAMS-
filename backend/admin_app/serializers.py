@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import AdminLog
-from student_app.serializers import StudentSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
+from student_app.serializers import StudentSerializer, StudentListSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
 from .models import Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Round
 
 class AdminLogSerializer(serializers.ModelSerializer):
@@ -61,6 +61,29 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
             'project_id',
             'members',
             'is_manual']
+        
+# Light Seralizer for faster group reload
+class SuggestedGroupMemberLiteSerializer(serializers.ModelSerializer):
+    student = StudentListSerializer(read_only=True)
+
+    class Meta:
+        model = SuggestedGroupMember
+        fields = ["id", "student"]
+
+class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
+    members = SuggestedGroupMemberLiteSerializer(many=True, read_only=True)
+    project = ProjectSerializer(read_only=True)
+
+    class Meta:
+        model = SuggestedGroup
+        fields = [
+            "suggestedgroup_id",
+            "name",
+            "strength",
+            "project",
+            "members",
+            "is_manual",
+        ]
 # --------------------------------------------------------------------
 
 class FinalGroupSerializer(serializers.ModelSerializer):

@@ -38,9 +38,21 @@ class SuggestedGroupListCreateView(generics.ListCreateAPIView):
 
 # Retrieve one suggested group by ID
 class SuggestedGroupDetailView(generics.RetrieveAPIView):
-    queryset = SuggestedGroup.objects.all()
     serializer_class = SuggestedGroupSerializer
     lookup_field = 'suggestedgroup_id'
+
+    def get_queryset(self):
+        return (
+            SuggestedGroup.objects
+            .select_related("project")
+            .prefetch_related(
+                "members__student__major",
+                "members__student__preferences__project",
+                "members__student__given_preferences__target_student",
+                "members__student__received_preferences__student",
+            )
+        )
+
 
 # GroupMember 
 class SuggestedGroupMemberListCreateView(generics.ListCreateAPIView):
@@ -63,7 +75,7 @@ class SuggestedGroupUpdateView(generics.UpdateAPIView):
 
 # ManualGroups View
 class ManualGroupListView(generics.ListAPIView):
-    serializer_class = SuggestedGroupSerializer
+    serializer_class = SuggestedGroupLiteSerializer
 
     def get_queryset(self):
         return SuggestedGroup.objects.filter(is_manual=True)
@@ -77,7 +89,7 @@ def remove_student_from_group(request, suggestedgroup_id):
         student__student_id=student_id
     ).delete()
 
-    serializer = SuggestedGroupSerializer(group)
+    serializer = SuggestedGroupLiteSerializer(group)
     return Response(serializer.data)
 
 @api_view(["POST"])
@@ -93,11 +105,11 @@ def add_student_to_group(request, suggestedgroup_id):
 
     # Prevent duplicates
     if SuggestedGroupMember.objects.filter(suggested_group=group, student=student).exists():
-        serializer = SuggestedGroupSerializer(group)
+        serializer = SuggestedGroupLiteSerializer(group)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     SuggestedGroupMember.objects.create(suggested_group=group, student=student)
-    serializer = SuggestedGroupSerializer(group)
+    serializer = SuggestedGroupLiteSerializer(group)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(["POST"])
@@ -121,7 +133,7 @@ def create_manual_group(request):
         project=None,
         is_manual=True
     )
-    return Response(SuggestedGroupSerializer(group).data)
+    return Response(SuggestedGroupLiteSerializer(group).data)
 
 @api_view(["DELETE"])
 def delete_manual_group(request, suggestedgroup_id):

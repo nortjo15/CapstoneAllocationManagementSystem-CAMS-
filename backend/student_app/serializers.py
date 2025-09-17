@@ -40,6 +40,7 @@ class NullableFloatField(serializers.FloatField):
         if data in ("", None):
             return None
         return super().to_internal_value(data)
+
     
 class StudentListSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)
