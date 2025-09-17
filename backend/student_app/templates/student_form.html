@@ -1,19 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Application</title>
-    <script src="https://unpkg.com/petite-vue" defer init></script>
 </head>
 
 {% extends "student_base.html" %}
-{% block content%}
+{% block content %}
 <body>
     <h1>Project Application form</h1>
     <hr>
     <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
-    <form method="post" enctype="multipart/form-data" id="Application-form">
+    <div id="form-Container">
+        <form enctype="multipart/form" id="Application-form">
+            {% csrf_token %}
+            <!-- Student ID -->
+            <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
+            <label for="studentID">Student ID</label>
+            <input type="text" pattern="[0-9]+" maxlength="8" name="studentID" id="studentID" required><br><br>
+            <!-- Email -->
+            <label for="email">Please enter your student email. E.g. john.smith@student.curtin.edu.au OR john.m.smith@student.curtin.edu.au</label><br><br>
+            <input type="email" id="email" name="email"><br><br>
+            <!-- Major -->
+            <label for="major">Select your major from the dropdown menu provided.</label><br><br>
+            <!-- CWA -->
+            <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
+            <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa"><br><br>
+            <!-- Project Preferences -->
+            <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
+            <!-- preferred Group Preferences -->
+            <label>Please choose 0 or 5 students you would prefer working with</label>
+            <!-- avoided Group Preferences -->
+            <label>Please choose 0 or 5 students you would like to avoid working with</label>
+            <!-- Resume -->
+            <p>When uploading your resume, ensure the file is named using the format "lastname-firstname_resume_year" for example, "Doe-Jane_resume_2025" 
+                and that it is in PDF format only.</p>
+            <input type="file" id="resume" name="filename" accept=".pdf"><br><br>
+            <!-- CV -->
+            <input type="file" id="cv" name="cv" accept=".pdf"><br><br>
+            <!-- Split Project -->
+            <label for="splitProject"> If you are completing a split project, please tick the box </label>
+            <input type="checkbox" name="splitProject" id="splitProject"><br>
+            <!-- Agree to terms -->
+            <p>Finally, you must tick the “Agree to Terms” checkbox to confirm your acceptance of the allocation process. 
+                <span style="color: red;">If this box is not ticked, you will not be allocated to any group or project</span></p>
+            <input type="checkbox" name="terms" id="terms">
+            <label for="terms">Agree to Terms</label><br><br>
+        </form>
+    </div>
+    {% comment %} <form enctype="multipart/form-data" id="Application-form">
         {% csrf_token %}
         {{ form.non_field_errors }}
 
@@ -122,7 +154,7 @@
                 hiddenInput.value = JSON.stringify(projectPreferences);
             }
         </script>
-    </form>
+    </form> {% endcomment %}
     {% comment %} <div v-scope>
         <form name="student_form" action="{% url 'students:student_form' %}" method= "post">
             {% csrf_token %}
