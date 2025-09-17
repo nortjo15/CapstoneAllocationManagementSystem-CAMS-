@@ -205,12 +205,14 @@ export function renderProjectInfo(group, groupSize, projectName,
             },
             body: JSON.stringify({ project_id: projectId || null }),
         })
-        .then(res => res.json())
-        .then(updated => {
-            console.log("Project updated:", updated);
-            loadGroup(group.suggestedgroup_id);
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to update project");
+            return res.json();
         })
-        .catch(err => console.error("Failed to update project:", err));
+        .catch(err => {
+            console.error("Failed to update project:", err);
+            loadGroup(group.suggestedgroup_id)
+        });
     });
 
     if (group.project) 

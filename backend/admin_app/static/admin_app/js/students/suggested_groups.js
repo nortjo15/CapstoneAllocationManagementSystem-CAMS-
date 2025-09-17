@@ -179,9 +179,6 @@ export function removeStudentFromGroup(student, group)
         if (!res.ok) throw new Error("Failed to remove student");
         return res.json();
     })
-    .then(updated => {
-        updateGroupUI(updated, finaliseBtn);
-    })
     .catch(err => 
     {
         console.error("Failed to remove student:", err);
