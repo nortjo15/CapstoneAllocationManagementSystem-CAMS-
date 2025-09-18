@@ -1,8 +1,11 @@
 from rest_framework import viewsets
 from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer
+from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer, FullFormSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse 
@@ -28,8 +31,20 @@ class MajorViewSet(viewsets.ModelViewSet):
     queryset = Major.objects.all()
     serializer_class = MajorSerializer
 
+class StudentApplicationView(APIView):
+    def post(self, request):
+        serializer = FullFormSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Application submitted successfully"}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 def student_form_view(request):
     return render(request, "student_form.html")
+
+def student_form_success(request):
+    return render(request, "student_form_success.html")
     
 def project_view(request):
     return render(request, "project_information.html")

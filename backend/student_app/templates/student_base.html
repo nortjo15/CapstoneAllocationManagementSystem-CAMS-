@@ -48,7 +48,8 @@
         window.ENDPOINTS = {
             projects: "{% url 'api_student:project-list' %}",
             students: "{% url 'api_student:student-list' %}",
-            majors: "{% url 'api_student:major-list' %}"
+            majors: "{% url 'api_student:major-list' %}",
+            success: "{% url 'students:application_success' %}",
             // Add other endpoints here as you create them
         };
     </script>

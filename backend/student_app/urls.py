@@ -33,6 +33,7 @@ urlpatterns = [
     path('projectInformation/', project_view, name="project_information"),
     #Student Form
     path('student_application/', views.student_form_view, name="student_form"),
+    path('application-success/', views.student_form_success, name="application_success"),
     #Information Views
     #path('capstone_information/', views.capstone_information, name="capstone_information"),
     path('section/<int:id>/', views.section_detail, name='section_detail')
