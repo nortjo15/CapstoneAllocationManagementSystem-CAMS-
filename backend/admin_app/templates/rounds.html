@@ -1,87 +1,85 @@
+{% extends "admin_base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
-    <title>Manage Project Rounds</title>
-</head>
-<body data-projects-api-url="{% url 'api_admin:projects_api' %}">
-    {% csrf_token %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'admin_app/css/rounds.css' %}">
+{% endblock %}
 
-    <div class="container">
-        <div id="left-pane">
-            <h1>Project Rounds</h1>
-            <button id="create-new-round-btn">
-                + Create New Round
-            </button>
-            <div id="rounds-list">
-            </div>
-        </div>
-
-
-        <div id="right-pane">
-            <h2 id="right-pane-title">Select a Round</h2>
-            
-            <div id="round-details-view">
-                <form id="edit-round-form">
-                    <input type="hidden" id="edit-round-id">
-                    <div>
-                        <label for="edit-round-name">Round Name</label>
-                        <input type="text" id="edit-round-name">
-                    </div>
-                    <div>
-                        <label for="edit-open-date">Open Date</label>
-                        <input type="datetime-local" id="edit-open-date">
-                    </div>
-                    <div>
-                        <label for="edit-close-date">Close Date</label>
-                        <input type="datetime-local" id="edit-close-date">
-                    </div>
-                    <div>
-                        <label for="edit-round-projects">Projects</label>
-                        <select multiple id="edit-round-projects">
-                        </select>
-                    </div>
-                    <div>
-                        <button type="submit">
-                            Save Changes
-                        </button>
-                        <button type="button" id="delete-round-btn">
-                            Delete
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div id="create-round-view">
-                <form id="create-round-form">
-                    <div>
-                        <label for="create-round-name">Round Name</label>
-                        <input type="text" id="create-round-name">
-                    </div>
-                    <div>
-                        <label for="create-open-date">Open Date</label>
-                        <input type="datetime-local" id="create-open-date">
-                    </div>
-                    <div>
-                        <label for="create-close-date">Close Date</label>
-                        <input type="datetime-local" id="create-close-date">
-                    </div>
-                    <div>
-                        <label for="create-round-projects">Projects</label>
-                        <select multiple id="create-round-projects">
-                        </select>
-                    </div>
-                    <div>
-                        <button type="submit">
-                            Create Round
-                        </button>
-                    </div>
-                </form>
-            </div>
+{% block content %}
+<div class="container">
+    <div id="left-pane">
+        <h1>Project Rounds</h1>
+        <button id="create-new-round-btn">
+            + Create New Round
+        </button>
+        <div id="rounds-list">
         </div>
     </div>
+
+
+    <div id="right-pane">
+        <h2 id="right-pane-title">Select a Round</h2>
+            
+        <div id="round-details-view">
+            <form id="edit-round-form">
+                {% csrf_token %}
+                <input type="hidden" id="edit-round-id">
+                <div>
+                    <label for="edit-round-name">Round Name</label>
+                    <input type="text" id="edit-round-name">
+                </div>
+                <div>
+                    <label for="edit-open-date">Open Date</label>
+                    <input type="datetime-local" id="edit-open-date">
+                </div>
+                <div>
+                    <label for="edit-close-date">Close Date</label>
+                    <input type="datetime-local" id="edit-close-date">
+                </div>
+                <div>
+                    <label for="edit-round-projects">Projects</label>
+                    <select multiple id="edit-round-projects">
+                    </select>
+                </div>
+                <div>
+                    <button type="submit">
+                        Save Changes
+                    </button>
+                    <button type="button" id="delete-round-btn">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div id="create-round-view">
+            <form id="create-round-form">
+                {% csrf_token %}
+                <div>
+                    <label for="create-round-name">Round Name</label>
+                    <input type="text" id="create-round-name">
+                </div>
+                <div>
+                    <label for="create-open-date">Open Date</label>
+                    <input type="datetime-local" id="create-open-date">
+                </div>
+                <div>
+                    <label for="create-close-date">Close Date</label>
+                    <input type="datetime-local" id="create-close-date">
+                </div>
+                <div>
+                    <label for="create-round-projects">Projects</label>
+                    <select multiple id="create-round-projects">
+                    </select>
+                </div>
+                <div>
+                    <button type="submit">
+                        Create Round
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
     <script src="{% static '../static/admin_app/js/round.js' %}"></script>
-</body>
-</html>
+{% endblock %}

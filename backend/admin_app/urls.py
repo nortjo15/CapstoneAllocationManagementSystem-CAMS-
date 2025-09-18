@@ -16,7 +16,6 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
 from django.conf import settings 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -29,9 +28,11 @@ from .view.round_views import round_view
 from .view.round_views_restAPI import rounds_api
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
-from .view.announcements_views import (
-    announcement_list, announcement_create, announcement_edit, announcement_delete
+from .view.information_views import (
+    information_list, information_create, information_edit, information_delete
 )
+from .view.section_views import section_list, section_create, section_edit, section_delete
+
 from admin_app.view import admin_views
 
 from admin_app.view.email_views import MailtoLinkView
@@ -42,10 +43,6 @@ from .view.admin_views import (
     SendApplicationSuccessView,
     SendAllocationReleasedView,
 )
-
-
-# router = DefaultRouter()
-# router.register(r'projects', ProjectViewSet, basename='project')
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -61,7 +58,6 @@ urlpatterns = [
     path("email/page/", admin_views.email_page, name="email_page"),
 
     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
-    path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
@@ -71,7 +67,6 @@ urlpatterns = [
     path('students/import/', StudentImportView.as_view(), name='admin_student_import'),
     path('student/update-notes/', update_student_notes, name='update_student_notes'),
     #Project_views
-    path('', include('admin_app.api.urls')),
     path('projectDashboard/', project_view, name='project_dashboard'),
    
     #Group_views
@@ -87,10 +82,17 @@ urlpatterns = [
     path('api/rounds/', rounds_api, name='rounds_api_list'),
     path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
     
-    #Announcements CRUD
-    path('announcements/',              announcement_list,  name='announcement_list'),
-    path('announcements/new/',          announcement_create, name='announcement_create'),
-    path('announcements/<int:pk>/edit/',   announcement_edit,   name='announcement_edit'),
-    path('announcements/<int:pk>/delete/', announcement_delete, name='announcement_delete'),
-    
+    #Information CRUD
+    path('information/',              information_list,  name='information_list'),
+    path('information/new/',          information_create, name='information_create'),
+    path('information/<int:pk>/edit/',   information_edit,   name='information_edit'),
+    path('information/<int:pk>/delete/', information_delete, name='information_delete'),
+    #Sections CRUD
+    path('sections/',                section_list,  name='section_list'),
+    path('sections/new/',            section_create, name='section_create'),
+    path('sections/<int:pk>/edit/',  section_edit,   name='section_edit'),
+    path('sections/<int:pk>/delete/',section_delete, name='section_delete'),
+
+    #api endpoint
+    path('', include('admin_app.api.urls')),
 ]
