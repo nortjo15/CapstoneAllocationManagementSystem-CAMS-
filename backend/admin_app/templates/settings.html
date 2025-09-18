@@ -1,13 +1,13 @@
 {% extends "admin_base.html" %}
 
 {% block content %}
+<div style="padding: 40px;">
     <h1>Settings</h1>
     <p>Manage your account settings here.</p>
 
-    <button onclick="showPopup()">Generate sign-up link</button>
-    <button onclick="showPopup1()">Change Password</button>
+    <a class="btn btn-primary" href="#" onclick="showPopup()" role="button">Link to user registration</a>
+    <a class="btn btn-primary" href="#" onclick="showPopup1()" role="button">Change Password</a>
 
-    <!-- Admin Log Section -->
     <div style="margin-top: 40px;">
         <h2>Admin Activity Log</h2>
         {% if admin_logs %}
@@ -61,8 +61,9 @@
             <p style="color: #6c757d; font-style: italic;">No admin logs found.</p>
         {% endif %}
     </div>
+</div>
 
-    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5);">
+    <div id="customModal" style=" align: center; display:none; position:fixed; top:0; left:0; width:200vw; height:200vh; background:rgba(0,0,0,0.5);">
         <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
             <p>Copy the link below:<br>
                 <a href="/admin-dashboard/register">Link to user registration</a>
@@ -81,6 +82,8 @@
             <button onclick="closePopup()">Close</button>
         </div>
     </div>
+
+    
 
     <script>
     function showPopup() {
