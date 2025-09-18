@@ -166,3 +166,8 @@ def delete_manual_group(request, suggestedgroup_id):
     group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id, is_manual=True)
     group.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+# FinalGroup Create View
+class FinalGroupCreateView(generics.CreateAPIView):
+    queryset = FinalGroup.objects.all()
+    serializer_class = FinalGroupCreateSerializer

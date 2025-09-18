@@ -94,15 +94,15 @@ class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
 # --------------------------------------------------------------------
 
 class FinalGroupCreateSerializer(serializers.ModelSerializer):
-    suggested_group_id = serializers.IntegerField(write_only=True)
+    suggestedgroup_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = FinalGroup
-        fields = ["id", "name", "notes", "suggested_group_id"]
+        fields = ["finalgroup_id", "name", "notes", "suggestedgroup_id"]
 
     def create(self, validated_data):
-        suggested_group_id = validated_data.pop("suggested_group_id")
-        sg = SuggestedGroup.objects.prefetch_related("members__student", "project").get(id=suggested_group_id)
+        suggestedgroup_id = validated_data.pop("suggestedgroup_id")
+        sg = SuggestedGroup.objects.prefetch_related("members__student", "project").get(suggestedgroup_id=suggestedgroup_id)
 
         # Create Final Group
         final_group = FinalGroup.objects.create(
@@ -116,7 +116,7 @@ class FinalGroupCreateSerializer(serializers.ModelSerializer):
         members = sg.members.all()
         for m in members:
             FinalGroupMember.objects.create(
-                group=final_group,
+                final_group=final_group,
                 student=m.student,
             )
             # Mark student as allocated
@@ -127,16 +127,23 @@ class FinalGroupCreateSerializer(serializers.ModelSerializer):
         sg.delete()
 
         return final_group
-
-
-class FinalGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FinalGroup
-        fields = '__all__'
+    
+    def to_representation(self, instance):
+        return FinalGroupSerializer(instance, context=self.context).data
 
 class FinalGroupMemberSerializer(serializers.ModelSerializer):
+    student = StudentListSerializer(read_only=True) 
+
     class Meta:
         model = FinalGroupMember
+        fields = ["id", "student"]
+
+class FinalGroupSerializer(serializers.ModelSerializer):
+    members = FinalGroupMemberSerializer(many=True, read_only=True)
+    project = ProjectSerializer(read_only=True)
+
+    class Meta:
+        model = FinalGroup
         fields = '__all__'
 
 class RoundSerializer(serializers.ModelSerializer):

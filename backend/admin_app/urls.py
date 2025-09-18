@@ -84,6 +84,7 @@ urlpatterns = [
     path("suggested_groups/manual/", ManualGroupListView.as_view(), name="manual-groups"),
     path("suggested_groups/<int:suggestedgroup_id>/delete/", delete_manual_group, name="delete-manual-group"),
     path("suggested_groups/auto/", SuggestedGroupLiteListView.as_view(), name="suggested-groups-auto"),
+    path("final_groups/", FinalGroupCreateView.as_view(), name="final-group-create"),
     # -- Webpage
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views

@@ -1,6 +1,6 @@
 import { fetchStudents } from "./student_table.js";
 import { removeStudentFromGroup } from "./suggested_groups.js";
-import { finaliseGroup } from "./final_group.js";
+import { finaliseGroup, setupFinaliseValidation } from "./final_group.js";
 
 // Helpers to open modals
 export function openModal() {
@@ -120,6 +120,7 @@ export function openCreateGroupModal(groupId)
 {
     const modal = document.getElementById("createGroupModal");
     if (modal) modal.style.display = "flex";
+    setupFinaliseValidation();
 
     const confirmBtn = document.getElementById("confirmGroupBtn");
     confirmBtn.onclick = () => {
