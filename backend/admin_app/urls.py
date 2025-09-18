@@ -26,7 +26,6 @@ from .view.project_views import project_view, ProjectViewSet
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
-from .view.round_views_restAPI import rounds_api
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
 from .view.settings_views import settings_view
 from .view.information_views import (
@@ -69,6 +68,10 @@ urlpatterns = [
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
+    
+    #Round_views
+    path('rounds/', round_view, name='round_view'),
+
     #Student_views
     path('student_view/', StudentListView.as_view(), name='student_view'),
     path('students/create/', StudentCreateView.as_view(), name='admin_student_create'),
@@ -85,10 +88,6 @@ urlpatterns = [
     #Settings_views
     path('settings/', settings_view, name='settings'),
 
-    #Round_views
-    path('rounds/', round_view, name='round_view'),
-    path('api/rounds/', rounds_api, name='rounds_api_list'),
-    path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
     
     #Information CRUD
     path('information/',              information_list,  name='information_list'),
