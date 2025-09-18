@@ -259,6 +259,7 @@ class Command(BaseCommand):
                 open_date_str = row['open_date']
                 close_date_str = row['close_date']
                 projects_titles = row['projects'].split(';')
+                is_internal = row['is_internal']
 
                 # Convert string dates to timezone-aware datetime objects
                 try:
@@ -279,6 +280,7 @@ class Command(BaseCommand):
                     round_name =round_name,
                     open_date=open_date,
                     close_date=close_date,
+                    is_internal=is_internal,
                     defaults={'status': 'upcoming', 'is_active': False}
                 )
 

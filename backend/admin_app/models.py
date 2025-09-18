@@ -52,6 +52,7 @@ class Round(models.Model):
 
     # Admin will manually activate a round by clicking a GUI button
     is_active = models.BooleanField(default=False)
+    is_internal = models.BooleanField(null=False)
 
     STATUS_CHOICES = [
         ('open', 'Open'),
