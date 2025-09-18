@@ -9,8 +9,9 @@
     crossorigin="anonymous"></script>
 <head>
     <title>Admin Portal</title>
-    {% block styles %}
-    {% endblock %}
+
+    #if individual pages use css, use the following to override admin_base css
+    {% block extra_css %}{% endblock %} 
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
