@@ -147,6 +147,7 @@ createRoundForm.addEventListener('submit', async function(e) {
     const roundName = document.getElementById('create-round-name').value;
     const openDate = document.getElementById('create-open-date').value;
     const closeDate = document.getElementById('create-close-date').value;
+    const isInternal = 'False';
 
     let selectedProjects = Array.from(
         document.querySelectorAll('#create-round-projects input[type="checkbox"]:checked')
@@ -157,6 +158,7 @@ createRoundForm.addEventListener('submit', async function(e) {
         round_name: roundName,
         open_date: openDate,
         close_date: closeDate,
+        is_internal: isInternal,
         project_ids: selectedProjects
     };
 

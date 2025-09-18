@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from django.shortcuts import render
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer
+from .serializers import StudentSerializer, MajorSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse 
@@ -14,7 +14,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
-
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
