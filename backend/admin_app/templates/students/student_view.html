@@ -6,7 +6,7 @@
  Base Page for Student View - calls all relevant html files 
  --> 
 {% extends 'admin_base.html' %}
-{% block styles %}
+{% block extra_css %}
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'admin_app/css/student_search.css' %}">
@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="{% static 'admin_app/css/modal.css' %}">
 <link rel="stylesheet" href="{% static 'admin_app/css/student_buttons.css' %}">
 <meta name="csrf-token" content="{{ csrf_token }}">
-{% endblock styles %}
+{% endblock extra_css %}
 
 {% block content %}
 <!-- Include htmls -->
