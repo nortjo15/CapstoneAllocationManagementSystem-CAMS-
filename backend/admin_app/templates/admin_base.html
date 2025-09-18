@@ -51,12 +51,19 @@
                 <li class="nav-item">
                 <a class="nav-link" href="{% url 'admin_dashboard:logout' %}">Logout</a>
                 </li>
+            </ul>
+            </div>
+            </div>
+        </div>
+
+
     </nav>
     <div v-scope id="content">
     <script>
         window.ENDPOINTS = {
             projects: "{% url 'api_admin:project-list' %}",
             rounds: "{% url 'api_admin:round-list' %}",
+            admin_logs: "{% url 'api_admin:admin_log-list' %}",
             // Add other endpoints here as you create them
         };
     </script>

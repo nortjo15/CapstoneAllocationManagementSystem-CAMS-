@@ -1,11 +1,12 @@
 {% extends "admin_base.html" %}
+{% load static %}
 
 {% block content %}
 <div style="padding: 40px;">
     <h1>Settings</h1>
     <p>Manage your account settings here.</p>
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <button type="button" style="margin-right: 10px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
     Change Password
     </button>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -44,11 +45,12 @@
             </div>
         </div>
     </div>
+    
 
     <div style="margin-top: 40px;">
         <h2>Admin Activity Log</h2>
         {% if admin_logs %}
-            <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+            <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background-color: #e9ecef;">
@@ -99,6 +101,27 @@
         {% endif %}
     </div>
 
+    <button type="button" style="margin-top: 20px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+    Clear Logs
+    </button>
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Clear Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to clear the logs? \nThis action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     
 </div>
     
@@ -110,4 +133,5 @@
         window.location.href = '{% url 'admin_dashboard:change_password' %}';
     }
     </script>
+<script src="{% static 'admin_app/js/settings.js' %}"></script>
 {% endblock %}

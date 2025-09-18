@@ -1,12 +1,10 @@
 from rest_framework import serializers
-from .models import AdminLog
+from .models import AdminLog, Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Round
 
 class AdminLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminLog
         fields = '__all__'
-
-from .models import Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Round
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
