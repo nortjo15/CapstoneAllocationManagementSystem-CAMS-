@@ -256,8 +256,6 @@ addBtn.addEventListener("click", (e) =>
         )
     )
     .then((updatedGroups) => {
-        console.log("Add response:", updatedGroups);
-
         const updatedGroup = updatedGroups[updatedGroups.length - 1];
         window.suggestedGroupsCache.set(parseInt(activeGroupId), updatedGroup);
 

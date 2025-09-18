@@ -48,8 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             li.appendChild(btn);
             suggestedGroupsUl.appendChild(li);
-
-            window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
         });
 
         suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
@@ -161,8 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
         manualGroupsUl.appendChild(li);
 
         btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-
-        window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
     }
 
     //Trigger tab:activated if SuggestedGroups is active on load 
@@ -190,6 +186,11 @@ export function removeStudentFromGroup(student, group)
     .then(res => {
         if (!res.ok) throw new Error("Failed to remove student");
         return res.json();
+    })
+    .then(() => {
+        //Invalidate cache & reload
+        window.suggestedGroupsCache.delete(group.suggestedgroup_id);
+        loadGroup(group.suggestedgroup_id);
     })
     .catch(err => 
     {

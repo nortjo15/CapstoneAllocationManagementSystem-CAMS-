@@ -202,7 +202,8 @@ export function renderProjectInfo(group, groupSize, projectName,
         const projectId = select.value;
 
         group.project = cachedProjects.find(p => p.project_id == projectId) || null;
-        updateGroupUI(group, createBtn);
+        window.suggestedGroupsCache.delete(group.suggestedgroup_id);
+        loadGroup(group.suggestedgroup_id);
 
         fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
@@ -407,7 +408,8 @@ export function updateGroupUI(group, finaliseBtn) {
 
     // keep global state in sync
     window.activeGroupId = group.suggestedgroup_id;
-    window.currentMemberIds = new Set(group.members.map(m => m.student.student_id));
+    const members = Array.isArray(group.members) ? group.members : [];
+    window.currentMemberIds = new Set(members.map(m => m.student.student_id));
 
     // clear title and member container
     groupTitle.textContent = "";
