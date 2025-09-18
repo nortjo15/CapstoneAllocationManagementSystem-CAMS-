@@ -1,9 +1,5 @@
 import { setButtonLoading } from "./utils.js";
-import { updateDeleteButton } from "./group_actions.js";
-import {
-    renderMemberCard, renderAddStudentCard, renderProjectInfo, renderCWARange,
-    clearError, applyAntiPreferenceUI, updateGroupUI
-} from "./render_groups.js";
+import { updateGroupUI } from "./render_groups.js";
 import { openCreateGroupModal } from "./modal_function.js";
 
 const manualGroupsUl = document.getElementById("manual-groups-ul");
@@ -17,6 +13,7 @@ const projectHost = document.getElementById("group-host")
 const projectCapacity = document.getElementById("group-capacity")
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 let suggestedGroupsInitialised = false;
+window.suggestedGroupsCache = new Map(); 
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -51,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             li.appendChild(btn);
             suggestedGroupsUl.appendChild(li);
+
+            window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
         });
 
         suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
@@ -162,6 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
         manualGroupsUl.appendChild(li);
 
         btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+
+        window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
     }
 
     //Trigger tab:activated if SuggestedGroups is active on load 
@@ -211,68 +212,20 @@ export function loadGroup(id)
     //Set it to load
     if (btn) setButtonLoading(btn, true);
 
+    // Check cache for the group
+    const cached = window.suggestedGroupsCache.get(parseInt(id));
+    if (cached)
+    {
+        renderGroupUI(cached, btn);
+        if (btn) setButtonLoading(btn, false);
+        return;
+    }
+
     fetch(`/api/suggested_groups/${id}/`)
         .then(res => res.json())
         .then(group => {
-
-            console.log(group)
-            // Clear active buttons, then assign to the new button
-            document.querySelectorAll("#manual-groups-ul button, #suggested-groups-ul button")
-            .forEach(b => b.classList.remove("active"))
-            if (btn)
-            {
-                btn.classList.add("active");
-            }
-
-            window.activeGroupId = group.suggestedgroup_id;
-            window.currentMemberIds = new Set(group.members.map(m => m.student.student_id));
-
-            groupTitle.textContent = "";
-            groupMembers.innerHTML = `<div class="members-container"></div>`;
-
-            const membersContainer = groupMembers.querySelector(".members-container");
-            //Create a card for each member
-            group.members.forEach(m => membersContainer.appendChild(renderMemberCard(m, group)));
-
-            if (!group.project || group.members.length < group.project.capacity)
-            {
-                membersContainer.appendChild(renderAddStudentCard(group))
-            }
-
-            //Update Group Information
-            renderProjectInfo(group, groupSize, projectName, 
-                projectCapacity, projectHost, finaliseBtn);
-            //CWA Information
-            renderCWARange(group, groupSize);
-
-            //Delete button for manual groups
-            updateDeleteButton(group, csrfToken, {
-                onDeleted: () => 
-                {
-                    groupTitle.textContent = "Select a group";
-                    groupMembers.innerHTML = "";
-                    projectName.innerHTML = "";
-                    projectCapacity.innerHTML = "";
-                    projectHost.innerHTML = "";
-                    groupSize.innerHTML = "";
-
-                    //hide delete button
-                    const deleteBtn = document.getElementById("delete-group-btn");
-                    if (deleteBtn)
-                    {
-                        deleteBtn.style.display = "none";
-                        deleteBtn.onclick = null;
-                    }
-
-                    // Clear errors
-                    const errorBox = document.getElementById("group-errors");
-                    if (errorBox) clearError(errorBox);
-                }
-            });
-
-            // Anti preference check
-            applyAntiPreferenceUI(group, finaliseBtn);
-            
+            window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
+            renderGroupUI(group, btn);
         })
         .catch(err => {
             console.error("Failed to load group:", err);
@@ -283,4 +236,15 @@ export function loadGroup(id)
             //stop spinner on this button 
             if (btn) setButtonLoading(btn, false);
         });
+}
+
+function renderGroupUI(group, btn) 
+{
+    // Clear active buttons
+    document.querySelectorAll("#manual-groups-ul button, #suggested-groups-ul button")
+        .forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+
+    // Update central panel
+    updateGroupUI(group, finaliseBtn);
 }

@@ -450,4 +450,6 @@ export function updateGroupUI(group, finaliseBtn) {
 
     // anti-preference highlighting
     applyAntiPreferenceUI(group, finaliseBtn);
+
+    window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
 }

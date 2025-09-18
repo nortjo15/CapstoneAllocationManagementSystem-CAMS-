@@ -1,6 +1,7 @@
 import { setButtonLoading } from "./utils.js";
 import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal, openMemberPreferenceModal } from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
+import { updateGroupUI } from "./render_groups.js";
 
 window.selectedStudentIds = new Set();
 
@@ -235,8 +236,7 @@ addBtn.addEventListener("click", (e) =>
         setButtonLoading(addBtn, false);
         return;
     }
-    
-    
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     Promise.all(
@@ -255,12 +255,26 @@ addBtn.addEventListener("click", (e) =>
             })
         )
     )
-    .then(() => {
-        loadGroup(activeGroupId);
+    .then((updatedGroups) => {
+        console.log("Add response:", updatedGroups);
+
+        const updatedGroup = updatedGroups[updatedGroups.length - 1];
+        window.suggestedGroupsCache.set(parseInt(activeGroupId), updatedGroup);
+
+        //Render UI
+        updateGroupUI(updatedGroup, document.getElementById("finalise-group-btn"));
+        enforceCapacityRules();
+
         document.getElementById("studentModal").style.display = "none";
-        window.selectedStudentIds.clear(); 
+        window.selectedStudentIds.clear();
     })
-    .catch(err => console.error("Error adding students:", err))
+    .catch(err => {
+        console.error("Error adding students:", err);
+
+        // Invalidate cache and reload from backend
+        window.suggestedGroupsCache.delete(parseInt(activeGroupId));
+        loadGroup(activeGroupId);
+    })
     .finally(() => {
         setButtonLoading(addBtn, false)
     });

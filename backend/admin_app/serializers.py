@@ -93,6 +93,42 @@ class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
         ]
 # --------------------------------------------------------------------
 
+class FinalGroupCreateSerializer(serializers.ModelSerializer):
+    suggested_group_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = FinalGroup
+        fields = ["id", "name", "notes", "suggested_group_id"]
+
+    def create(self, validated_data):
+        suggested_group_id = validated_data.pop("suggested_group_id")
+        sg = SuggestedGroup.objects.prefetch_related("members__student", "project").get(id=suggested_group_id)
+
+        # Create Final Group
+        final_group = FinalGroup.objects.create(
+            name=validated_data.get("name"),
+            notes=validated_data.get("notes"),
+            project=sg.project,
+        )
+
+        # Copy members
+        from admin_app.models import SuggestedGroupMember, FinalGroupMember
+        members = sg.members.all()
+        for m in members:
+            FinalGroupMember.objects.create(
+                group=final_group,
+                student=m.student,
+            )
+            # Mark student as allocated
+            m.student.is_allocated = True 
+            m.student.save()
+
+        # Delete suggested group and its  members
+        sg.delete()
+
+        return final_group
+
+
 class FinalGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinalGroup
