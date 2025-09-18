@@ -20,7 +20,7 @@ class MajorSerializer(serializers.ModelSerializer):
 class FullFormSerializer(serializers.Serializer):
     #Student fields
     student_id = serializers.CharField(max_length=8)
-    name = serializers.CharField(max_length=100)
+    #name = serializers.CharField(max_length=100)
     major = serializers.PrimaryKeyRelatedField(queryset=Major.objects.all())
     cwa = serializers.FloatField()
     email = serializers.EmailField()
