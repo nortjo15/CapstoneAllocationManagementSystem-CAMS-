@@ -1,19 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Application</title>
-    <script src="https://unpkg.com/petite-vue" defer init></script>
 </head>
 
 {% extends "student_base.html" %}
-{% block content%}
+{% load static %}
+{% block content %}
 <body>
     <h1>Project Application form</h1>
     <hr>
     <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
-    <div v-scope>
+    <div id="form-Container">
+        <form enctype="multipart/form" id="Application-form">
+            {% csrf_token %}
+            <!-- Student ID -->
+            <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
+            <label for="studentID">Student ID</label>
+            <input type="text" pattern="[0-9]+" maxlength="8" name="studentID" id="studentID" required><br><br>
+            <!-- Email -->
+            <label for="email">Please enter your student email. E.g. john.smith@student.curtin.edu.au OR john.m.smith@student.curtin.edu.au</label><br><br>
+            <input type="email" id="email" name="email"><br><br>
+            <!-- Major -->
+            <label for="major">Select your major from the dropdown menu provided.</label><br><br>
+            <select name="major" id="major" require>
+                <option value=""> loading Majors... </option> 
+            </select><br><br>
+            <!-- CWA -->
+            <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
+            <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa"><br><br>
+            <!-- Project Preferences -->
+            <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
+            <select name="project" id="project" require>
+                <option value=""> loading Projects... </option> 
+            </select><br><br>
+            <ul id="preference-list"></ul>
+            <input type="hidden" name="project-preferences" id="project-preferences-input">
+            <!-- preferred Group Preferences -->
+            <label>Please choose 0 or 5 students you would prefer working with</label><br>
+            <input type="text" id="user-search" placeholder="Search Students..."><br>
+            <ul id="autocomplete-results"></ul><br>
+            <ul id="preferred-list"></ul>
+            <input type="hidden" name="preferred-students" id="preferred-input">
+            <!-- avoided Group Preferences -->
+            <label>Please choose 0 or 5 students you would like to avoid working with</label>
+            <ul id="avoided-list"></ul>
+            <input type="hidden" name="avoided-students" id="avoided-input">
+            <!-- Resume -->
+            <p>When uploading your resume, ensure the file is named using the format "lastname-firstname_resume_year" for example, "Doe-Jane_resume_2025" 
+                and that it is in PDF format only.</p>
+            <input type="file" id="resume" name="filename" accept=".pdf"><br><br>
+            <!-- CV -->
+            <input type="file" id="cv" name="cv" accept=".pdf"><br><br>
+            <!-- Split Project -->
+            <label for="splitProject"> If you are completing a split project, please tick the box </label>
+            <input type="checkbox" name="splitProject" id="splitProject"><br>
+            <!-- Agree to terms -->
+            <p>Finally, you must tick the “Agree to Terms” checkbox to confirm your acceptance of the allocation process. 
+                <span style="color: red;">If this box is not ticked, you will not be allocated to any group or project</span></p>
+            <input type="checkbox" name="terms" id="terms">
+            <label for="terms">Agree to Terms</label><br><br>
+        </form>
+    </div>
+    <script src="{% static 'student_app/js/form.js' %}"></script>
+        {% comment %} <script>
+            const dropdown = document.getElementById('project-dropdown');
+            const list = document.getElementById('preference-list');
+            const hiddenInput = document.getElementById('project-preferences-input');
+            const searchInput = document.getElementById('user-search');
+            const resultsList = document.getElementById('autocomplete-results');
+            let projectPreferences = [], preferred = [], avoided =[];
+
+            dropdown.addEventListener('change', () => {
+                const id = dropdown.value;
+                const name = dropdown.options[dropdown.selectedIndex].text;
+                if(!projectPreferences.includes(id)) {
+                    projectPreferences.push(id);
+                    updateList();
+                }
+            });
+
+            searchInput.addEventListener('input', () => {
+                fetch(`/students/autocomplete-results?q=${encodeURIComponent(searchInput.value)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        resultsList.innerHTML = '';
+                        data.forEach(student => {
+                            const li = document.createElement('li');
+                            li.textContent = student.name;
+                            li.onclick = () => {
+                                if(!preferred.includes(student.id)){
+                                    preferred.push({id: student.id, name: student.name});
+                                    updateStudentList('preferred');
+                                }
+                            };
+                            resultsList.appendChild(li);
+                        });
+                    });
+            });
+
+            function updateStudentList(type){
+                const list = document.getElementById(`${type}-list`);
+                const input = document.getElementById(`${type}-input`);
+                const data = type == 'preferred' ? preferred : avoided;
+
+                list.innerHTML = '';
+                data.forEach(id => {
+                    const li = document.createElement('li'); 
+                    li.textContent = `student: ${id.name}`;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.onclick = () => {
+                        if(type == 'preferred'){
+                            preferred = preferred.filter(uid => uid != id);
+                        } else {
+                            avoided = avoided.filter(uid => uid != id);
+                        }
+                        updateStudentList(type);
+                    };
+                    li.appendChild(removeBtn);
+                    list.appendChild(li);
+                });
+                input.value = JSON.stringify(data)
+            }
+
+            function updateList(){
+                list.innerHTML = '';
+                projectPreferences.forEach((id, index) => {
+                    const currentId = id
+                    const li = document.createElement('li');
+                    li.textContent = `${index + 1}. ${dropdown.querySelector(`option[value="${id}"]`).text}`;
+                    console.log('Preferences:', projectPreferences);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.onclick = () => {
+                        projectPreferences = projectPreferences.filter(pid => pid != currentId);
+                        updateList();
+                    };
+                    li.appendChild(removeBtn);
+                    list.appendChild(li);
+                });
+                hiddenInput.value = JSON.stringify(projectPreferences);
+            }
+        </script>
+    </form>  {% endcomment %}
+    {% comment %} <div v-scope>
         <form name="student_form" action="{% url 'students:student_form' %}" method= "post">
             {% csrf_token %}
             <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
@@ -75,7 +205,7 @@
             <label for="terms">Agree to Terms</label><br><br>
             <input type="submit" value="submit">
         </form>
-    </div>
+    </div> {% endcomment %}
 </body>
 {% endblock content %}
 

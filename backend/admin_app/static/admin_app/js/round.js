@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function fetchProjects() {
-        const response = await fetch('/api/projects/');
+        const apiUrl = window.ENDPOINTS.projects
+        const response = await fetch(apiUrl);
         if (!response.ok) {
             console.error('Failed to fetch projects');
             return [];
@@ -46,8 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function populateRoundsList() {
+        const apiUrl = window.ENDPOINTS.rounds
         try {
-            const response = await fetch('/api/rounds/');
+            const response = await fetch(apiUrl);
             const rounds = await response.json();
 
             roundsList.innerHTML = '';
@@ -70,8 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function showRoundDetails(roundId) {
+        const apiUrl = window.ENDPOINTS.rounds
         try {
-            const response = await fetch(`/api/rounds/${roundId}/`);
+            const response = await fetch(`${apiUrl}${roundId}/`);
             const round = await response.json();
             const projects = await fetchProjects();
 
@@ -85,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             projects.forEach(project => {
                 const option = document.createElement('option');
                 option.value = project.project_id;
-                option.textContent = project.title;
+                option.textContent = `${project.title}`;
                 if (round.projects.includes(project.project_id)) {
                     option.selected = true;
                 }
@@ -118,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     createRoundForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+        const apiUrl = window.ENDPOINTS.rounds
         const roundName = document.getElementById('create-round-name').value;
         const openDate = document.getElementById('create-open-date').value;
         const closeDate = document.getElementById('create-close-date').value;
@@ -134,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const response = await fetch('/api/rounds/', {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newRound)
@@ -158,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     editRoundForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+        const apiUrl = window.ENDPOINTS.rounds
         const roundId = document.getElementById('edit-round-id').value;
         const roundName = document.getElementById('edit-round-name').value;
         const openDate = document.getElementById('edit-open-date').value;
@@ -175,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const response = await fetch(`/api/rounds/${roundId}/`, {
+            const response = await fetch(`${apiUrl}${roundId}/`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedRound)
@@ -195,10 +198,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     deleteRoundBtn.addEventListener('click', async function() {
+        const apiUrl = window.ENDPOINTS.rounds
         const roundId = document.getElementById('edit-round-id').value;
         if (confirm('Are you sure you want to delete this round?')) {
             try {
-                const response = await fetch(`/api/rounds/${roundId}/`, {
+                const response = await fetch(`${apiUrl}${roundId}/`, {
                     method: 'DELETE'
                 });
                 if (response.status === 204) {
