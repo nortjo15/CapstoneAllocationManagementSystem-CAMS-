@@ -37,10 +37,7 @@ label {
     font-weight: bold;
 }
 
-label input[type="checkbox"] {
-    width: auto; /* make sure checkbox isn’t stretched */
-    margin-right: 5px; /* optional spacing */
-}
+
 
 input, select, button, textarea {
     width: auto;
@@ -49,6 +46,13 @@ input, select, button, textarea {
     box-sizing: border-box;
     border: 1px solid #ccc;
 }
+
+input[type="checkbox"] {
+    width: auto; /* make sure checkbox isn’t stretched */
+    margin-right: 5px; /* optional spacing */
+    display: block;
+}
+
 button {
     cursor: pointer;
     border: none;
