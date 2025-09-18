@@ -15,14 +15,30 @@
 <br><br>
 <button onclick="sendRoundEmail()">Send Round Email via Outlook Web</button>
 
-<!-- Industry Notifications -->
-<h3>Post Round Finish (Industry)</h3>
-<label for="projectSelect">Select Project:</label>
+
+
+<!-- Original Dropdown -->
+<h4>Dropdown Content:</h4>
 <select id="projectSelect">
-  {% for project in projects %}
-    <option value="{{ project.project_id }}">{{ project.title }}</option>
-  {% endfor %}
+  {% if projects %}
+    {% for project in projects %}
+      <option value="{{ project.project_id }}">{{ project.title }} </option>
+    {% endfor %}
+  {% else %}
+    <option disabled selected>No internal projects available</option>
+  {% endif %}
 </select>
+
+
+
+
+
+
+
+
+
+
+
 <br><br>
 <button onclick="sendIndustryEmail()">Send Industry Email via Outlook Web</button>
 <button onclick="loadResumes()">Show Resumes</button>
@@ -40,8 +56,8 @@
 <h3>Finalised Groups</h3>
 <button onclick="sendFinalisedGroupsEmail()">Post Round Finish (Finalised Groups)</button>
 
+
 <script>
-// Use Django template tags to generate base URLs
 const mailtoUrlBase = "{% url 'admin_app:mailto_link' %}";
 
 async function sendRoundEmail() {
@@ -60,7 +76,11 @@ async function sendRoundEmail() {
 
 async function sendIndustryEmail() {
     const csrftoken = getCookie('csrftoken');
-    const projectId = document.getElementById("projectSelect").value;
+    const projectSelect = document.getElementById("projectSelect");
+    const projectId = projectSelect ? projectSelect.value : null;
+
+    if (!projectId) { alert("No internal project available."); return; }
+
     const res = await fetch(mailtoUrlBase, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
@@ -90,12 +110,16 @@ async function sendFinalisedGroupsEmail() {
 }
 
 async function loadResumes() {
-    const projectId = document.getElementById("projectSelect").value;
+    const projectSelect = document.getElementById("projectSelect");
+    const projectId = projectSelect ? projectSelect.value : null;
+    if (!projectId) { alert("No internal project selected."); return; }
+
     const url = "{% url 'admin_app:project_resumes' 0 %}".replace('/0/', `/${projectId}/`);
     const res = await fetch(url);
     const data = await res.json();
     const container = document.getElementById("resumeList");
     container.innerHTML = "";
+
     if (data.resumes && data.resumes.length > 0) {
         data.resumes.forEach(r => {
             const link = document.createElement("a");
@@ -111,8 +135,9 @@ async function loadResumes() {
 }
 
 function downloadResumes() {
-    const projectId = document.getElementById("projectSelect").value;
-    if (!projectId) { alert("Please select a project."); return; }
+    const projectSelect = document.getElementById("projectSelect");
+    const projectId = projectSelect ? projectSelect.value : null;
+    if (!projectId) { alert("No internal project selected."); return; }
 
     const url = "{% url 'admin_app:project_resumes_zip' 0 %}".replace('/0/', `/${projectId}/`);
     window.location.href = url;

@@ -70,9 +70,18 @@ class SendAllocationReleasedView(APIView):
     
 
 
+from django.shortcuts import render
+from admin_app.models import Project
+
 @login_required
 @user_passes_test(lambda u: u.is_staff)  # only staff/admins can access
 def email_page(request):
-    """Render the Email Notifications page with projects for industry emails"""
-    projects = Project.objects.all()
-    return render(request, "admin_email.html", {"projects": projects})
+    """
+    Renders the admin email notification page.
+    Filters projects to show only those with at least one internal round.
+    """
+    # Step 1: Get all projects that have at least one internal round
+    internal_projects = Project.objects.filter(rounds__is_internal=True).distinct()
+
+    # Step 2: Render the template with filtered projects
+    return render(request, "admin_email.html", {"projects": internal_projects})
