@@ -12,5 +12,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
 @login_required
 def project_view(request):
    return render(request, "project_dashboard.html")
-
-
