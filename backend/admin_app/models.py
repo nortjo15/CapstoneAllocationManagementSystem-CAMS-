@@ -52,13 +52,14 @@ class Round(models.Model):
 
     # Admin will manually activate a round by clicking a GUI button
     is_active = models.BooleanField(default=False)
+    is_internal = models.BooleanField(null=False)
 
     STATUS_CHOICES = [
         ('open', 'Open'),
         ('closed', 'Closed'),
         ('upcoming', 'Upcoming'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='upcoming')
     
     open_date = models.DateTimeField()
     close_date = models.DateTimeField()
