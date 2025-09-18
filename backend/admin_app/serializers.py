@@ -3,6 +3,10 @@ from .models import AdminLog
 from student_app.serializers import StudentSerializer, StudentListSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
 from .models import Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Round
 
+
+
+from .models import Project, ProjectPreference, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Round
+
 class AdminLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminLog

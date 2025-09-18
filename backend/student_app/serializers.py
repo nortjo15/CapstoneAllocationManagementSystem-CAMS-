@@ -1,4 +1,5 @@
 from rest_framework import serializers
+<<<<<<< HEAD
 from student_app.models import *
 from admin_app.models import *
 
@@ -59,6 +60,10 @@ class StudentListSerializer(serializers.ModelSerializer):
             "has_preferences",
             "has_teamPref",
         ]
+=======
+from student_app.models import Student
+from admin_app.models import Project, Major
+>>>>>>> 754a2fba877df886b16fe8381b07bab5b437638a
 
 class StudentSerializer(serializers.ModelSerializer):
     major = MajorSerializer(read_only=True)
@@ -80,6 +85,7 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = '__all__'
 
+<<<<<<< HEAD
     def create(self, validated_data):
         # enforce defaults
         validated_data.setdefault("application_submitted", False)
@@ -108,11 +114,37 @@ class StudentSerializer(serializers.ModelSerializer):
     resume = serializers.FileField(required=False, allow_null=True)
 
 class GroupPreferenceSerializer(serializers.ModelSerializer):
+=======
+class ProjectSerializer(serializers.ModelSerializer):
+>>>>>>> 754a2fba877df886b16fe8381b07bab5b437638a
     class Meta:
-        model = GroupPreference
+        model = Project
         fields = '__all__'
 
-class ProjectPreferenceSerializer(serializers.ModelSerializer):
+class MajorSerializer(serializers.ModelSerializer):
     class Meta:
+<<<<<<< HEAD
         model = ProjectPreference
         fields = '__all__'
+=======
+        model = Major
+        fields = '__all__'
+
+#Production endpoints
+# class StudentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Student
+#         fields = ['student_id', 'name', 'cwa', 'major', 'email', 'resume', 'application_submitted']
+
+# class GroupPreferenceSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = GroupPreference
+#         fields = ['student', 'target_student', 'preference_type']
+
+# class ProjectPreferenceSerializer(serializers.ModelSerializer);
+#     class Meta:
+#         model = ProjectPreference
+#         fields = ['student', 'project', 'rank']
+
+
+>>>>>>> 754a2fba877df886b16fe8381b07bab5b437638a

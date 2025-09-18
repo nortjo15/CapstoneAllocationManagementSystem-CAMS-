@@ -52,13 +52,14 @@ class Round(models.Model):
 
     # Admin will manually activate a round by clicking a GUI button
     is_active = models.BooleanField(default=False)
+    is_internal = models.BooleanField(null=False)
 
     STATUS_CHOICES = [
         ('open', 'Open'),
         ('closed', 'Closed'),
         ('upcoming', 'Upcoming'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='upcoming')
     
     open_date = models.DateTimeField()
     close_date = models.DateTimeField()
@@ -199,6 +200,9 @@ class CapstoneInformationSection(models.Model):
     class Meta:
         ordering = ["order", "id"]
 
+    def __str__(self):
+        return self.name
+
 # Stores actual information that is displayed on Capstone Information pages
 # Each section can have multiple pieces of content, and each piece can be pinned or have a priority
 # Content can be published, archived or in draft state
@@ -225,3 +229,6 @@ class CapstoneInformationContent(models.Model):
             models.Index(fields=["section_id", "-pinned", "priority", "-published_at"]),
             models.Index(fields=["status", "published_at", "expires_at"]),
         ]
+ 
+    def __str__(self):
+        return self.title
