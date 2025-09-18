@@ -27,7 +27,7 @@ from .view.round_views import round_view
 from .view.round_views_restAPI import rounds_api
 from .view.group_views import *
 from .view.settings_views import settings_view
-from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView, FinalGroupListCreateView, FinalGroupMemberListCreateView
+from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView
 from .view.settings_views import settings_view
 from .view.information_views import (
     information_list, information_create, information_edit, information_delete
@@ -76,7 +76,7 @@ urlpatterns = [
     path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
     path("viewStudents/", student_page, name="student_view"),
     #Project_views
-    #path('project_list/', ProjectListCreateView.as_view(), name="project-list"),
+    path('project_list/', ProjectListCreateView.as_view(), name="project-list"),
     #path('preferences/', ProjectPreferenceListCreateView.as_view()),
     path('projectDashboard/', project_view, name='project_dashboard'),
     #Group_views

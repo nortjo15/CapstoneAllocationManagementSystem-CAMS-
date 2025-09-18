@@ -171,3 +171,8 @@ def delete_manual_group(request, suggestedgroup_id):
 class FinalGroupCreateView(generics.CreateAPIView):
     queryset = FinalGroup.objects.all()
     serializer_class = FinalGroupCreateSerializer
+
+
+class ProjectListCreateView(generics.ListCreateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer

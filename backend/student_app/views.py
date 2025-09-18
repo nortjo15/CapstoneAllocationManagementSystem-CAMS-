@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from django.shortcuts import render
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer
+from .serializers import StudentSerializer, MajorSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse 
@@ -15,12 +15,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
 
-<<<<<<< HEAD
-class StudentListCreateView(generics.ListCreateAPIView):
-=======
-
 class StudentViewSet(viewsets.ModelViewSet):
->>>>>>> 754a2fba877df886b16fe8381b07bab5b437638a
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
