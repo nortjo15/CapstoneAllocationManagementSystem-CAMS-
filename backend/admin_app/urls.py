@@ -19,7 +19,6 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings 
 from django.urls import path
-
 #Import all required views
 from .view.project_views import ProjectListCreateView, ProjectPreferenceListCreateView
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
