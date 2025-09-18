@@ -26,7 +26,8 @@ class FullFormSerializer(serializers.Serializer):
     email = serializers.EmailField()
     resume = serializers.FileField()
     cv = serializers.FileField()
-    #Projetc Preference List
+    application_submitted = serializers.BooleanField(default=False)
+    #Project Preference List
     project_preferences = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, max_length=6
     )

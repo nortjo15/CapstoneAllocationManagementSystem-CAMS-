@@ -1,16 +1,15 @@
+{% extends "student_base.html" %}
+{% load static %}
+{% block content %}
 <head>
     <title>Project Application</title>
 </head>
 
-{% extends "student_base.html" %}
-{% load static %}
-{% block content %}
-<body>
     <h1>Project Application form</h1>
     <hr>
     <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
     <div id="form-Container">
-        <form enctype="multipart/form-data" id="Application-form">
+        <form enctype="multipart/form-data" id="application-form">
             {% csrf_token %}
             <!-- Student ID -->
             <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
@@ -21,21 +20,21 @@
             <input type="email" id="email" name="email"><br><br>
             <!-- Major -->
             <label for="major">Select your major from the dropdown menu provided.</label><br><br>
-            <select name="major" id="major" require>
+            <select name="major" id="major" required>
                 <option value=""> loading Majors... </option> 
             </select><br><br>
             <!-- CWA -->
             <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
-            <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa"><br><br>
+            <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa" required><br><br>
             <!-- Project Preferences -->
             <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
-            <select name="project" id="project" require>
+            <select name="project" id="project">
                 <option value=""> loading Projects... </option> 
             </select><br><br>
             <ul id="preference-list"></ul>
             <input type="hidden" name="project_preferences" id="project-preferences-input">
             <!-- preferred Group Preferences -->
-            <label> Please use the search bar below to choose your group preferences </label><br><br>
+            <label> Please use the search bar below to choose your group preferences, type in the student's full name </label><br><br>
             <input type="text" id="user-search" placeholder="Search Students..."><br>
             <ul id="autocomplete-results"></ul><br>
             <label>Please choose 0 or 5 students you would prefer working with</label><br>
@@ -59,10 +58,9 @@
                 <span style="color: red;">If this box is not ticked, you will not be allocated to any group or project</span></p>
             <input type="checkbox" name="terms" id="terms">
             <label for="terms">Agree to Terms</label><br><br>
+            <input type="submit" value="Submit"><br><br>
         </form>
     </div>
     <script src="{% static 'student_app/js/form.js' %}"></script>
-</body>
 {% endblock content %}
 
-</html>

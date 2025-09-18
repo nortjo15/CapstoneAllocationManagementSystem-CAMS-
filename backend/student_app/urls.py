@@ -15,7 +15,7 @@ from django.contrib import admin
 from django.conf import settings 
 from rest_framework.routers import DefaultRouter
 from .import views
-from student_app.views import StudentViewSet, ProjectViewSet, project_view
+from student_app.views import StudentViewSet, ProjectViewSet, project_view, StudentApplicationView
 
 router = DefaultRouter()
 router.register(r'projects', ProjectViewSet, basename='project')
@@ -35,6 +35,7 @@ urlpatterns = [
     path('student_application/', views.student_form_view, name="student_form"),
     path('application-success/', views.student_form_success, name="application_success"),
     path('autocomplete-results/', views.autocomplete_users, name="autocomplete"),
+    path('submitApplication/', StudentApplicationView.as_view(), name="form_submission"),
     #Information Views
     #path('capstone_information/', views.capstone_information, name="capstone_information"),
     path('section/<int:id>/', views.section_detail, name='section_detail')

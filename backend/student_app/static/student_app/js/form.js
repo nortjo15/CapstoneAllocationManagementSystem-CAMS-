@@ -72,7 +72,7 @@ function populateProjectDropdown(projects){
 }
 
 //Autocomplete functionality
-function setupSearchFunctionality(students){
+function setupSearchFunctionality(){
     const searchInput = document.getElementById('user-search');
     const resultsList = document.getElementById('autocomplete-results');
     const preferredList = document.getElementById('preferred-list');
@@ -226,21 +226,184 @@ function setupProjectPreferences(projects){
     });
 }
 
-//Validate form
+function showError(elementId, message){
+    const element = document.getElementById(elementId);
 
+    const existingError = element.nextElementSibling;
+    if(existingError && existingError.classList.contains('error-message')){
+        existingError.remove();
+    }
+
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    errorElement.textContent = message;
+    element.parentElement.insertBefore(errorElement, element.nextSibling);
+}
+
+function clearError(elementId){
+    const element = document.getElementById(elementId);
+    const existingError = element.nextElementSibling;
+    if(existingError && existingError.classList.contains('error-message')){
+        existingError.remove();
+    }
+}
+
+//Validate StudentId
+function validateStudentId() {
+    const studentId = document.getElementById('student_id');
+
+    if(!/^\d{8}$/.test(studentId.value)){
+        showError('student_id', 'Student ID must be exactly 8 digits');
+        return false;
+    }
+    clearError('student_id');
+    return true;
+}
+//Validate Email
+function validateEmail(){
+    const emailEl = document.getElementById('email');
+
+    if(!/^[a-zA-Z0-9._%+-]+@student\.curtin\.edu\.au$/.test(emailEl.value)){
+        showError('email', 'Email must be in the format E.g. john.smith@student.curtin.edu.au');
+        return false;
+    }
+    clearError('email');
+    return true;
+}
+//Validate CWA
+function validateCWA() {
+    const cwaEl = document.getElementById('cwa');
+    let valueStr = cwaEl.value;
+
+    clearError('cwa');
+
+    if(valueStr.trim() === ''){
+        showError('cwa', 'You must enter in a CWA');
+        return false;
+    }
+
+    if(!/^\d+(\.\d{2})?$/.test(valueStr)){
+        showError('cwa', 'CWA must be a number with up to two decimal places');
+        return false;
+    }
+
+    const value = parseFloat(valueStr);
+
+    if (value < 0 || value > 100){
+        showError('cwa', 'CWA must be between 0 and 100');
+        return false;
+    }
+    clearError('cwa');
+    return true;
+}
+//Validate file name
+function validateFile(fileInput, keyword){
+    clearError(fileInput.id);
+
+    const file = fileInput.files[0];
+    if(!file) return true;
+
+    if (file.type !== 'application/pdf'){
+        showError(fileInput.id, 'File must be in PDF format');
+        fileInput.value = '';
+        return false;
+    }
+
+    const fileNameRegex = new RegExp(`^[a-zA-Z]+-[a-zA-Z]+_${keyword}_\\d{4}\\.pdf$`, 'i');
+    if(!fileNameRegex.test(file.name)){
+        showError(fileInput.id, `Filename must be in the format "Last-First_${keyword}_YYYY.pdf"`);
+        fileInput.value = '';
+        return false;
+    }
+    return true;
+}
 
 //Posting the form to corresponding tables
+async function submitForm(){
+    const apiUrl = window.ENDPOINTS.submit
+    const form = document.getElementById('application-form');
+    const formData = new FormData(form);
+    const csrfToken = formData.get('csrfmiddlewaretoken');
+
+    //Get List data
+    const projectPreferences = JSON.parse(document.getElementById('project-preferences-input').value || '[]');
+    const preferredStudents = JSON.parse(document.getElementById('preferred-input').value || '[]');
+    const avoidedStudents = JSON.parse(document.getElementById('avoided-input').value || '[]');
+
+    formData.delete('project_preferences');
+    formData.delete('preferred_students');
+    formData.delete('avoided_students');
+
+    projectPreferences.forEach(id => formData.append('project_preferences', id));
+    preferredStudents.forEach(id => formData.append('preferred_students', id));
+    avoidedStudents.forEach(id => formData.append('avoided_students', id));
+    
+    //Set flag to application submitted
+    formData.append('application_submitted', 'true');
+    try{
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        });
+
+        if (response.ok){
+            alert('Application submitted successfully!');
+            const redirectPage = window.ENDPOINTS.success;
+            window.location.href = redirectPage;
+        } else {
+            const errors = await response.json();
+            console.error('Validation errors', errors);
+            alert('Submission failed. Please check the form for errors');
+        }
+    } catch(error){
+        console.error('Network error during submission', error);
+        alert('A network error occurred. Please try again');
+    }
+}
+
+//Validate entire form
+function validateEntireForm() {
+    const isStudentIdValid = validateStudentId();
+    const isEmailValid = validateEmail();
+    const isCwaValid = validateCWA();
+    const isResumeValid = validateFile(document.getElementById('resume'), 'resume');
+    
+    return isStudentIdValid && isEmailValid && isCwaValid && isResumeValid;
+}
+
 //Document listener
 document.addEventListener('DOMContentLoaded', async() => {
     //Majors list
     const majors = await getMajors();
     const projects = await getProjects();
-    const students = await getStudents();
 
     populateProjectDropdown(projects);
     populateMajorDropdown(majors);
 
     setupProjectPreferences(projects);
-    setupSearchFunctionality(students);
+    setupSearchFunctionality();
+
+    //Input validation
+    document.getElementById('student_id').addEventListener('input', validateStudentId);
+    document.getElementById('cwa').addEventListener('input', validateCWA);
+    document.getElementById('email').addEventListener('input', validateEmail);
+    //File validation
+    const resumeInput = document.getElementById('resume');
+    resumeInput.addEventListener('change', () => {
+        validateFile(resumeInput, 'resume'); 
+    });
+    //Submit form
+    document.getElementById('application-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        if(validateEntireForm()){
+            submitForm();
+        } else {
+            alert('Please correct the errors before submitting');
+        }
+        
+    });
     
 });
