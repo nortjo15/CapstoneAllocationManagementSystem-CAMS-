@@ -14,8 +14,8 @@ class addStudentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # student_id & name are required fields 
-        # the others can be left blank - filled in by students 
+        # student_id & name are required fields
+        # the others can be left blank - filled in by students
         self.fields['student_id'].required = True
         self.fields['name'].required = True
         
