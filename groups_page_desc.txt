@@ -1,0 +1,42 @@
+I am building a Groups page with three main sections:
+
+- Left panel: a vertical scrollable list of suggested groups (just the name, clickable). These are generated from students’ mutual preferencing.
+- Center panel: displays details of the active group when clicked. This includes student cards (name, ID, major, CWA, preferences, etc.), plus group metadata (name, project host, contact number, capacity). The center section is also scrollable.
+- Right panel: contains the main action button “Create This Group” which finalises a suggested group (turns it into a FinalGroup). Options to add or remove students from a group will also be provided here or within student cards.
+
+Step-by-step implementation plan:
+
+1. Models
+   - Confirm SuggestedGroup and FinalGroup models.
+   - Ensure fields like name, capacity, project_host, project_contact, and a ManyToMany relation to Student.
+   - Create serializers for SuggestedGroup and FinalGroup.
+
+2. Backend endpoints
+   - GET /api/suggested-groups/ → list suggested groups (id + name).
+   - GET /api/suggested-groups/<id>/ → retrieve group details with members.
+   - POST /api/final-groups/ → create a final group from a suggested group.
+   - POST/DELETE /api/final-groups/<id>/members/ → manage members.
+
+3. Frontend layout scaffolding
+   - Grid with three panels: left (groups list), center (student details), right (actions).
+   - Use placeholder HTML/JS first to test layout.
+
+4. Connect Suggested Groups list
+   - Fetch suggested groups and populate left panel dynamically.
+   - On click, fetch details and update center panel.
+
+5. Render Student cards
+   - Build reusable card component for student info.
+   - Test with dummy JSON, then API data.
+
+6. Add Create Group functionality
+   - Wire “Create” button to POST /api/final-groups/.
+   - On success, remove group from suggested list and update UI.
+
+7. Add member management
+   - Add/remove buttons on student cards.
+   - Wire to POST/DELETE /api/final-groups/<id>/members/.
+
+8. Polish
+   - Display group metadata above student cards.
+   - Add error handling, loading states, styling, and scroll polish.

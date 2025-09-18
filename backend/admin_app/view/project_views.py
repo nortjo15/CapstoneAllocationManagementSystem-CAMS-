@@ -1,11 +1,14 @@
-from admin_app.serializers import ProjectSerializer, ProjectPreferenceSerializer
+from admin_app.serializers import ProjectSerializer
 from admin_app.models import Project, ProjectPreference
-from rest_framework import generics
+from django.shortcuts import render, redirect
+from rest_framework import viewsets
+from django.contrib.auth.decorators import login_required
+from rest_framework import viewsets
 
-class ProjectListCreateView(generics.ListCreateAPIView):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-class ProjectPreferenceListCreateView(generics.ListCreateAPIView):
-    queryset = ProjectPreference.objects.all()
-    serializer_class = ProjectPreferenceSerializer
+@login_required
+def project_view(request):
+   return render(request, "project_dashboard.html")

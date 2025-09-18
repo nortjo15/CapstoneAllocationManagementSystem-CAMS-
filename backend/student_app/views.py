@@ -1,56 +1,47 @@
-from rest_framework import generics, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import viewsets
 from django.shortcuts import render
-from .models import Student, GroupPreference
-from .serializers import StudentSerializer, GroupPreferenceSerializer
+from .models import Student
+from admin_app.models import Project
+from .serializers import StudentSerializer, MajorSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
 from admin_app.serializers import ProjectSerializer
-from django.http import JsonResponse
-from django.db.models import Prefetch
+from django.http import JsonResponse 
+from django.db.models import Prefetch, Q
+from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.views.decorators.http import require_GET
+from django.http import HttpResponse
 
-
-
-class StudentListCreateView(generics.ListCreateAPIView):
+class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
-class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
-    lookup_field = 'student_id'
-
-class GroupPreferenceListCreateView(generics.ListCreateAPIView):
-    queryset = GroupPreference.objects.all()
-    serializer_class = GroupPreferenceSerializer
-
-class ProjectListCreateView(generics.ListCreateAPIView):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-def student_form(request):
-    if request.method =='POST':
-        studentID = request.POST.get("studentID")
-        # projects = request.POST.getlist('projects[]')
-        Student.objects.filter(student_id=studentID).update(
-            cwa = request.POST.get("cwa"),
-            major = request.POST.get("major"),
-            application_submitted=True,
-            email = request.POST.get("email"),
-            resume = request.POST.get("filename")
-        )
-        print("Form data received: ", data)
-        return JsonResponse({"received_data" : data})
-    else: 
-        students = Student.objects.values('name')
-        projects = Project.objects.values('title')
-        majors = Major.objects.values('name')
-        return render(request, "student_form.html", {'students': students, 'projects': projects, 'majors': majors})
+class MajorViewSet(viewsets.ModelViewSet):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer
 
-def capstone_information(request):
+def student_form_view(request):
+    return render(request, "student_form.html")
+    
+def project_view(request):
+    return render(request, "project_information.html")
+
+@require_GET #Only respond to get requests
+def autocomplete_users(request):
+    #extracts query from URL
+    query = request.GET.get('q', '')
+    #limit matches to 10
+    results = Student.objects.filter(name__icontains=query)[:10]
+    return JsonResponse([{'student_id': u.student_id, 'name': u.name} for u in results], safe=False)
+
+def landing_page(request):
     sections = (CapstoneInformationSection.objects
                 .prefetch_related(
                     Prefetch(
@@ -61,3 +52,31 @@ def capstone_information(request):
                 ))
     return render(request, "capstone_information.html", {"sections": sections})
 
+def section_detail(request, id):
+    section = get_object_or_404(CapstoneInformationSection, id=id)
+    now = timezone.now()
+
+    qs = (
+        CapstoneInformationContent.objects
+        .select_related("section_id")
+        .filter(section_id=section, status="published")
+        .filter(
+            Q(published_at__lte=now) | Q(published_at__isnull=True),
+            Q(expires_at__gt=now)    | Q(expires_at__isnull=True),
+        )
+        .order_by("-pinned", "priority", "-published_at", "id")
+    )
+
+    page = Paginator(qs, 20).get_page(request.GET.get("page"))
+    subsections = section.subsections.order_by("order", "id")
+
+    return render(
+        request,
+        "section_detail.html",
+        {
+            "section": section,
+            "contents": page.object_list,
+            "subsections": subsections,
+            "page": page,
+        },
+    )

@@ -1,0 +1,46 @@
+{% extends "student_base.html" %}
+{% block content %}
+
+<nav>
+  <a href="{% url 'student_app:student_home' %}">← Back to Sections</a>
+</nav>
+
+<header>
+  <h1>{{ section.name }}</h1>
+</header>
+
+<main>
+  {% if subsections %}
+    <section>
+      <h2>Subsections</h2>
+      <ul>
+        {% for sub in subsections %}
+          <li><a href="{% url 'student_app:section_detail' sub.id %}">{{ sub.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  <section aria-label="Section contents">
+    <h2>Contents</h2>
+    {% if contents %}
+      <div>
+        {% for item in contents %}
+          <article>
+            <h3>{% if item.pinned %}[Pinned] {% endif %}{{ item.title }}</h3>
+            <div>
+              {% if item.published_at %}<small>Published: {{ item.published_at }}</small><br>{% endif %}
+              <small>Author: {{ item.author }}</small>
+            </div>
+            <div>{{ item.body|linebreaks }}</div>
+          </article>
+          <hr>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No content available for this section.</p>
+    {% endif %}
+  </section>
+</main>
+
+{% endblock content %}

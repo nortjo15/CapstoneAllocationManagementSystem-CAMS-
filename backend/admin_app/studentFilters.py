@@ -40,18 +40,9 @@ class StudentFilter:
 
         # Degree and Major filtering 
         # Recieve pair and split it 
-        degree_major_vals = self.params.getlist('degree_major')
-        if degree_major_vals:
-                # Container for query criteria and combining queries
-                filters = Q()
-                for val in degree_major_vals:
-                    try: 
-                        degree_name, major_name = val.split('||', 1)
-                        filters |= Q(major__degree__name=degree_name, major__name=major_name) #Build an OR of selected pairs
-                    except ValueError: 
-                        continue 
-                           
-                qs = qs.filter(filters)
+        major_ids = self.params.getlist('major')
+        if major_ids:
+            qs = qs.filter(major__id__in=major_ids)
 
         # Filtering by application_submitted option 
         application_submitted = self.params.get('application_submitted', '').lower()
@@ -98,7 +89,8 @@ class StudentFilter:
 
         for degree in Degree.objects.prefetch_related('majors').order_by('name'):
             degree_name = degree.name or 'Unknown Degree'
-            majors = degree.majors.order_by('name').values_list('name', flat=True)
-            pairs[degree_name] = list(majors) or ['Unknown Major']
+            # return both ID and name, not just name
+            majors = degree.majors.order_by('name').values_list('id', 'name')
+            pairs[degree_name] = list(majors) or []
 
         return pairs

@@ -8,15 +8,16 @@
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" 
     crossorigin="anonymous"></script>
 <head>
+    <meta charset="UTF-8">
     <title>Admin Portal</title>
-
-    #if individual pages use css, use the following to override admin_base css
-    {% block extra_css %}{% endblock %} 
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin_app/css/main.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">Admin Dashboard</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
@@ -26,10 +27,10 @@
                     <a class="nav-link" href="{% url 'admin_dashboard:student_view' %}">Students</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="endpoint for screen">Groups</a>
+                    <a class="nav-link" href="{% url 'admin_dashboard:groups_view' %}">Groups</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="endpoint for screen">Projects</a>
+                    <a class="nav-link" href="{% url 'admin_dashboard:project_dashboard' %}">Projects</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:round_view' %}">Round form</a>
@@ -45,11 +46,16 @@
                 <li class="nav-item">
                 <a class="nav-link" href="{% url 'admin_dashboard:logout' %}">Logout</a>
                 </li>
-            </ul>
-            </div>
-        </div>
     </nav>
-    <div v-scope id="content">
+    <script>
+        window.ENDPOINTS = {
+            projects: "{% url 'api_admin:project-list' %}",
+            rounds: "{% url 'api_admin:round-list' %}",
+            // Add other endpoints here as you create them
+        };
+    </script>
+    {% block scripts %}{% endblock %}
+    <div id="content">
         {% block content %}{% endblock %}
     </div>
 </body>
