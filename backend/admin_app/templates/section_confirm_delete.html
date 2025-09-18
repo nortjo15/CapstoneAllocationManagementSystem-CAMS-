@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Delete Announcement</title>
+  <title>Delete Section</title>
 </head>
 <body>
-  <h1>Delete “{{ obj.title }}”?</h1>
+  <h1>Delete “{{ obj.name }}”?</h1>
   <form method="post">{% csrf_token %}
     <button type="submit">Confirm delete</button>
-    <a href="{% url 'admin_app:announcement_list' %}">Cancel</a>
+    <a href="{% url 'admin_app:section_list' %}">Cancel</a>
   </form>
 </body>
 </html>

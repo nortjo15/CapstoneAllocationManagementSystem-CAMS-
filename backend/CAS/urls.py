@@ -17,21 +17,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings 
-from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls), #Default Admin
 
-    # Endpoints 
-    path('api/projects/', include(('admin_app.urls', 'admin_app'), namespace='api_projects')),
-
     # Actual webpages for admin dashboard & student facing end
     path('admin-dashboard/', include(('admin_app.urls', 'admin_app'), namespace='admin_dashboard')),
     path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
-    #path('api/', include('admin_app.urls')),
+
+    # Yes - we do need this (Muhammad)
+    path('api/', include('admin_app.urls')),
     path('api/', include('admin_app.api.urls')),
-    # Root URL viewCan 
-    path('', lambda request: HttpResponse("Welcome to CAS API!")),
+    # ----------------------------------------
+    
+    #APIs for student and Admin
+    path('api/admin/', include('admin_app.api.urls', namespace='api_admin')),
+    path('api/student/', include('student_app.urls', namespace='api_student')),
+
+    #root view
+    path('', include(('student_app.urls', 'student_app'), namespace='root')),
 ]
 
 # During development, add URL path to serve resume & CV files. 

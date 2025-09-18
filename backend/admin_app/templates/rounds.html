@@ -1,18 +1,27 @@
+{% extends "admin_base.html" %}
 {% load static %}
+
+{% block extra_css %}
+{% comment %} <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}"> {% endcomment %}
+{% endblock %}
+{% comment %} {% load static %} {% endcomment %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
     <title>Manage Project Rounds</title>
 </head>
+{% comment %} <body data-projects-api-url="{% url 'api_admin:projects_api' %}"> {% endcomment %}
 <body>
     {% csrf_token %}
 
     <div class="container">
         <div id="left-pane">
-            <h1>Project Rounds</h1>
+            <h1>Capstone Rounds</h1>
             <button id="create-new-round-btn">
                 + Create New Round
             </button>
@@ -22,10 +31,10 @@
 
 
         <div id="right-pane">
-            <h2 id="right-pane-title">Select a Round</h2>
-            
+            <h1 id='right-pane-title'></h1>
             <div id="round-details-view">
                 <form id="edit-round-form">
+                    {% csrf_token %}
                     <input type="hidden" id="edit-round-id">
                     <div>
                         <label for="edit-round-name">Round Name</label>
@@ -40,9 +49,12 @@
                         <input type="datetime-local" id="edit-close-date">
                     </div>
                     <div>
-                        <label for="edit-round-projects">Projects</label>
-                        <select multiple id="edit-round-projects">
-                        </select>
+                        <label for="edit-status">temp status</label>
+                        <input type="text" id="edit-status">
+                    </div>
+                    <div>
+                        <span>Projects</span>
+                        <div id="edit-round-projects"></div>
                     </div>
                     <div>
                         <button type="submit">
@@ -56,6 +68,7 @@
             </div>
             <div id="create-round-view">
                 <form id="create-round-form">
+                    {% csrf_token %}
                     <div>
                         <label for="create-round-name">Round Name</label>
                         <input type="text" id="create-round-name">
@@ -69,8 +82,13 @@
                         <input type="datetime-local" id="create-close-date">
                     </div>
                     <div>
-                        <label for="create-round-projects">Projects</label>
-                        <select multiple id="create-round-projects">
+                        <label for="create-status">temp status</label>
+                        <input type="text" id="create-status">
+                    </div>
+                    <div>
+                        
+                        <span>Projects</span>
+                        <div id="create-round-projects"></div>
                         </select>
                     </div>
                     <div>
@@ -82,6 +100,7 @@
             </div>
         </div>
     </div>
+    {% load static %}
     <script src="{% static '../static/admin_app/js/round.js' %}"></script>
 </body>
-</html>
+{% endblock content %}
