@@ -134,6 +134,7 @@ def add_student_to_group(request, suggestedgroup_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     SuggestedGroupMember.objects.create(suggested_group=group, student=student)
+    group.refresh_from_db()
     serializer = SuggestedGroupLiteSerializer(group)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 

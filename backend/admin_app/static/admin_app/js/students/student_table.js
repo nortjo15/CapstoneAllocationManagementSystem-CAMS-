@@ -262,7 +262,7 @@ addBtn.addEventListener("click", (e) =>
         window.suggestedGroupsCache.set(parseInt(activeGroupId), updatedGroup);
 
         //Render UI
-        updateGroupUI(updatedGroup, document.getElementById("finalise-group-btn"));
+        loadGroup(activeGroupId);
         enforceCapacityRules();
 
         document.getElementById("studentModal").style.display = "none";
