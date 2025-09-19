@@ -3,6 +3,7 @@
 # URL patterns for a ViewSet, which simplifies things immensely.
 
 from rest_framework.routers import DefaultRouter
+
 from .views import *
 
 app_name = 'api_admin'
@@ -10,6 +11,7 @@ app_name = 'api_admin'
 router = DefaultRouter()
 router.register(r'rounds', RoundViewSet, basename='round')
 router.register(r'projects', ProjectViewSet, basename='project')
+router.register(r'admin-logs', AdminLogViewSet, basename='admin_log')
 router.register(r'suggested_groups', SuggestedGroupViewSet, basename='suggested_group')
 router.register(r'project_preferences', ProjectPreferencesViewSet, basename='project_preference')
 router.register(r'suggested_group_members', SuggestedGroupMemberViewSet, basename='suggested_group_member')
