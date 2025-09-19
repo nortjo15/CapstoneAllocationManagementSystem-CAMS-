@@ -50,6 +50,11 @@ from .view.admin_views import (
     SendApplicationSuccessView,
     SendAllocationReleasedView,
 )
+from .view.degree_views import (
+    DegreeTwoPaneView,
+    DegreeCreateView, DegreeUpdateView, DegreeDeleteView,
+    MajorCreateView, MajorUpdateView, MajorDeleteView,
+)
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -124,4 +129,15 @@ urlpatterns = [
 
     #api endpoint
     path('', include('admin_app.api.urls')),
+    
+    path("degrees", DegreeTwoPaneView.as_view(), name="degree_twopane"),
+
+    path("degrees/create", DegreeCreateView.as_view(), name="degree_create"),
+    path("degrees/<int:pk>/edit", DegreeUpdateView.as_view(), name="degree_edit"),
+    path("degrees/<int:pk>/delete", DegreeDeleteView.as_view(), name="degree_delete"),
+
+    path("degrees/<int:degree_id>/majors/create", MajorCreateView.as_view(), name="major_create"),
+    path("majors/<int:pk>/edit", MajorUpdateView.as_view(), name="major_edit"),
+    path("majors/<int:pk>/delete", MajorDeleteView.as_view(), name="major_delete"),
+    
 ]

@@ -14,7 +14,6 @@ class InformationForm(forms.ModelForm):
 
     class Meta:
         model = CapstoneInformationContent
-        # NOTE: your FK is named section_id
         fields = [
             "title", "section_id", "body",
             "status", "priority", "pinned",
