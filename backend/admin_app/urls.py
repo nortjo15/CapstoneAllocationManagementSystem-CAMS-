@@ -33,7 +33,7 @@ from .view.information_views import (
     information_list, information_create, information_edit, information_delete
 )
 from .view.section_views import section_list, section_create, section_edit, section_delete
-
+from admin_app.view.email_views import ProjectResumesView, ProjectResumesZipView
 from admin_app.view import admin_views
 from .view.group_views import *
 from admin_app.view.student_api_views import (
@@ -65,13 +65,23 @@ urlpatterns = [
     path('login_success/', login_success, name="login_success"),
     path('change_password/', change_password, name='change_password'),
     #Admin_views
-    path('admin/logs/', AdminLogListCreateView.as_view()),
+    path('admin/logs/', AdminLogListCreateView.as_view(), name="admin_logs"),
     path("email/mailto/", MailtoLinkView.as_view(), name="mailto_link"),
     path("email/page/", admin_views.email_page, name="email_page"),
     path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
     path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
     path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
     path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
+    path(
+        "projects/<int:project_id>/resumes/",
+        ProjectResumesView.as_view(),
+        name="project_resumes",
+    ),
+    path(
+        "projects/<int:project_id>/resumes/zip/",
+        ProjectResumesZipView.as_view(),
+        name="project_resumes_zip",
+    ),
     #Round_views
     path('rounds/', round_view, name='round_view'),
     #Student_views

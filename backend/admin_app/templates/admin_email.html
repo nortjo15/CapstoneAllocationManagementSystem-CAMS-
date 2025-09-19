@@ -1,57 +1,169 @@
 {% extends "admin_base.html" %}
-
 {% block content %}
 <h2>Email Notifications</h2>
 
-<button onclick="sendEmail()">Send Email via Outlook Web</button>
+<!-- Round Notifications -->
+<h3>Round Notifications</h3>
+<label for="notificationType">Select Notification:</label>
+<select id="notificationType">
+  <option value="round_start">Round Start</option>
+  <option value="round_end">Round End</option>
+</select>
+<br><br>
+<label for="roundNum">Round Number:</label>
+<input type="number" id="roundNum" min="1" placeholder="Enter round number">
+<br><br>
+<button onclick="sendRoundEmail()">Send Round Email via Outlook Web</button>
+
+
+
+<!-- Original Dropdown -->
+<h4>Dropdown Content:</h4>
+<select id="projectSelect">
+  {% if projects %}
+    {% for project in projects %}
+      <option value="{{ project.project_id }}">{{ project.title }} </option>
+    {% endfor %}
+  {% else %}
+    <option disabled selected>No internal projects available</option>
+  {% endif %}
+</select>
+
+
+
+
+
+
+
+
+
+
+
+<br><br>
+<button onclick="sendIndustryEmail()">Send Industry Email via Outlook Web</button>
+<button onclick="loadResumes()">Show Resumes</button>
+<button onclick="downloadResumes()">Download Resume PDFs (ZIP)</button>
+
+<!-- Resume List -->
+<h3>Resumes for Selected Project</h3>
+<div id="resumeList"></div>
+
+<!-- Other Notifications -->
+<h3>Other Notifications</h3>
+<button onclick="sendOtherEmail('post_round_finish_students')">Post Round Finish (Students)</button>
+
+<!-- Finalised Groups -->
+<h3>Finalised Groups</h3>
+<button onclick="sendFinalisedGroupsEmail()">Post Round Finish (Finalised Groups)</button>
+
 
 <script>
-async function sendEmail() {
+const mailtoUrlBase = "{% url 'admin_app:mailto_link' %}";
+
+async function sendRoundEmail() {
     const csrftoken = getCookie('csrftoken');
+    const type = document.getElementById("notificationType").value;
+    const roundNum = document.getElementById("roundNum").value;
+    if (!roundNum) { alert("Please enter a round number."); return; }
 
-    // 1️⃣ Call your backend API to get the recipients
-    const res = await fetch("{% url 'admin_dashboard:mailto_link' %}", {
+    const res = await fetch(mailtoUrlBase, {
         method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken
-        },
-        body: JSON.stringify({
-            subject: "Round 1 Closed",
-            body: "Dear Students,\n\nRound 1 has been closed.\n\nRegards,\nAdmin",
-            audience: "students"
-        })
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ notification_type: type, round_num: roundNum })
     });
+    handleResponse(res);
+}
 
+async function sendIndustryEmail() {
+    const csrftoken = getCookie('csrftoken');
+    const projectSelect = document.getElementById("projectSelect");
+    const projectId = projectSelect ? projectSelect.value : null;
+
+    if (!projectId) { alert("No internal project available."); return; }
+
+    const res = await fetch(mailtoUrlBase, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ notification_type: "post_round_finish_industry", project_id: projectId })
+    });
+    handleResponse(res);
+}
+
+async function sendOtherEmail(type) {
+    const csrftoken = getCookie('csrftoken');
+    const res = await fetch(mailtoUrlBase, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ notification_type: type })
+    });
+    handleResponse(res);
+}
+
+async function sendFinalisedGroupsEmail() {
+    const csrftoken = getCookie('csrftoken');
+    const res = await fetch(mailtoUrlBase, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ notification_type: "post_round_finish_finalised_groups" })
+    });
+    handleResponse(res);
+}
+
+async function loadResumes() {
+    const projectSelect = document.getElementById("projectSelect");
+    const projectId = projectSelect ? projectSelect.value : null;
+    if (!projectId) { alert("No internal project selected."); return; }
+
+    const url = "{% url 'admin_app:project_resumes' 0 %}".replace('/0/', `/${projectId}/`);
+    const res = await fetch(url);
     const data = await res.json();
-    if (!data.mailto_link) {
-        alert("Error: " + (data.error || "Could not generate email link"));
-        return;
+    const container = document.getElementById("resumeList");
+    container.innerHTML = "";
+
+    if (data.resumes && data.resumes.length > 0) {
+        data.resumes.forEach(r => {
+            const link = document.createElement("a");
+            link.href = r.resume_url;
+            link.textContent = `${r.student_id} - ${r.name}`;
+            link.target = "_blank";
+            container.appendChild(link);
+            container.appendChild(document.createElement("br"));
+        });
+    } else {
+        container.innerHTML = "<p>No resumes found for this project.</p>";
     }
+}
 
-    // 2️⃣ Parse recipients from mailto link
-    const mailto = new URL(data.mailto_link);
-    const recipients = mailto.pathname;  // emails before ?
-    const subject = mailto.searchParams.get("subject") || "";
-    const body = mailto.searchParams.get("body") || "";
+function downloadResumes() {
+    const projectSelect = document.getElementById("projectSelect");
+    const projectId = projectSelect ? projectSelect.value : null;
+    if (!projectId) { alert("No internal project selected."); return; }
 
-    // 3️⃣ Open Outlook Web compose URL
+    const url = "{% url 'admin_app:project_resumes_zip' 0 %}".replace('/0/', `/${projectId}/`);
+    window.location.href = url;
+}
+
+async function handleResponse(res) {
+    if (!res.ok) { alert("Error: Could not contact server."); return; }
+    const data = await res.json();
+    if (!data.mailto_link) { alert("Error: " + (data.error || "Could not generate email link")); return; }
+
+    const mailtoUrl = new URL(data.mailto_link);
+    const recipients = mailtoUrl.pathname.replace(/^\/+/, "");
+    const subject = mailtoUrl.searchParams.get("subject") || "";
+    const body = mailtoUrl.searchParams.get("body") || "";
+
     const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(recipients)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(outlookUrl, "_blank");
 }
 
-// Function to get CSRF cookie
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
+        document.cookie.split(';').forEach(cookie => {
             cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+            if (cookie.startsWith(name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); }
+        });
     }
     return cookieValue;
 }

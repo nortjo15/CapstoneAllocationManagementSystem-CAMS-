@@ -1,44 +1,137 @@
 {% extends "admin_base.html" %}
+{% load static %}
 
 {% block content %}
+<div style="padding: 40px;">
     <h1>Settings</h1>
     <p>Manage your account settings here.</p>
 
-    <button onclick="showPopup()">Generate sign-up link</button>
-    <button onclick="showPopup()">Change Password</button>
+    <button type="button" style="margin-right: 10px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Change Password
+    </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to change your password?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="changePassword()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+    Link to user registration
+    </button>
+    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Register a new user</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <a href="/admin-dashboard/register">Link to user registration</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
-    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5);">
-        <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
-            <p>Copy the link below:<br>
-                <a href="/admin-dashboard/register">Link to user registration</a>
-            </p>
-            <button onclick="closePopup()">Close</button>
+    <div style="margin-top: 40px;">
+        <h2>Admin Activity Log</h2>
+        {% if admin_logs %}
+            <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #e9ecef;">
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">User</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Action</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Target</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Timestamp</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in admin_logs %}
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.user.username }}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    <span style="background-color: 
+                                        {% if log.action == 'CREATE' %}#d4edda
+                                        {% elif log.action == 'EDIT' %}#fff3cd
+                                        {% elif log.action == 'DELETE' %}#f8d7da
+                                        {% elif log.action == 'LOGIN' %}#cce5ff
+                                        {% else %}#e2e3e5{% endif %}; 
+                                        padding: 2px 6px; border-radius: 3px; font-size: 0.85em;">
+                                        {{ log.get_action_display }}
+                                    </span>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    {% if log.target %}
+                                        {{ log.target }}
+                                    {% else %}
+                                        <em>No target</em>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    {% if log.notes %}
+                                        {{ log.notes|truncatechars:50 }}
+                                    {% else %}
+                                        <em>No notes</em>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="color: #6c757d; font-style: italic;">No admin logs found.</p>
+        {% endif %}
+    </div>
+
+    <button type="button" style="margin-top: 20px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+    Clear Logs
+    </button>
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Clear Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to clear the logs? \nThis action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="customModal1" style=" align: center; display:none; position:fixed; top:0; left:0; width:200vw; height:200vh; background:rgba(0,0,0,0.5);">
-        <div style="background:#fff; padding:20px; margin:100px auto; width:300px; text-align:center;">
-            <form class="form-with-validation" action="{% url 'admin_dashboard:change_password' %}" method="post">
-                {% csrf_token %}
-                {{ form.as_p }} 
-                <button type="submit">Change Password</button>
-            </form>
-            <button onclick="closePopup()">Close</button>
-        </div>
-    </div>
+    
+</div>
+    
+
+    
 
     <script>
-    function showPopup() {
-    document.getElementById('customModal').style.display = 'block';
-    }
-    function closePopup() {
-    document.getElementById('customModal').style.display = 'none';
-    }
-    function showPopup() {
-    document.getElementById('customModal1').style.display = 'block';
-    }
-    function closePopup() {
-    document.getElementById('customModal1').style.display = 'none';
+    function changePassword() {
+        window.location.href = '{% url 'admin_dashboard:change_password' %}';
     }
     </script>
+<script src="{% static 'admin_app/js/settings.js' %}"></script>
 {% endblock %}
