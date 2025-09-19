@@ -10,27 +10,6 @@
     {% block extra_css %}{% endblock %}
     <title>Student Portal</title>
 </head>
-<body>
-    <div id="navigationBar">
-        {% block navigationBar %}
-            <h1>Capstone Allocation</h1>
-            <ul>
-                <li><a href="{% url 'students:student_form' %}"> Make Application </a></li> <!--Temporary link to student form, will be moved to rounds later-->
-                <li><a href="{% url 'students:capstone_information' %}"> Capstone Information </a></li> 
-                <li><a href="{% url 'students:project_information' %}"> Project Information </a></li>
-                <li><a href="endpoint for screen"> Industry Round </a></li> 
-                <li><a href="endpoint for screen"> Internal Round </a></li> 
-                <li><a href="{% url 'admin_dashboard:login' %}"> Admin Login </a></li>
-            </ul>
-        {% endblock %}
-    </div>
-     <script>
-        window.ENDPOINTS = {
-            projects: "{% url 'api_student:project-list' %}",
-            // Add other endpoints here as you create them
-        };
-    </script>
-    {% block scripts %}{% endblock %}
     <div v-scope id="content">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">

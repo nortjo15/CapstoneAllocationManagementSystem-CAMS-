@@ -6,6 +6,16 @@ from admin_app.models import Project, Major
 from student_app.models import Student, GroupPreference
 from admin_app.models import Project, Major, ProjectPreference
 
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = 'all'
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = 'all'
+
 class ProjectPreferenceNestedSerializer(serializers.ModelSerializer):
     project_title = serializers.CharField(source="project.title", read_only=True)
 
