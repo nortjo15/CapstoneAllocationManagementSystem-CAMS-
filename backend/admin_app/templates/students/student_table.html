@@ -1,0 +1,43 @@
+<div class="container-grid">
+    <!-- Left Panel -->
+    <div class="panel">
+        <h3>Students</h3>
+        <button id="addStudentBtn" class="btn btn-primary">Add Student</button>
+        <button id="importStudentBtn" class="btn btn-primary">Import Students</button>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="panel">
+        <div class="top-bar">
+            <button id="openFilterBtnStudents" class="btn btn-primary">Open Filters</button>
+            <input
+            type="text"
+            id="studentIdSearch"
+            placeholder="Search by Student ID..."
+            class="student-search"
+            inputmode="numeric"
+            pattern="\d"
+            maxlength="8"
+            >
+        </div>
+
+        <div class="scroll-container">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>CWA</th>
+                        <th>Major</th>
+                        <th>Submitted</th>
+                        <th>Allocated</th>
+                        <th>Notes</th>
+                        <th>Projects</th>
+                        <th>Members</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>

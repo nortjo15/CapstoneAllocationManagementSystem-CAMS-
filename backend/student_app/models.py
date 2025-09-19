@@ -20,7 +20,7 @@ class Student(models.Model):
     major = models.ForeignKey('admin_app.Major', on_delete=models.PROTECT, null=True, related_name='students')
     application_submitted = models.BooleanField(default=False)
     allocated_group = models.BooleanField(default=False)
-    email = models.EmailField(unique=True, null=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
     cv = models.FileField(upload_to='cvs/', null=True, blank=True)
@@ -58,4 +58,3 @@ class GroupPreference(models.Model):
 
     def __str__(self):
         return f"{self.student} → {self.target_student} ({self.preference_type})"
-

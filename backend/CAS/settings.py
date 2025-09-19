@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'admin_app',
     'student_app',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -94,6 +95,9 @@ DATABASES = {
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'cas_password'), # Use your chosen DB password
         'HOST': os.environ.get('POSTGRES_HOST', 'db'), # This 'db' refers to the service name in docker-compose.yml
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'OPTIONS': {
+            'sslmode': 'require', 
+        }
     }
 }
 # Also ensure SECRET_KEY, ALLOWED_HOSTS, DEBUG are pulled from env vars
@@ -125,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Australia/Perth'
 
 USE_I18N = True
 

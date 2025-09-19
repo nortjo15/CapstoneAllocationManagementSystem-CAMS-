@@ -18,7 +18,6 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
 
-
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer

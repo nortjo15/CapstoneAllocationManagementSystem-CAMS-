@@ -1,11 +1,12 @@
 import urllib.parse
 from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from student_app.models import Student
-from .models import Project, FinalGroupMember, Round
+from admin_app.models import Project, FinalGroupMember
 
-def generate_mailto_link(subject, body, audience="students", final_group_id=None):
+def generate_mailto_link(subject, body, audience="students", project_id=None):
+    """Generate mailto: links for different audiences"""
+    recipients = []
+
     if audience == "students":
         recipients = list(
             Student.objects.exclude(email__isnull=True).exclude(email="").values_list("email", flat=True)
@@ -14,21 +15,36 @@ def generate_mailto_link(subject, body, audience="students", final_group_id=None
         recipients = list(
             Project.objects.exclude(host_email__isnull=True).exclude(host_email="").values_list("host_email", flat=True)
         )
-    elif audience == "final_group" and final_group_id:
-        members = FinalGroupMember.objects.filter(final_group_id=final_group_id).select_related("student")
+    elif audience == "finalised_groups":
+        members = FinalGroupMember.objects.select_related("student")
         recipients = [m.student.email for m in members if m.student.email]
-    else:
-        recipients = []
+    elif audience == "industry" and project_id:
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            return None
+
+        recipients = [project.host_email] if project.host_email else []
+
+        final_groups = project.final_groups.all().prefetch_related("members__student")
+        resume_links = []
+        for group in final_groups:
+            for member in group.members.all():
+                if member.student.resume:
+                    resume_links.append(f"{settings.MEDIA_URL}{member.student.resume}")
+
+        if resume_links:
+            body += "\n\nAttached CVs/Resumes (please download from links):\n" + "\n".join(resume_links)
+        else:
+            body += "\n\n(No resumes found for this project)"
+
+    if not recipients:
+        return None
 
     to_emails = ";".join(recipients)
-
-    params = {
-        "subject": subject,
-        "body": body,
-    }
-    query = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
-
+    query = urllib.parse.urlencode({"subject": subject, "body": body}, quote_via=urllib.parse.quote)
     return f"mailto:{to_emails}?{query}"
+
 
 
 
