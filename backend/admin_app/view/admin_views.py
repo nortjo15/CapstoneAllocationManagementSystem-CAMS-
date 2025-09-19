@@ -12,6 +12,9 @@ from student_app.models import Student
 from admin_app import email_service
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
+from admin_app.models import Project
+
+
 
 class AdminLogListCreateView(generics.ListCreateAPIView):
     queryset = AdminLog.objects.all()
@@ -66,8 +69,19 @@ class SendAllocationReleasedView(APIView):
         return Response({"ok": True, "sent": sent})
     
 
+
+from django.shortcuts import render
+from admin_app.models import Project
+
 @login_required
-@user_passes_test(lambda u: u.is_staff)  # only admins can access
+@user_passes_test(lambda u: u.is_staff)  # only staff/admins can access
 def email_page(request):
-    """Render the Email Notifications page"""
-    return render(request, "admin_email.html")
+    """
+    Renders the admin email notification page.
+    Filters projects to show only those with at least one internal round.
+    """
+    # Step 1: Get all projects that have at least one internal round
+    internal_projects = Project.objects.filter(rounds__is_internal=True).distinct()
+
+    # Step 2: Render the template with filtered projects
+    return render(request, "admin_email.html", {"projects": internal_projects})
