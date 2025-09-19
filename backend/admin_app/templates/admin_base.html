@@ -22,7 +22,7 @@
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Admin Dashboard</a>
+            <a class="navbar-brand" href="{% url 'admin_dashboard:login_success' %}">Admin Dashboard</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
@@ -32,7 +32,7 @@
                     <a class="nav-link" href="{% url 'admin_dashboard:student_view' %}">Students</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="endpoint for screen">Groups</a>
+                    <a class="nav-link" href="{% url 'admin_dashboard:groups_view' %}">Groups</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:project_dashboard' %}">Projects</a>
