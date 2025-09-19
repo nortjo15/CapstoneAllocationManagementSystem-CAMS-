@@ -25,25 +25,25 @@
             </select><br><br>
             <!-- CWA -->
             <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
-            <input type="number" step="1.0" min="0" max="100" id="cwa" name="cwa" required><br><br>
+            <input type="number" step="0.01" min="0" max="100" id="cwa" name="cwa" required><br><br>
             <!-- Project Preferences -->
             <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
             <select name="project" id="project">
                 <option value=""> loading Projects... </option> 
             </select><br><br>
             <ul id="preference-list"></ul>
-            <input type="hidden" name="project_preferences" id="project-preferences-input">
+            <input type="hidden" name="project_preferences" id="project_preferences">
             <!-- preferred Group Preferences -->
             <label> Please use the search bar below to choose your group preferences, type in the student's full name </label><br><br>
             <input type="text" id="user-search" placeholder="Search Students..."><br>
             <ul id="autocomplete-results"></ul><br>
             <label>Please choose 0 or 5 students you would prefer working with</label><br>
             <ul id="preferred-list"></ul>
-            <input type="hidden" name="preferred_students" id="preferred-input">
+            <input type="hidden" name="preferred_students" id="preferred_students">
             <!-- avoided Group Preferences -->
             <label>Please choose 0 or 5 students you would like to avoid working with</label>
             <ul id="avoided-list"></ul>
-            <input type="hidden" name="avoided_students" id="avoided-input">
+            <input type="hidden" name="avoided_students" id="avoided_students">
             <!-- Resume -->
             <p>When uploading your resume, ensure the file is named using the format "lastname-firstname_resume_year" for example, "Doe-Jane_resume_2025" 
                 and that it is in PDF format only.</p>

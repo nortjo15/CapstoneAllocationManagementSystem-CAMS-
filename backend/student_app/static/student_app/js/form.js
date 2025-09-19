@@ -77,8 +77,8 @@ function setupSearchFunctionality(){
     const resultsList = document.getElementById('autocomplete-results');
     const preferredList = document.getElementById('preferred-list');
     const avoidedList = document.getElementById('avoided-list');
-    const avoidedInput = document.getElementById('avoided-input');
-    const preferredInput = document.getElementById('preferred-input');
+    const avoidedInput = document.getElementById('avoided_students');
+    const preferredInput = document.getElementById('preferred_students');
 
     let preferred = [];
     let avoided = [];
@@ -177,7 +177,7 @@ function setupSearchFunctionality(){
 function setupProjectPreferences(projects){
     const projectDropdown = document.getElementById('project');
     const preferenceList = document.getElementById('preference-list');
-    const hiddenInput = document.getElementById('project-preferences-input');
+    const hiddenInput = document.getElementById('project_preferences');
 
     let selectedPreferences = [];
 
@@ -318,6 +318,26 @@ function validateFile(fileInput, keyword){
     return true;
 }
 
+function displayBackendErrors(errors){
+    for (const field in errors){
+        const inputElement = document.getElementById(field);
+        const errorValue = errors[field];
+        let errorMessage;
+
+        if(Array.isArray(errorValue)){
+            errorMessage = errorValue.join(' ');
+        } else {
+            errorMessage = errorValue;
+        }
+        
+        if(inputElement){
+            showError(field, errorMessage);
+        } else {
+            alert(`Error with ${field}: ${errorMessage}`);
+        }
+    }
+}
+
 //Posting the form to corresponding tables
 async function submitForm(){
     const apiUrl = window.ENDPOINTS.submit
@@ -326,9 +346,9 @@ async function submitForm(){
     const csrfToken = formData.get('csrfmiddlewaretoken');
 
     //Get List data
-    const projectPreferences = JSON.parse(document.getElementById('project-preferences-input').value || '[]');
-    const preferredStudents = JSON.parse(document.getElementById('preferred-input').value || '[]');
-    const avoidedStudents = JSON.parse(document.getElementById('avoided-input').value || '[]');
+    const projectPreferences = JSON.parse(document.getElementById('project_preferences').value || '[]');
+    const preferredStudents = JSON.parse(document.getElementById('preferred_students').value || '[]');
+    const avoidedStudents = JSON.parse(document.getElementById('avoided_students').value || '[]');
 
     formData.delete('project_preferences');
     formData.delete('preferred_students');
@@ -357,6 +377,7 @@ async function submitForm(){
             const errors = await response.json();
             console.error('Validation errors', errors);
             alert('Submission failed. Please check the form for errors');
+            displayBackendErrors(errors);
         }
     } catch(error){
         console.error('Network error during submission', error);
@@ -387,9 +408,9 @@ document.addEventListener('DOMContentLoaded', async() => {
     setupSearchFunctionality();
 
     //Input validation
-    document.getElementById('student_id').addEventListener('input', validateStudentId);
-    document.getElementById('cwa').addEventListener('input', validateCWA);
-    document.getElementById('email').addEventListener('input', validateEmail);
+    document.getElementById('student_id').addEventListener('blur', validateStudentId);
+    document.getElementById('cwa').addEventListener('blur', validateCWA);
+    document.getElementById('email').addEventListener('blur', validateEmail);
     //File validation
     const resumeInput = document.getElementById('resume');
     resumeInput.addEventListener('change', () => {

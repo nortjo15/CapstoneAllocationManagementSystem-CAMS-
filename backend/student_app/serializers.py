@@ -25,31 +25,31 @@ class FullFormSerializer(serializers.Serializer):
     cwa = serializers.FloatField()
     email = serializers.EmailField()
     resume = serializers.FileField()
-    cv = serializers.FileField()
+    cv = serializers.FileField(required=False, allow_null=True)
     application_submitted = serializers.BooleanField(default=False)
     #Project Preference List
     project_preferences = serializers.ListField(
-        child=serializers.IntegerField(), allow_empty=True, max_length=6
+        child=serializers.IntegerField(), allow_empty=True, max_length=6, required=False
     )
     #Group preference Lists
     preferred_students = serializers.ListField(
-        child=serializers.CharField(max_length=8), allow_empty=True
+        child=serializers.CharField(max_length=8), allow_empty=True, required=False
     )
     avoided_students = serializers.ListField(
-        child=serializers.CharField(max_length=8), allow_empty=True
+        child=serializers.CharField(max_length=8), allow_empty=True, required=False
     )
 
     def create(self, validated_data):
         student_id = validated_data.pop('student_id')
-        project_preference_ids = validated_data.pop('project_preferences')
-        preferred_preference_ids = validated_data.pop('preferred_students')
-        avoided_preference_ids = validated_data.pop('avoided_students')
+        project_preference_ids = validated_data.pop('project_preferences', [])
+        preferred_preference_ids = validated_data.pop('preferred_students', [])
+        avoided_preference_ids = validated_data.pop('avoided_students', [])
 
         #Get student instance
         try:
             student = Student.objects.get(student_id=student_id)
         except Student.DoesNotExist:
-            raise serializers.ValidationError({"Student_id":"A student with this ID does not exist"})
+            raise serializers.ValidationError({"student_id":"A student with this ID does not exist"})
         #check if student exists
 
         #update student details
