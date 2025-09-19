@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Delete Degree</title></head>
+<body>
+  <h3>Delete Degree</h3>
+  <p>
+    Are you sure you want to <strong>delete</strong> the degree
+    “{{ object.name }}”? This will also delete all associated majors (cascade).
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'admin_app:degree_twopane' %}?degree_id={{ object.id }}">Cancel</a>
+  </form>
+</body>
+</html>

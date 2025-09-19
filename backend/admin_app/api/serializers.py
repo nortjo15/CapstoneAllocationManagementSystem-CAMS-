@@ -1,0 +1,80 @@
+from rest_framework import serializers
+from ..models import *
+
+class AdminLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminLog
+        fields = '__all__'
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = '__all__'
+
+class ProjectPreferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectPreference
+        fields = '__all__'
+
+class SuggestedGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SuggestedGroup
+        fields = '__all__'
+
+class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SuggestedGroupMember
+        fields = '__all__'
+
+class FinalGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinalGroup
+        fields = '__all__'
+
+class FinalGroupMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinalGroupMember
+        fields = '__all__'
+
+class RoundSerializer(serializers.ModelSerializer):
+    project_ids = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Project.objects.all(),
+        write_only=True
+    )
+    projects = ProjectSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Round
+        fields = '__all__'
+
+    def create(self, validated_data):
+        project_ids = validated_data.pop('project_ids', [])
+        round_instance = Round.objects.create(**validated_data)
+        round_instance.projects.set(project_ids)
+        return round_instance
+    
+    
+    def update(self, instance, validated_data):
+        project_ids = validated_data.pop('project_ids', None)
+
+        # update regular fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # update many-to-many if provided
+        if project_ids is not None:
+            instance.projects.set(project_ids)
+
+        return instance
+
+class DegreeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Degree
+        fields = '__all__'
+
+class MajorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Major
+        fields = '__all__'

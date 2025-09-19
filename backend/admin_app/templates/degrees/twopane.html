@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Degrees & Majors</title>
+
+  <style>
+    /* Tables + pagination echo announcements style */
+    table { width:100%; border-collapse: collapse; }
+    th, td { border:1px solid #ddd; padding:8px; }
+    th { text-align:left; }
+    .pagination { margin-top:10px; display:flex; gap:10px; align-items:center; }
+    .actions a { margin-right:8px; }
+
+    /* Slide-over panel + backdrop */
+    .backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      display: none; z-index: 999;
+    }
+    .slideover {
+      position: fixed; top:0; right:-480px; height:100vh; width:420px;
+      background:#fff; box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+      padding:16px; overflow:auto; z-index: 1000;
+      transition: right 0.25s ease-in-out;
+    }
+    .slideover.open { right:0; }
+    .slideover header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .field { margin-bottom:10px; }
+    .field label { display:block; margin-bottom:4px; font-weight:600; }
+    .errors { color:#b00020; margin:6px 0; }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .layout { display:flex; gap:16px; align-items:flex-start; }
+    .left { width:40%; }
+    .right { flex:1; }
+  </style>
+</head>
+{% block content %}
+<body>
+  <h1>Degrees & Majors</h1>
+
+  <div class="layout">
+    <!-- Left pane: Degrees list (paginated) -->
+    <section class="left">
+      <div class="toolbar">
+        <h2>Degrees</h2>
+        <button type="button" onclick="openSlide('degree')">+ Add Degree</button>
+      </div>
+
+      {% if page.paginator.count == 0 %}
+        <p>No degrees</p>
+      {% else %}
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>#Majors</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in degrees %}
+              <tr {% if selected_degree and d.id == selected_degree.id %}style="background:#f6f6f6"{% endif %}>
+                <td><a href="?page={{ page.number }}&degree_id={{ d.id }}">{{ d.name }}</a></td>
+                <td>{{ d.majors_count }}</td>
+                <td class="actions">
+                  <a href="{% url 'admin_app:degree_edit' d.id %}?page={{ page.number }}&degree_id={{ selected_degree.id|default:d.id }}">Edit</a> |
+                  <a href="{% url 'admin_app:degree_delete' d.id %}?page={{ page.number }}">Delete</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}{% if selected_degree %}&degree_id={{ selected_degree.id }}{% endif %}">« Prev</a>
+          {% endif %}
+          <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+          {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}{% if selected_degree %}&degree_id={{ selected_degree.id }}{% endif %}">Next »</a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- Right pane: Majors for selected degree -->
+    <section class="right">
+      <div class="toolbar">
+        <h2>{% if selected_degree %}Majors in “{{ selected_degree.name }}”{% else %}Majors{% endif %}</h2>
+        {% if selected_degree %}
+          <button type="button" onclick="openSlide('major')">+ Add Major</button>
+        {% endif %}
+      </div>
+
+      {% if not selected_degree %}
+        <p>Select a degree to view its majors.</p>
+      {% else %}
+        {% if no_majors %}
+          <p>No majors in this degree</p>
+        {% else %}
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for m in majors %}
+                <tr>
+                  <td>{{ m.name }}</td>
+                  <td class="actions">
+                    <a href="{% url 'admin_app:major_edit' m.id %}?page={{ page.number }}&degree_id={{ selected_degree.id }}">Edit</a> |
+                    <a href="{% url 'admin_app:major_delete' m.id %}?page={{ page.number }}&degree_id={{ selected_degree.id }}">Delete</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      {% endif %}
+    </section>
+  </div>
+
+  <!-- Backdrop -->
+  <div id="backdrop" class="backdrop" onclick="closeSlides()"></div>
+
+  <!-- Slide-over: Create Degree -->
+  <aside id="degree-slide" class="slideover" aria-hidden="true">
+    <header>
+      <h3>Create Degree</h3>
+      <button type="button" onclick="closeSlides()">✕</button>
+    </header>
+    <form method="post" action="{% url 'admin_app:degree_create' %}?page={{ page.number }}{% if selected_degree %}&degree_id={{ selected_degree.id }}{% endif %}">
+      {% csrf_token %}
+      {% if degree_form.non_field_errors %}<div class="errors">{{ degree_form.non_field_errors }}</div>{% endif %}
+      <div class="field">
+        <label for="{{ degree_form.name.id_for_label }}">Name</label>
+        {{ degree_form.name.errors }}{{ degree_form.name }}
+      </div>
+      <div>
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeSlides()">Cancel</button>
+      </div>
+    </form>
+  </aside>
+
+  <!-- Slide-over: Create Major -->
+  {% if selected_degree %}
+  <aside id="major-slide" class="slideover" aria-hidden="true">
+    <header>
+      <h3>Create Major</h3>
+      <button type="button" onclick="closeSlides()">✕</button>
+    </header>
+    <form method="post" action="{% url 'admin_app:major_create' selected_degree.id %}?page={{ page.number }}&degree_id={{ selected_degree.id }}">
+      {% csrf_token %}
+      {% if major_form.non_field_errors %}<div class="errors">{{ major_form.non_field_errors }}</div>{% endif %}
+      <div class="field">
+        <label for="{{ major_form.degree.id_for_label }}">Degree</label>
+        {{ major_form.degree.errors }}{{ major_form.degree }}
+      </div>
+      <div class="field">
+        <label for="{{ major_form.name.id_for_label }}">Name</label>
+        {{ major_form.name.errors }}{{ major_form.name }}
+      </div>
+      <div>
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeSlides()">Cancel</button>
+      </div>
+    </form>
+  </aside>
+  {% endif %}
+
+  <script>
+    function openSlide(which) {
+      const el = document.getElementById(which + "-slide");
+      const backdrop = document.getElementById("backdrop");
+      if (el) { el.classList.add("open"); }
+      if (backdrop) { backdrop.style.display = "block"; }
+    }
+    function closeSlides() {
+      document.querySelectorAll(".slideover.open").forEach(el => el.classList.remove("open"));
+      const backdrop = document.getElementById("backdrop");
+      if (backdrop) { backdrop.style.display = "none"; }
+    }
+  </script>
+</body>
+</html>
+{% endblock %}

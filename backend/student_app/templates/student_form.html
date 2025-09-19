@@ -1,82 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "student_base.html" %}
+{% load static %}
+{% block content %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Application</title>
-    <script src="https://unpkg.com/petite-vue" defer init></script>
 </head>
 
-{% extends "student_base.html" %}
-{% block content%}
-<body>
     <h1>Project Application form</h1>
     <hr>
     <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
-    <div v-scope>
-        <form name="student_form" action="{% url 'students:student_form' %}" method= "post">
+    <div id="form-Container">
+        <form enctype="multipart/form-data" id="application-form">
             {% csrf_token %}
+            <!-- Student ID -->
             <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
-            <label for="studentID">Student ID</label>
-            <input type="text" pattern="[0-9]+" maxlength="8" name="studentID" id="studentID" required><br><br>
-            <label for="email">Please enter your student email. E.g. firstname.lastname@student.curtin.edu.au</label><br>
+            <label for="student_id">Student ID</label>
+            <input type="text" pattern="[0-9]+" maxlength="8" name="student_id" id="student_id" required><br><br>
+            <!-- Email -->
+            <label for="email">Please enter your student email. E.g. john.smith@student.curtin.edu.au OR john.m.smith@student.curtin.edu.au</label><br><br>
             <input type="email" id="email" name="email"><br><br>
-
-            <label for="major">Select your major from the dropdown menu provided.</label><br>
-            <select name ="major" id="major">
-                <option disabled selected>Select a Major</option>
-                {% for major in majors %}
-                    <option value="{{ major.name }}">{{ major.name }}</option>
-                {%  endfor %}
+            <!-- Major -->
+            <label for="major">Select your major from the dropdown menu provided.</label><br><br>
+            <select name="major" id="major" required>
+                <option value=""> loading Majors... </option> 
             </select><br><br>
-            <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br>
-            <input type="number" step="0.01" min="0" max="100" id="cwa" name="cwa">
-
-            <p>You are required to choose at least three preferences in projects. Although you may select up to six options in projects, a minimum of three is mandatory.</p>
-
-            <label>Please choose your top 6 preferences for projects</label><br>
-            <div v-for="n in 6" :key="n">
-                <select name="projects[]">
-                    <option disabled selected>Select a Project</option>
-                    {% for project in projects %}
-                        <option value = "{{ project.title }}">{{ project.title }}</option>
-                    {% endfor %}
-                </select>
-            </div><br>
-
-            <label>Please choose 6 desirable group members</label><br>
-            <div v-for="n in 6" :key="n">
-                <select name="student-desirable[]">
-                    <option disabled selected>Select a student</option>
-                    {% for student in students%}
-                        <option value="{{ student.name }}">{{ student.name }}</option>
-                    {% endfor %}
-                </select><br>
-            </div><br>
-
-            <label>Please choose 6 undesirable group member</label>
-            <div v-for="n in 6" :key="n">
-                <select name="student-undesirable[]">
-                    <option disabled selected>Select a student</option>
-                    {% for student in students%}
-                        <option value="{{ student.name }}">{{ student.name }}</option>
-                    {% endfor %}
-                </select>
-            </div><br>
-
+            <!-- CWA -->
+            <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
+            <input type="number" step="0.01" min="0" max="100" id="cwa" name="cwa" required><br><br>
+            <!-- Project Preferences -->
+            <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
+            <select name="project" id="project">
+                <option value=""> loading Projects... </option> 
+            </select><br><br>
+            <ul id="preference-list"></ul>
+            <input type="hidden" name="project_preferences" id="project_preferences">
+            <!-- preferred Group Preferences -->
+            <label> Please use the search bar below to choose your group preferences, type in the student's full name </label><br><br>
+            <input type="text" id="user-search" placeholder="Search Students..."><br>
+            <ul id="autocomplete-results"></ul><br>
+            <label>Please choose 0 or 5 students you would prefer working with</label><br>
+            <ul id="preferred-list"></ul>
+            <input type="hidden" name="preferred_students" id="preferred_students">
+            <!-- avoided Group Preferences -->
+            <label>Please choose 0 or 5 students you would like to avoid working with</label>
+            <ul id="avoided-list"></ul>
+            <input type="hidden" name="avoided_students" id="avoided_students">
+            <!-- Resume -->
             <p>When uploading your resume, ensure the file is named using the format "lastname-firstname_resume_year" for example, "Doe-Jane_resume_2025" 
                 and that it is in PDF format only.</p>
-
-            <label for="resume">Upload Resume</label><br>
-            <input type="file" id="resume" name="filename" accept=".pdf"><br><br>
+            <input type="file" id="resume" name="resume" accept=".pdf"><br><br>
+            <!-- CV -->
+            <input type="file" id="cv" name="cv" accept=".pdf"><br><br>
+            <!-- Split Project -->
+            <label for="splitProject"> If you are completing a split project, please tick the box </label>
+            <input type="checkbox" name="splitProject" id="splitProject"><br>
+            <!-- Agree to terms -->
             <p>Finally, you must tick the “Agree to Terms” checkbox to confirm your acceptance of the allocation process. 
                 <span style="color: red;">If this box is not ticked, you will not be allocated to any group or project</span></p>
             <input type="checkbox" name="terms" id="terms">
             <label for="terms">Agree to Terms</label><br><br>
-            <input type="submit" value="submit">
+            <input type="submit" value="Submit"><br><br>
         </form>
     </div>
-</body>
+    <script src="{% static 'student_app/js/form.js' %}"></script>
 {% endblock content %}
 
-</html>

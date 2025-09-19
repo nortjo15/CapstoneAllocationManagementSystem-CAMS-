@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Delete Major</title></head>
+<body>
+  <h3>Delete Major</h3>
+  <p>Delete “{{ object.name }}”?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'admin_app:degree_twopane' %}?degree_id={{ object.degree.id }}">Cancel</a>
+  </form>
+</body>
+</html>

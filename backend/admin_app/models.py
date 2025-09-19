@@ -52,13 +52,14 @@ class Round(models.Model):
 
     # Admin will manually activate a round by clicking a GUI button
     is_active = models.BooleanField(default=False)
+    is_internal = models.BooleanField(null=False)
 
     STATUS_CHOICES = [
         ('open', 'Open'),
         ('closed', 'Closed'),
         ('upcoming', 'Upcoming'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='upcoming')
     
     open_date = models.DateTimeField()
     close_date = models.DateTimeField()
@@ -86,7 +87,7 @@ class Project(models.Model):
 # Stores information about a Student's Project Preference
 # Foreign Key to Student & Project
 class ProjectPreference(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="preferences")
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     rank = models.PositiveBigIntegerField(validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True) 
@@ -113,6 +114,10 @@ class SuggestedGroup(models.Model):
     suggestedgroup_id = models.AutoField(primary_key=True)
     strength = models.CharField(max_length=6, choices=STRENGTH_CHOICES)
     notes=models.TextField(null=True, blank=True)
+    name=models.CharField(max_length=50, null=True, blank=True, unique=True)
+    has_anti_preference=models.BooleanField(default=False)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='suggested_groups', null=True)
+    is_manual = models.BooleanField(default=False)
 
     def __str__(self):
         return f"SuggestedGroup {self.suggestedgroup_id} ({self.get_strength_display()})"
@@ -138,6 +143,7 @@ class FinalGroup(models.Model):
     created_by_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(null=True, blank=True)
+    name=models.CharField(max_length=50, null=True, blank=True, unique=True)
 
     def __str__(self):
         return f"FinalGroup {self.finalgroup_id} for {self.project.title}"
@@ -194,6 +200,9 @@ class CapstoneInformationSection(models.Model):
     class Meta:
         ordering = ["order", "id"]
 
+    def __str__(self):
+        return self.name
+
 # Stores actual information that is displayed on Capstone Information pages
 # Each section can have multiple pieces of content, and each piece can be pinned or have a priority
 # Content can be published, archived or in draft state
@@ -220,3 +229,6 @@ class CapstoneInformationContent(models.Model):
             models.Index(fields=["section_id", "-pinned", "priority", "-published_at"]),
             models.Index(fields=["status", "published_at", "expires_at"]),
         ]
+ 
+    def __str__(self):
+        return self.title
