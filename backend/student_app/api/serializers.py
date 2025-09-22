@@ -1,20 +1,36 @@
 from rest_framework import serializers
-from student_app.models import *
-from admin_app.models import *
-from student_app.models import Student
 from admin_app.models import Project, Major
 from student_app.models import Student, GroupPreference
 from admin_app.models import Project, Major, ProjectPreference
 
-
+#Generic Serializers
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = 'all'
+        fields = '__all__'
+
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = 'all'
+        fields = '__all__'
+
+class GroupPreferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupPreference
+        fields = '__all__'
+
+class MajorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Major
+        fields = '__all__'
+
+#Unique Serialisers
+class MajorSerializer(serializers.ModelSerializer):
+    """Serializer for Major model (minimal fields needed for display)."""
+
+    class Meta:
+        model = Major
+        fields = ["id", "name"] 
 
 class ProjectPreferenceNestedSerializer(serializers.ModelSerializer):
     project_title = serializers.CharField(source="project.title", read_only=True)
@@ -40,12 +56,6 @@ class GroupPreferenceReceivedSerializer(serializers.ModelSerializer):
         model = GroupPreference
         fields = ["preference_type", "source_id", "source_name"]
 
-class MajorSerializer(serializers.ModelSerializer):
-    """Serializer for Major model (minimal fields needed for display)."""
-
-    class Meta:
-        model = Major
-        fields = ["id", "name"] 
 
 # Handle "" inputs for CWA
 class NullableFloatField(serializers.FloatField):
@@ -121,17 +131,6 @@ class StudentSerializer(serializers.ModelSerializer):
     notes = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     resume = serializers.FileField(required=False, allow_null=True)
 
-class GroupPreferenceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = '__all__'
-
-class MajorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Major
-        fields = '__all__'
-        
-
 class FullFormSerializer(serializers.Serializer):
     #Student fields
     student_id = serializers.CharField(max_length=8)
@@ -173,36 +172,31 @@ class FullFormSerializer(serializers.Serializer):
         #Clear old preferences
         ProjectPreference.objects.filter(student=student).delete()
         for i, project_id in enumerate(project_preference_ids):
-            project = Project.objects.get(pk=project_id)
-            ProjectPreference.objects.create(student=student, project=project, rank=i+1)
-        
+            try:  
+                project = Project.objects.get(pk=project_id)
+                ProjectPreference.objects.create(student=student, project=project, rank=i+1)
+            except Project.DoesNotExist:
+                # This prevents a server crash if an invalid ID is sent
+                print(f"Warning: Project with ID {project_id} not found. Skipping.")
+                continue 
+            
         GroupPreference.objects.filter(student=student).delete()
         for i, student_id in enumerate(preferred_preference_ids):
-            targetStudent = Student.objects.get(pk=student_id)
-            GroupPreference.objects.create(student=student, target_student=targetStudent, preference_type='like')
+            try:
+                targetStudent = Student.objects.get(pk=student_id)
+                GroupPreference.objects.create(student=student, target_student=targetStudent, preference_type='like')
+            except Student.DoesNotExist:
+                # This prevents a server crash if an invalid ID is sent
+                print(f"Warning: Student not found. Skipping.")
+                continue 
+        
         for i, student_id in enumerate(avoided_preference_ids):
-            targetStudent = Student.objects.get(pk=student_id)
-            GroupPreference.objects.create(student=student, target_student=targetStudent, preference_type='avoid')
+            try:
+                targetStudent = Student.objects.get(pk=student_id)
+                GroupPreference.objects.create(student=student, target_student=targetStudent, preference_type='avoid')
+            except Student.DoesNotExist:
+                # This prevents a server crash if an invalid ID is sent
+                print(f"Warning: Student not found. Skipping.")
+                continue 
         
         return student
-
-
-
-#Production endpoints
-# class StudentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Student
-#         fields = ['student_id', 'name', 'cwa', 'major', 'email', 'resume', 'application_submitted']
-
-# class GroupPreferenceSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = GroupPreference
-#         fields = ['student', 'target_student', 'preference_type']
-
-# class ProjectPreferenceSerializer(serializers.ModelSerializer);
-#     class Meta:
-#         model = ProjectPreference
-#         fields = ['student', 'project', 'rank']
-
-# model = ProjectPreference
-#        fields = '__all__'
