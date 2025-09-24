@@ -1,10 +1,21 @@
 from rest_framework import serializers
-from ..models import *
+from ..models import Project, ProjectPreference, Round, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Degree, Major, AdminLog
+from django.contrib.auth import get_user_model
 
 class AdminLogSerializer(serializers.ModelSerializer):
+    #Get the string representation of user
+    user = serializers.StringRelatedField(read_only=True)
+    action_display = serializers.CharField(source='get_action_display', read_only=True)
+    target = serializers.SerializerMethodField()
+
     class Meta:
         model = AdminLog
-        fields = '__all__'
+        fields = ['id', 'user', 'action', 'action_display', 'target', 'timestamp', 'notes']
+    
+    def get_target(self, obj):
+        if obj.target:
+            return str(obj.target)
+        return None
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:

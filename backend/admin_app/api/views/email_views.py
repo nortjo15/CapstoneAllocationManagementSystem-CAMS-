@@ -40,6 +40,22 @@ NOTIFICATION_TEMPLATES = {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MailtoLinkView(APIView):
     permission_classes = [IsAdminUser]
 

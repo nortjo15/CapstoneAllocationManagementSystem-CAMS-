@@ -22,13 +22,9 @@ from rest_framework.routers import DefaultRouter
 #Import all required views
 from .view.project_views import project_view, ProjectViewSet
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
-from .view.admin_views import AdminLogListCreateView #, SendNotificationView
 from .view.round_views import round_view
-from .view.round_views_restAPI import rounds_api
 from .view.group_views import *
-from .view.settings_views import settings_view
 from .view.group_views import SuggestedGroupListCreateView, SuggestedGroupMemberListCreateView
-from .view.settings_views import settings_view
 from .view.information_views import (
     information_list, information_create, information_edit, information_delete
 )
@@ -44,12 +40,12 @@ from admin_app.view.student_api_views import (
 )
 from admin_app.view.student_views import student_page
 from admin_app.view.email_views import MailtoLinkView
-from .view.admin_views import (
-    SendRoundStartView,
-    SendRoundClosedView,
-    SendApplicationSuccessView,
-    SendAllocationReleasedView,
-)
+# from .view.admin_views import (
+#     SendRoundStartView,
+#     SendRoundClosedView,
+#     SendApplicationSuccessView,
+#     SendAllocationReleasedView,
+# )
 from .view.degree_views import (
     DegreeTwoPaneView,
     DegreeCreateView, DegreeUpdateView, DegreeDeleteView,
@@ -65,23 +61,10 @@ urlpatterns = [
     path('login_success/', login_success, name="login_success"),
     path('change_password/', change_password, name='change_password'),
     #Admin_views
-    path('admin/logs/', AdminLogListCreateView.as_view(), name="admin_logs"),
     path("email/mailto/", MailtoLinkView.as_view(), name="mailto_link"),
     path("email/page/", admin_views.email_page, name="email_page"),
-    path("notify/round-start/<int:round_id>/", SendRoundStartView.as_view(), name="notify_round_start"),
-    path("notify/round-closed/<int:round_id>/", SendRoundClosedView.as_view(), name="notify_round_closed"),
-    path("notify/application-success/<str:student_id>/", SendApplicationSuccessView.as_view(), name="notify_application_success"),
-    path("notify/allocation-released/<int:final_group_id>/", SendAllocationReleasedView.as_view(), name="notify_allocation_released"),
-    path(
-        "projects/<int:project_id>/resumes/",
-        ProjectResumesView.as_view(),
-        name="project_resumes",
-    ),
-    path(
-        "projects/<int:project_id>/resumes/zip/",
-        ProjectResumesZipView.as_view(),
-        name="project_resumes_zip",
-    ),
+    path("projects/<int:project_id>/resumes/", ProjectResumesView.as_view(), name="project_resumes"),
+    path("projects/<int:project_id>/resumes/zip/", ProjectResumesZipView.as_view(), name="project_resumes_zip"),
     #Round_views
     path('rounds/', round_view, name='round_view'),
     #Student_views
@@ -92,7 +75,6 @@ urlpatterns = [
     path("viewStudents/", student_page, name="student_view"),
     #Project_views
     path('project_list/', ProjectListCreateView.as_view(), name="project-list"),
-    #path('preferences/', ProjectPreferenceListCreateView.as_view()),
     path('projectDashboard/', project_view, name='project_dashboard'),
     #Group_views
     path("suggested_groups/", SuggestedGroupListCreateView.as_view(), name="suggested-group-list"),
@@ -110,12 +92,12 @@ urlpatterns = [
     # -- Webpage
     path("suggested_groups_view/", GroupListView.as_view(), name="groups_view"),
     #Settings_views
-    path('settings/', settings_view, name='settings'),
+    path('settings/', admin_views.settings_view, name='settings'),
     #Round_views
     path('rounds/', round_view, name='round_view'),
-    path('api/rounds/', rounds_api, name='rounds_api_list'),
-    path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
-    path('api/projects/', rounds_api, name='projects_api'),
+    #path('api/rounds/', rounds_api, name='rounds_api_list'),
+    #path('api/rounds/<int:round_id>/', rounds_api, name='rounds_api_detail'),
+    #path('api/projects/', rounds_api, name='projects_api'),
     #Information CRUD
     path('information/',              information_list,  name='information_list'),
     path('information/new/',          information_create, name='information_create'),
@@ -126,16 +108,11 @@ urlpatterns = [
     path('sections/new/',            section_create, name='section_create'),
     path('sections/<int:pk>/edit/',  section_edit,   name='section_edit'),
     path('sections/<int:pk>/delete/',section_delete, name='section_delete'),
-
-    #api endpoint
-    path('', include('admin_app.api.urls')),
-    
+    #Degree and Major CRUD
     path("degrees", DegreeTwoPaneView.as_view(), name="degree_twopane"),
-
     path("degrees/create", DegreeCreateView.as_view(), name="degree_create"),
     path("degrees/<int:pk>/edit", DegreeUpdateView.as_view(), name="degree_edit"),
     path("degrees/<int:pk>/delete", DegreeDeleteView.as_view(), name="degree_delete"),
-
     path("degrees/<int:degree_id>/majors/create", MajorCreateView.as_view(), name="major_create"),
     path("majors/<int:pk>/edit", MajorUpdateView.as_view(), name="major_edit"),
     path("majors/<int:pk>/delete", MajorDeleteView.as_view(), name="major_delete"),
