@@ -2,39 +2,23 @@
 {% load static %}
 
 {% block extra_css %}
-{% comment %} <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}"> 
 {% endblock %}
-{% comment %} {% load static %} {% endcomment %}
-{% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}">
-    <title>Manage Project Rounds</title>
-</head>
-{% comment %} <body data-projects-api-url="{% url 'api_admin:projects_api' %}"> {% endcomment %}
-<body>
-    {% csrf_token %}
 
+{% block content %}
+    {% csrf_token %}
     <div class="container">
         <div id="left-pane">
             <h1>Capstone Rounds</h1>
-            <button id="create-new-round-btn">
-                + Create New Round
-            </button>
-            <div id="rounds-list">
-            </div>
+            <button id="create-new-round-btn">+ Create New Round</button>
+            <div id="rounds-list"> </div>
         </div>
 
-
         <div id="right-pane">
-            <h1 id='right-pane-title'></h1>
-            <div id="round-details-view">
+            <h1 id='right-pane-title'>Select a Round</h1>
+
+            <div id="round-details-view" class="hidden">
                 <form id="edit-round-form">
-                    {% csrf_token %}
                     <input type="hidden" id="edit-round-id">
                     <div>
                         <label for="edit-round-name">Round Name</label>
@@ -53,22 +37,18 @@
                         <input type="text" id="edit-status">
                     </div>
                     <div>
-                        <span>Projects</span>
+                        <label for="edit-round-projects">Projects</label>
                         <div id="edit-round-projects"></div>
                     </div>
                     <div>
-                        <button type="submit">
-                            Save Changes
-                        </button>
-                        <button type="button" id="delete-round-btn">
-                            Delete
-                        </button>
+                        <button type="submit">Save Changes</button>
+                        <button type="button" id="delete-round-btn">Delete</button>
                     </div>
                 </form>
             </div>
-            <div id="create-round-view">
+
+            <div id="create-round-view" class="hidden">
                 <form id="create-round-form">
-                    {% csrf_token %}
                     <div>
                         <label for="create-round-name">Round Name</label>
                         <input type="text" id="create-round-name">
@@ -86,21 +66,19 @@
                         <input type="text" id="create-status">
                     </div>
                     <div>
-                        
-                        <span>Projects</span>
+                        <label for="create-round-projects"></div>
                         <div id="create-round-projects"></div>
                         </select>
                     </div>
                     <div>
-                        <button type="submit">
-                            Create Round
-                        </button>
+                        <button type="submit">Create Round</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    {% load static %}
-    <script src="{% static '../static/admin_app/js/round.js' %}"></script>
-</body>
 {% endblock content %}
+{% block scripts %}
+    <script src="{% static '../static/admin_app/js/round.js' %}"></script>
+{% endblock scripts%}
+

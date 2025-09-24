@@ -1,9 +1,8 @@
 from rest_framework import generics, viewsets
-from ..serializers import *
-from ... import email_service
+from admin_app.api.serializers import AdminLogSerializer
+from admin_app import email_service
 from admin_app.models import AdminLog, Project, Round, FinalGroup
 from student_app.models import Student
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from django.core.mail import send_mail

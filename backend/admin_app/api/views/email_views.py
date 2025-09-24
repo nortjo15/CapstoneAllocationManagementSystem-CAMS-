@@ -1,15 +1,3 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
-from django.http import HttpResponse
-from django.core.files.storage import default_storage
-import io, zipfile, urllib.parse
-from django.conf import settings
-
-from admin_app.models import Project, Round, FinalGroupMember
-from student_app.models import Student
-
 # --- Notification templates ---
 NOTIFICATION_TEMPLATES = {
     "round_start": {
