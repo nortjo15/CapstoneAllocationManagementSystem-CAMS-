@@ -42,6 +42,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin_dashboard:email_page' %}">Email</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:degree_dashboard' %}">Degrees</a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
@@ -56,12 +59,14 @@
     <div id="content">
         {% block content %}{% endblock %}
     </div>
-    
+
     <script>
         window.ENDPOINTS = {
             projects: "{% url 'api_admin:project-list' %}",
             rounds: "{% url 'api_admin:round-list' %}",
             adminLogs: "{% url 'api_admin:admin_log-list' %}",
+            degrees: "{% url 'api_admin:degree-list' %}",
+            majors: "{% url 'api_admin:major-list' %}",
             // Add other endpoints here as you create them
         };
     </script>

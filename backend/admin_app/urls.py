@@ -20,7 +20,7 @@ from django.conf import settings
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 #Import all required views
-from .view.project_views import project_view, ProjectViewSet
+from .view.project_views import project_view
 from .view.auth_views import register_view, login_view, logout_view, login_success, change_password
 from .view.round_views import round_view
 from .view.group_views import *
@@ -40,17 +40,8 @@ from admin_app.view.student_api_views import (
 )
 from admin_app.view.student_views import student_page
 from admin_app.view.email_views import MailtoLinkView
-# from .view.admin_views import (
-#     SendRoundStartView,
-#     SendRoundClosedView,
-#     SendApplicationSuccessView,
-#     SendAllocationReleasedView,
-# )
-from .view.degree_views import (
-    DegreeTwoPaneView,
-    DegreeCreateView, DegreeUpdateView, DegreeDeleteView,
-    MajorCreateView, MajorUpdateView, MajorDeleteView,
-)
+from admin_app.view.degree_views import degree_view
+
 
 app_name = 'admin_app'
 urlpatterns = [
@@ -74,7 +65,7 @@ urlpatterns = [
     path("students/<pk>/notes/", StudentNotesUpdateAPIView.as_view(), name="student_notes_update"),
     path("viewStudents/", student_page, name="student_view"),
     #Project_views
-    path('project_list/', ProjectListCreateView.as_view(), name="project-list"),
+    #path('project_list/', ProjectListCreateView.as_view(), name="project-list"),
     path('projectDashboard/', project_view, name='project_dashboard'),
     #Group_views
     path("suggested_groups/", SuggestedGroupListCreateView.as_view(), name="suggested-group-list"),
@@ -108,13 +99,14 @@ urlpatterns = [
     path('sections/new/',            section_create, name='section_create'),
     path('sections/<int:pk>/edit/',  section_edit,   name='section_edit'),
     path('sections/<int:pk>/delete/',section_delete, name='section_delete'),
-    #Degree and Major CRUD
-    path("degrees", DegreeTwoPaneView.as_view(), name="degree_twopane"),
-    path("degrees/create", DegreeCreateView.as_view(), name="degree_create"),
-    path("degrees/<int:pk>/edit", DegreeUpdateView.as_view(), name="degree_edit"),
-    path("degrees/<int:pk>/delete", DegreeDeleteView.as_view(), name="degree_delete"),
-    path("degrees/<int:degree_id>/majors/create", MajorCreateView.as_view(), name="major_create"),
-    path("majors/<int:pk>/edit", MajorUpdateView.as_view(), name="major_edit"),
-    path("majors/<int:pk>/delete", MajorDeleteView.as_view(), name="major_delete"),
+    #Degree and Major
+    path('degreeDashboard/', degree_view, name='degree_dashboard'),
+    # path("degrees", DegreeTwoPaneView.as_view(), name="degree_twopane"),
+    # path("degrees/create", DegreeCreateView.as_view(), name="degree_create"),
+    # path("degrees/<int:pk>/edit", DegreeUpdateView.as_view(), name="degree_edit"),
+    # path("degrees/<int:pk>/delete", DegreeDeleteView.as_view(), name="degree_delete"),
+    # path("degrees/<int:degree_id>/majors/create", MajorCreateView.as_view(), name="major_create"),
+    # path("majors/<int:pk>/edit", MajorUpdateView.as_view(), name="major_edit"),
+    # path("majors/<int:pk>/delete", MajorDeleteView.as_view(), name="major_delete"),
     
 ]

@@ -86,6 +86,8 @@ class DegreeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class MajorSerializer(serializers.ModelSerializer):
+    degree_name = serializers.CharField(source='degree.name', read_only=True)
+    student_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = Major
-        fields = '__all__'
+        fields = ['id', 'name', 'degree', 'degree_name', 'student_count']

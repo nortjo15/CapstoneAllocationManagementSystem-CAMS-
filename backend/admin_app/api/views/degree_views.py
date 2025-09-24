@@ -7,16 +7,19 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
-
+from django.db.models import Count
 from admin_app.models import Degree, Major
+from student_app.models import Student
 from admin_app.forms.degree_forms import DegreeForm, MajorForm
 
 class DegreeViewSet(viewsets.ModelViewSet):
-    queryset = Degree.objects.all()
+    queryset = Degree.objects.all().order_by('name')
     serializer_class = DegreeSerializer
 
 class MajorViewSet(viewsets.ModelViewSet):
-    queryset = Major.objects.all()
+    queryset = Major.objects.select_related('degree').annotate(
+        student_count=Count('students')
+    ).order_by('degree__name', 'name')
     serializer_class = MajorSerializer
 
 LOGIN_DECORATOR = method_decorator(login_required, name="dispatch")
