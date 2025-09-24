@@ -5,8 +5,9 @@
 <main>
   {% if sections %}
     <nav aria-label="Sections">
-      <h1>Capstone Information — Sections</h1>
+      <h1>Capstone Information</h1>
       <ul>
+        <p>Click on a section to view details:</p>
         {% for section in sections %}
           <li>
             <a href="{% url 'student_app:section_detail' section.id %}">{{ section.name }}</a>
