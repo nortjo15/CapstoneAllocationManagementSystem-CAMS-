@@ -1,35 +1,46 @@
 {% extends "admin_base.html" %}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Section</title>
-</head>
-<body>
-  <h1>Section</h1>
+{% load static form_extras %}
 
-  {% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
-  {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+{% block page_header %}
+<h1 class="h3 mb-0">{% if form.instance.pk %}Edit section{% else %}New section{% endif %}</h1>
+{% endblock %}
 
-  <form method="post">{% csrf_token %}
-    <div class="field">
-      <label for="{{ form.name.id_for_label }}">Name</label>
-      {{ form.name }} {{ form.name.errors }}
+{% block page_toolbar %}
+<a href="{% url 'admin_app:section_list' %}" class="btn btn-outline-secondary">Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="card"><div class="card-body">
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
+      {{ form.name|add_class:"form-control" }}
+      {% if form.name.errors %}<div class="invalid-feedback d-block">{{ form.name.errors|join:", " }}</div>{% endif %}
     </div>
-    <div class="field">
-      <label for="{{ form.parent_section.id_for_label }}">Parent section</label>
-      {{ form.parent_section }} {{ form.parent_section.errors }}
+
+    <div class="mb-3">
+      <label for="{{ form.parent_section.id_for_label }}" class="form-label">Parent section</label>
+      {{ form.parent_section|add_class:"form-select" }}
+      {% if form.parent_section.errors %}<div class="invalid-feedback d-block">{{ form.parent_section.errors|join:", " }}</div>{% endif %}
+      <div class="form-text">Leave empty for a top-level section.</div>
     </div>
-    <div class="field">
-      <label for="{{ form.order.id_for_label }}">Order</label>
-      {{ form.order }} {{ form.order.errors }}
+
+    <div class="mb-3">
+      <label for="{{ form.order.id_for_label }}" class="form-label">Order</label>
+      {{ form.order|add_class:"form-control" }}
+      {% if form.order.errors %}<div class="invalid-feedback d-block">{{ form.order.errors|join:", " }}</div>{% endif %}
     </div>
-    <div class="actions">
-      <button type="submit">Save</button>
-      <a href="{% url 'admin_app:section_list' %}">Back to list</a>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="{% url 'admin_app:section_list' %}" class="btn btn-outline-secondary">Cancel</a>
     </div>
   </form>
-</body>
-</html>
-
+</div></div>
 {% endblock %}

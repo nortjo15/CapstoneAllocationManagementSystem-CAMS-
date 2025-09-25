@@ -19,11 +19,13 @@ from django.conf import settings
 from django.urls import path, include
 #Import all required views
 from admin_app.view import admin_views, auth_views, information_views, section_views, round_views, student_views, project_views, group_views, degree_views
+from django.views.generic import RedirectView
 
 #App namespace
 app_name = 'admin_app'
 
 urlpatterns = [
+    path("", RedirectView.as_view(pattern_name="admin_app:login_success", permanent=False)),
     #Auth_views
     path('register/', auth_views.register_view, name="register"),
     path('login/', auth_views.login_view, name="login"),
