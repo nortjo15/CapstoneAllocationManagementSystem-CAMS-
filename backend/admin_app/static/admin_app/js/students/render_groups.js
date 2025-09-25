@@ -180,7 +180,7 @@ export function renderProjectInfo(group, groupSize, projectName,
     }
     else 
     {
-        fetch("/api/project_list/")
+        fetch("/api/admin/project_list/")
             .then(res => res.json())
             .then(projects => {
                 cachedProjects = projects;

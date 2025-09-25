@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         suggestedGroupsInitialised = true; 
 
         // --- Load existing auto-suggested groups on page reload ---
-        fetch("/api/suggested_groups/auto/")
+        fetch("/api/admin/suggested_groups/auto/")
             .then(res => res.json())
             .then(data => {
                 renderSuggestedGroups(data);
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         generateBtn.addEventListener("click", () => {
             setButtonLoading(generateBtn, true);
 
-            fetch("/api/generate_suggestions/", {
+            fetch("/api/admin/generate_suggestions/", {
                 method: "POST",
                 headers: { "X-CSRFToken": csrfToken }
             })
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         createBtn.addEventListener("click", () => {
             setButtonLoading(createBtn, true);
 
-            fetch("/api/suggested_groups/create_manual/", {
+            fetch("/api/admin/suggested_groups/create_manual/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initManualGroups()
     {
-        fetch("/api/suggested_groups/manual/")
+        fetch("/api/admin/suggested_groups/manual/")
             .then(res => res.json())
             .then(groups => {
                 manualGroupsUl.innerHTML = "";
@@ -175,7 +175,7 @@ export function removeStudentFromGroup(student, group)
     group.members = group.members.filter(m => m.student.student_id !== student.student_id);
     updateGroupUI(group, finaliseBtn);
 
-    fetch(`/api/suggested_groups/${group.suggestedgroup_id}/remove_student/`, {
+    fetch(`/api/admin/suggested_groups/${group.suggestedgroup_id}/remove_student/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -222,7 +222,7 @@ export function loadGroup(id)
         return;
     }
 
-    fetch(`/api/suggested_groups/${id}/`)
+    fetch(`/api/admin/suggested_groups/${id}/`)
         .then(res => res.json())
         .then(group => {
             window.suggestedGroupsCache.set(group.suggestedgroup_id, group);

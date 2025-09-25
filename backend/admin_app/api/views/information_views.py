@@ -1,11 +1,9 @@
 # admin_app/view/informations_views.py
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
 from django.core.paginator import Paginator
-
 from admin_app.models import CapstoneInformationContent, CapstoneInformationSection
 from admin_app.forms.admin_forms import InformationForm
 
