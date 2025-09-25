@@ -7,6 +7,7 @@
     const elements = {
         // Main containers
         majorsTableContainer: document.getElementById('majors-table-container'),
+        degreesTableContainer: document.getElementById('degrees-table-container'),
         majorsHeading: document.getElementById('majors-heading'),
         backdrop: document.getElementById('backdrop'),
 
@@ -57,11 +58,11 @@
         const tableRows = state.majors.map(major => `
             <tr>
                 <td>${major.degree_name}</td>
-                    <td>${major.name}</td>
-                    <td>${major.student_count}</td>
+                <td>${major.name}</td>
+                <td>${major.student_count}</td>
                 <td class="actions">
-                    <button class="btn btn-sm btn-secondary edit-major-btn" data-major-id="${major.id}">Edit</button>
-                    <button class="btn btn-sm btn-danger delete-major-btn" data-major-id="${major.id}">Delete</button>
+                    <button class="btn btn-sm btn-secondary edit-major-btn" data-id="${major.id}">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-major-btn" data-id="${major.id}">Delete</button>
                 </td>
             </tr>
         `).join('');
@@ -69,6 +70,29 @@
         elements.majorsTableContainer.innerHTML = `
             <table class="table">
                 <thead><tr><th>Degree</th><th>Major</th><th>Student Count</th><th>Actions</th></tr></thead>
+                <tbody>${tableRows}</tbody>
+            </table>`;
+    }
+
+    function renderDegreesTable() {
+        if(state.degrees.length === 0){
+            elements.degreesTableContainer.innerHTML = "<p> No Degrees Found </p>";
+            return;
+        }
+
+        const tableRows = state.degrees.map(degree => `
+            <tr>   
+                <td>${degree.name}</td>
+                <td class="actions">
+                    <button class="btn btn-sm btn-secondary edit-degree-btn" data-id="${degree.id}">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-degree-btn" data-id="${degree.id}">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+
+         elements.degreesTableContainer.innerHTML = `
+            <table class="table">
+                <thead><tr><th>Degree</th></tr></thead>
                 <tbody>${tableRows}</tbody>
             </table>`;
     }
@@ -120,6 +144,7 @@
         }
         openSlide(elements.majorSlide);
     }
+    
 
     // Handles the submission for both creating and editing a degree.
     async function handleDegreeSubmit(event) {
@@ -167,15 +192,24 @@
     }
 
     async function handleDeleteMajor(majorId) {
-        if (!confirm('Are you sure you want to delete this major?')) return;
-            
-        try {
+        if(!confirm('Are you sure you want to delete this major?')) return;
+
+        try{
             await apiFetch(`${window.ENDPOINTS.majors}${majorId}/`, { method: 'DELETE' });
-            // Remove the major from the local state and re-render
-            state.majors = state.majors.filter(m => m.id !== parseInt(majorId));
             await init();
-        } catch (error) {
+        }catch (error) {
             alert('Failed to delete major.');
+        }
+    }
+
+     async function handleDeleteDegree(degreeId) {
+        if(!confirm('Are you sure you want to delete this Degree?')) return;
+        
+        try{
+            await apiFetch(`${window.ENDPOINTS.degrees}${degreeId}/`, { method: 'DELETE' });
+            await init();
+        }catch (error) {
+            alert('Failed to delete degree.');
         }
     }
 
@@ -202,14 +236,26 @@
                 handleDeleteMajor(event.target.dataset.id);
             }
         });
+
+        elements.degreesTableContainer.addEventListener('click', (event) => {
+            if(event.target.matches('.edit-degree-btn')) {
+                handleOpenDegreeForm(event.target.dataset.id)
+            }
+            if (event.target.matches('.delete-degree-btn')) {
+                handleDeleteDegree(event.target.dataset.id);
+            }
+        });
     }
 
     async function init() {
         // Fetch the initial list of majors to display in the table
         const majorsData = await apiFetch(window.ENDPOINTS.majors);
+        const degreeData = await apiFetch(window.ENDPOINTS.degrees);
         // Handle both paginated and unpaginated responses
         state.majors = majorsData.results || majorsData;
+        state.degrees = degreeData.results || degreeData;
         renderMajorsTable();
+        renderDegreesTable();
             
         // Set up all the interactive parts of the page
         setupEventListeners();
