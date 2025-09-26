@@ -1,4 +1,4 @@
-from admin_app.serializers import ProjectSerializer, ProjectPreferenceSerializer
+from admin_app.api.serializers import ProjectSerializer, ProjectPreferenceSerializer
 from admin_app.models import Project, ProjectPreference
 from rest_framework import viewsets
 
