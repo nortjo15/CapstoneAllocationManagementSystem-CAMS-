@@ -28,8 +28,8 @@ NOTIFICATION_TEMPLATES = {
         "audience": "industry",
     },
     "post_round_finish_students": {
-        "subject": "Round Outcome",
-        "body": "Dear Student,\n\nWe are pleased to inform you of your outcome. Please check the portal for details.\n\nRegards,\nAdmin",
+        "subject": "Industry Round Selection",
+    "body": "Dear Student,\n\nCongratulations! You have been selected for the Industry Round. Please check the portal for details.\n\nRegards,\nAdmin",
         "audience": "students",
     },
     "post_round_finish_finalised_groups": {

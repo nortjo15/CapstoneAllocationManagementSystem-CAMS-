@@ -1,162 +1,199 @@
 {% extends "admin_base.html" %}
+
+{% block page_header %}
+<h1 class="h3 mb-0">Email notifications</h1>
+{% endblock %}
+
 {% block content %}
-<h2>Email Notifications</h2>
+<div class="row g-4">
 
-<!-- Round Start/End Notifications -->
-<h3>Round Start/End Notifications</h3>
-<label for="notificationType">Select Notification:</label>
-<select id="notificationType">
-  <option value="round_start">Round Start</option>
-  <option value="round_end">Round End</option>
-</select>
-<br><br>
-<label for="roundNum">Round Number:</label>
-<input type="number" id="roundNum" min="1" placeholder="Enter round number">
-<br><br>
-<button onclick="sendRoundEmail()">Send Round Notification</button>
+  <!-- Round notifications -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">Round notifications</div>
+      <div class="card-body">
+        <form class="row g-3 align-items-end" onsubmit="sendRoundEmail(); return false;">
+          <div class="col-sm-5 col-md-4">
+            <label for="notificationType" class="form-label">Notification</label>
+            <select id="notificationType" class="form-select">
+              <option value="round_start">Round start</option>
+              <option value="round_end">Round end</option>
+            </select>
+          </div>
+          <div class="col-sm-4 col-md-3">
+            <label for="roundNum" class="form-label">Round number</label>
+            <input type="number" id="roundNum" min="1" class="form-control" placeholder="e.g. 1">
+          </div>
+          <div class="col-sm-3 col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Compose in Outlook</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
+  <!-- Internal project emails -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">Internal project emails</div>
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-6 col-lg-4">
+            <label for="projectSelect" class="form-label">Project</label>
+            <select id="projectSelect" class="form-select">
+              {% if projects %}
+                {% for project in projects %}
+                  <option value="{{ project.project_id }}">{{ project.title }}</option>
+                {% endfor %}
+              {% else %}
+                <option disabled selected>No internal projects available</option>
+              {% endif %}
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-8 d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" onclick="loadResumes()">Show resumes</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="downloadResumes()">Download resumes (ZIP)</button>
+            <button type="button" class="btn btn-primary" onclick="sendIndustryEmail()">Compose industry email</button>
+          </div>
+        </div>
 
+        <hr class="my-4">
+        <h6 class="mb-2">Resumes for selected project</h6>
+        <div id="resumeList"></div>
+      </div>
+    </div>
+  </div>
 
-<!-- Original Dropdown -->
-<h4>Dropdown Content:</h4>
-<select id="projectSelect">
-  {% if projects %}
-    {% for project in projects %}
-      <option value="{{ project.project_id }}">{{ project.title }} </option>
-    {% endfor %}
-  {% else %}
-    <option disabled selected>No internal projects available</option>
-  {% endif %}
-</select>
+  <!-- Other notifications -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">Other notifications</div>
+      <div class="card-body d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-outline-primary" onclick="sendOtherEmail('post_round_finish_students')">
+          Post round finish (students)
+        </button>
+        <button type="button" class="btn btn-outline-primary" onclick="sendFinalisedGroupsEmail()">
+          Post round finish (finalised groups)
+        </button>
+      </div>
+    </div>
+  </div>
 
+</div>
+{% endblock %}
 
-<br><br>
-<button onclick="sendIndustryEmail()">Send Industry Email Notification</button>
-<button onclick="loadResumes()">Show Resumes</button>
-<button onclick="downloadResumes()">Download Resume PDFs (ZIP)</button>
-
-<!-- Resume List -->
-<h3>Resumes for Selected Project</h3>
-<div id="resumeList"></div>
-
-<!-- Round Close  -->
-<h3>Round Close Notification</h3>
-<button onclick="sendOtherEmail('post_round_finish_students')">Send Round Close Notification (Students)</button>
-
-<!-- Finalised Groups -->
-<h3>Groups Finalised</h3>
-<button onclick="sendFinalisedGroupsEmail()">Send Groups Finalised Notification</button>
-
-
+{% block scripts %}
 <script>
-const mailtoUrlBase = "{% url 'admin_app:mailto_link' %}";
+const mailtoUrlBase = "{% url 'api_admin:mailto_link' %}";
 
 async function sendRoundEmail() {
-    const csrftoken = getCookie('csrftoken');
-    const type = document.getElementById("notificationType").value;
-    const roundNum = document.getElementById("roundNum").value;
-    if (!roundNum) { alert("Please enter a round number."); return; }
+  const csrftoken = getCookie('csrftoken');
+  const type = document.getElementById("notificationType").value;
+  const roundNum = document.getElementById("roundNum").value;
+  if (!roundNum) { alert("Enter a round number."); return; }
 
-    const res = await fetch(mailtoUrlBase, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
-        body: JSON.stringify({ notification_type: type, round_num: roundNum })
-    });
-    handleResponse(res);
+  const res = await fetch(mailtoUrlBase, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+    credentials: "same-origin",
+    body: JSON.stringify({ notification_type: type, round_num: roundNum })
+  });
+  handleResponse(res);
 }
 
 async function sendIndustryEmail() {
-    const csrftoken = getCookie('csrftoken');
-    const projectSelect = document.getElementById("projectSelect");
-    const projectId = projectSelect ? projectSelect.value : null;
+  const csrftoken = getCookie('csrftoken');
+  const sel = document.getElementById("projectSelect");
+  const projectId = sel && sel.value ? sel.value : null;
+  if (!projectId) { alert("No internal project selected."); return; }
 
-    if (!projectId) { alert("No internal project available."); return; }
-
-    const res = await fetch(mailtoUrlBase, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
-        body: JSON.stringify({ notification_type: "post_round_finish_industry", project_id: projectId })
-    });
-    handleResponse(res);
+  const res = await fetch(mailtoUrlBase, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+    credentials: "same-origin",
+    body: JSON.stringify({ notification_type: "post_round_finish_industry", project_id: projectId })
+  });
+  handleResponse(res);
 }
 
 async function sendOtherEmail(type) {
-    const csrftoken = getCookie('csrftoken');
-    const res = await fetch(mailtoUrlBase, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
-        body: JSON.stringify({ notification_type: type })
-    });
-    handleResponse(res);
+  const csrftoken = getCookie('csrftoken');
+  const res = await fetch(mailtoUrlBase, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+    credentials: "same-origin",
+    body: JSON.stringify({ notification_type: type })
+  });
+  handleResponse(res);
 }
 
 async function sendFinalisedGroupsEmail() {
-    const csrftoken = getCookie('csrftoken');
-    const res = await fetch(mailtoUrlBase, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
-        body: JSON.stringify({ notification_type: "post_round_finish_finalised_groups" })
-    });
-    handleResponse(res);
+  const csrftoken = getCookie('csrftoken');
+  const res = await fetch(mailtoUrlBase, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+    credentials: "same-origin",
+    body: JSON.stringify({ notification_type: "post_round_finish_finalised_groups" })
+  });
+  handleResponse(res);
 }
 
 async function loadResumes() {
-    const projectSelect = document.getElementById("projectSelect");
-    const projectId = projectSelect ? projectSelect.value : null;
-    if (!projectId) { alert("No internal project selected."); return; }
+  const sel = document.getElementById("projectSelect");
+  const projectId = sel && sel.value ? sel.value : null;
+  if (!projectId) { alert("No internal project selected."); return; }
 
-    const url = "{% url 'admin_app:project_resumes' 0 %}".replace('/0/', `/${projectId}/`);
-    const res = await fetch(url);
-    const data = await res.json();
-    const container = document.getElementById("resumeList");
-    container.innerHTML = "";
+  const url = "{% url 'api_admin:project_resumes' 0 %}".replace('/0/', `/${projectId}/`);
+  const res = await fetch(url, { credentials: "same-origin" });
+  const data = await res.json();
+  const container = document.getElementById("resumeList");
+  container.innerHTML = "";
 
-    if (data.resumes && data.resumes.length > 0) {
-        data.resumes.forEach(r => {
-            const link = document.createElement("a");
-            link.href = r.resume_url;
-            link.textContent = `${r.student_id} - ${r.name}`;
-            link.target = "_blank";
-            container.appendChild(link);
-            container.appendChild(document.createElement("br"));
-        });
-    } else {
-        container.innerHTML = "<p>No resumes found for this project.</p>";
-    }
+  if (data.resumes && data.resumes.length) {
+    data.resumes.forEach(r => {
+      const a = document.createElement("a");
+      a.href = r.resume_url;
+      a.textContent = `${r.student_id} - ${r.name}`;
+      a.target = "_blank";
+      container.appendChild(a);
+      container.appendChild(document.createElement("br"));
+    });
+  } else {
+    container.innerHTML = "<p class='text-muted mb-0'>No resumes found for this project.</p>";
+  }
 }
 
 function downloadResumes() {
-    const projectSelect = document.getElementById("projectSelect");
-    const projectId = projectSelect ? projectSelect.value : null;
-    if (!projectId) { alert("No internal project selected."); return; }
-
-    const url = "{% url 'admin_app:project_resumes_zip' 0 %}".replace('/0/', `/${projectId}/`);
-    window.location.href = url;
+  const sel = document.getElementById("projectSelect");
+  const projectId = sel && sel.value ? sel.value : null;
+  if (!projectId) { alert("No internal project selected."); return; }
+  const url = "{% url 'api_admin:project_resumes_zip' 0 %}".replace('/0/', `/${projectId}/`);
+  window.location.href = url;
 }
 
 async function handleResponse(res) {
-    if (!res.ok) { alert("Error: Could not contact server."); return; }
-    const data = await res.json();
-    if (!data.mailto_link) { alert("Error: " + (data.error || "Could not generate email link")); return; }
+  if (!res.ok) { alert("Error: Could not contact server."); return; }
+  const data = await res.json();
+  if (!data.mailto_link) { alert("Error: " + (data.error || "Could not generate email link")); return; }
 
-    const mailtoUrl = new URL(data.mailto_link);
-    const recipients = mailtoUrl.pathname.replace(/^\/+/, "");
-    const subject = mailtoUrl.searchParams.get("subject") || "";
-    const body = mailtoUrl.searchParams.get("body") || "";
+  const mailtoUrl = new URL(data.mailto_link);
+  const recipients = mailtoUrl.pathname.replace(/^\/+/, "");
+  const subject = mailtoUrl.searchParams.get("subject") || "";
+  const body = mailtoUrl.searchParams.get("body") || "";
 
-    const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(recipients)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(outlookUrl, "_blank");
+  const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(recipients)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(outlookUrl, "_blank");
 }
 
 function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        document.cookie.split(';').forEach(cookie => {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); }
-        });
-    }
-    return cookieValue;
+  let v = null;
+  if (document.cookie && document.cookie !== '') {
+    document.cookie.split(';').forEach(c => {
+      c = c.trim();
+      if (c.startsWith(name + '=')) v = decodeURIComponent(c.substring(name.length + 1));
+    });
+  }
+  return v;
 }
 </script>
 {% endblock %}
