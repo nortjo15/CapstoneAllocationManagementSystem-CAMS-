@@ -28,7 +28,7 @@ export function finaliseGroup(groupId, name, notes)
         return;
     }
 
-    fetch("/api/final_groups/", {
+    fetch("/api/admin/final_groups/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

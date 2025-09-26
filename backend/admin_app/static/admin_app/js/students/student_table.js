@@ -16,7 +16,7 @@ function getGroupCapacityInfo() {
 }
 
 export function fetchStudents(targetId = "studentsTableBody", params = "") {
-    fetch(`/api/students/${params}`)
+    fetch(`/api/admin/students/${params}`)
         .then(res => res.json())
         .then(data => {
 
@@ -103,7 +103,7 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                         e.stopPropagation();
 
                         //Get the full student before opening modal
-                        fetch(`/api/students/${student.student_id}/`)
+                        fetch(`/api/admin/students/${student.student_id}/`)
                             .then(res => res.json())
                             .then(fullStudent => openPreferenceModal(fullStudent))
                     });
@@ -130,7 +130,7 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                         e.stopPropagation();
 
                         //Get full student before opening modal
-                        fetch(`/api/students/${student.student_id}`)
+                        fetch(`/api/admin/students/${student.student_id}`)
                             .then(res => res.json())
                             .then(fullStudent => openMemberPreferenceModal(fullStudent))
                     })

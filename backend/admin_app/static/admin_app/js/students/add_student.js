@@ -73,7 +73,7 @@ if (addStudentForm) {
         const csrfToken = csrfTokenInput ? csrfTokenInput.value : "";
 
         // --- Submit to API ---
-        fetch("/api/students/", {
+        fetch("/api/admin/students/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -49,57 +49,12 @@
 
     <div style="margin-top: 40px;">
         <h2>Admin Activity Log</h2>
-        {% if admin_logs %}
-            <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background-color: #e9ecef;">
-                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">User</th>
-                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Action</th>
-                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Target</th>
-                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Timestamp</th>
-                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for log in admin_logs %}
-                            <tr>
-                                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.user.username }}</td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">
-                                    <span style="background-color: 
-                                        {% if log.action == 'CREATE' %}#d4edda
-                                        {% elif log.action == 'EDIT' %}#fff3cd
-                                        {% elif log.action == 'DELETE' %}#f8d7da
-                                        {% elif log.action == 'LOGIN' %}#cce5ff
-                                        {% else %}#e2e3e5{% endif %}; 
-                                        padding: 2px 6px; border-radius: 3px; font-size: 0.85em;">
-                                        {{ log.get_action_display }}
-                                    </span>
-                                </td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">
-                                    {% if log.target %}
-                                        {{ log.target }}
-                                    {% else %}
-                                        <em>No target</em>
-                                    {% endif %}
-                                </td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.timestamp|date:"M d, Y H:i" }}</td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">
-                                    {% if log.notes %}
-                                        {{ log.notes|truncatechars:50 }}
-                                    {% else %}
-                                        <em>No notes</em>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <p style="color: #6c757d; font-style: italic;">No admin logs found.</p>
-        {% endif %}
+        <div id="admin-logs-container">
+            <p> Loading Logs...</p>
+        </div>
     </div>
+
+    <script src="{% static 'admin_app/js/settings.js' %}"></script>
 
     <button type="button" style="margin-top: 20px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
     Clear Logs
@@ -124,14 +79,10 @@
 
     
 </div>
-    
-
-    
 
     <script>
     function changePassword() {
         window.location.href = '{% url 'admin_dashboard:change_password' %}';
     }
     </script>
-<script src="{% static 'admin_app/js/settings.js' %}"></script>
 {% endblock %}

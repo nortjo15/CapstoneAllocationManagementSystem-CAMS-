@@ -1,0 +1,76 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'admin_app/css/degree.css' %}"> 
+{% endblock %}
+
+{% block content %}
+    <h1>Degrees</h1>
+    <div id="degrees-table-container">
+        <p>Loading Degrees...</p>
+    </div>
+    <div class="toolbar">
+        <button id="add-degree-btn" type="button" class="btn btn-primary">Add Degree</button>
+    </div>
+    <h1>Majors</h1>
+    <div id="majors-table-container">
+        <p>Loading Majors...</p>
+    </div>
+    <div class="toolbar">
+        <button id="add-major-btn" type="button" class="btn btn-primary">Add Major</button>
+    </div>
+
+    <div id="pagination-container" class="pagination"></div>
+
+    <div id="backdrop" class="backdrop"></div>
+
+    <aside id="degree-slide" class="slideover">
+        <header>
+            <h3 id="degree-form-title">Create Degree</h3>
+            <button type="button" class="close-slide-btn">✕</button>
+        </header>
+        <form id="degree-form">
+            {% csrf_token %}
+            <input type="hidden" id="degree-id" name="id">
+            <div class="field">
+                <label for="degree-name">Degree Name</label>
+                <input type="text" id="degree-name" name="name" required>
+            </div>
+            <div>
+                <button type="submit">Save</button>
+                <button type="button" class="close-slide-btn">Cancel</button>
+            </div>
+        </form>
+    </aside>
+
+    <aside id="major-slide" class="slideover">
+        <header>
+            <h3 id="major-form-title">Create Major</h3>
+            <button type="button" class="close-slide-btn">✕</button>
+        </header>
+        <form id="major-form">
+            {% csrf_token %}
+            <input type="hidden" id="major-id" name="id">
+            <div class="field">
+                <label for="major-degree-select">Degree</label>
+                <select id="major-degree-select" name="degree" required>
+                    <option value="">Loading degrees...</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="major-name">Major Name</label>
+                <input type="text" id="major-name" name="name" required>
+            </div>
+            <div>
+                <button type="submit">Save</button>
+                <button type="button" class="close-slide-btn">Cancel</button>
+            </div>
+        </form>
+    </aside>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'admin_app/js/degree.js' %}"></script>
+{% endblock scripts%}

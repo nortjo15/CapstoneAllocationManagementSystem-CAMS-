@@ -8,10 +8,7 @@ def student_page(request):
     degree_major_pairs = {}
     for major in Major.objects.all():
         degree_major_pairs.setdefault(major.degree.name, []).append((major.id, major.name))
-
-
     selected_majors = request.GET.getlist("major")
-
     return render(request, "students/student_view.html",
         {
             "add_form": addStudentForm(),
