@@ -360,6 +360,16 @@ async function submitForm(){
     
     //Set flag to application submitted
     formData.append('application_submitted', 'true');
+    //Set flag for Split group
+    const checkBoxSplitProject = document.getElementById('split_project');
+    //const isSplit = checkBoxSplitProject.value;
+    const isSplit = checkBoxSplitProject.checked;
+    formData.append('split_project', isSplit);
+
+    //Check the agree terms value
+    const termsCheckbox = document.getElementById('terms');
+    const isChecked = termsCheckbox.checked;
+    
     try{
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -369,10 +379,13 @@ async function submitForm(){
             body: formData
         });
 
-        if (response.ok){
+
+        if (response.ok && isChecked){
             alert('Application submitted successfully!');
             const redirectPage = window.ENDPOINTS.success;
             window.location.href = redirectPage;
+        } else if (!isChecked){
+            alert('You have not agreed to terms and conidtions, your application will not be submitted')
         } else {
             const errors = await response.json();
             console.error('Validation errors', errors);
