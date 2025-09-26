@@ -2,8 +2,8 @@
 {% block content %}
 <h2>Email Notifications</h2>
 
-<!-- Round Notifications -->
-<h3>Round Notifications</h3>
+<!-- Round Start/End Notifications -->
+<h3>Round Start/End Notifications</h3>
 <label for="notificationType">Select Notification:</label>
 <select id="notificationType">
   <option value="round_start">Round Start</option>
@@ -13,7 +13,7 @@
 <label for="roundNum">Round Number:</label>
 <input type="number" id="roundNum" min="1" placeholder="Enter round number">
 <br><br>
-<button onclick="sendRoundEmail()">Send Round Email via Outlook Web</button>
+<button onclick="sendRoundEmail()">Send Round Notification</button>
 
 
 
@@ -30,7 +30,7 @@
 </select>
 
 <br><br>
-<button onclick="sendIndustryEmail()">Send Industry Email via Outlook Web</button>
+<button onclick="sendIndustryEmail()">Send Industry Email Notification</button>
 <button onclick="loadResumes()">Show Resumes</button>
 <button onclick="downloadResumes()">Download Resume PDFs (ZIP)</button>
 
@@ -38,13 +38,13 @@
 <h3>Resumes for Selected Project</h3>
 <div id="resumeList"></div>
 
-<!-- Other Notifications -->
-<h3>Other Notifications</h3>
-<button onclick="sendOtherEmail('post_round_finish_students')">Post Round Finish (Students)</button>
+<!-- Round Close  -->
+<h3>Round Close Notification</h3>
+<button onclick="sendOtherEmail('post_round_finish_students')">Send Round Close Notification (Students)</button>
 
 <!-- Finalised Groups -->
-<h3>Finalised Groups</h3>
-<button onclick="sendFinalisedGroupsEmail()">Post Round Finish (Finalised Groups)</button>
+<h3>Groups Finalised</h3>
+<button onclick="sendFinalisedGroupsEmail()">Send Groups Finalised Notification</button>
 
 
 <script>
