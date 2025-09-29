@@ -13,7 +13,7 @@ if (notesForm) {
         const csrfTokenInput = notesForm.querySelector("input[name='csrfmiddlewaretoken']");
         const csrfToken = csrfTokenInput ? csrfTokenInput.value : "";
 
-        fetch(`/api/students/${studentId}/notes/`, {
+        fetch(`/api/admin/students/${studentId}/notes/`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

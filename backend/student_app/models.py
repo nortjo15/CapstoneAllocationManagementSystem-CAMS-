@@ -24,6 +24,7 @@ class Student(models.Model):
     notes = models.TextField(null=True, blank=True)
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
     cv = models.FileField(upload_to='cvs/', null=True, blank=True)
+    split_project = models.BooleanField(default=False)
     # Settings.py should configure media settings 
 
     def __str__(self):

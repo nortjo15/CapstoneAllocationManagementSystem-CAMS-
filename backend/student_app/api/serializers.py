@@ -141,6 +141,7 @@ class FullFormSerializer(serializers.Serializer):
     resume = serializers.FileField()
     cv = serializers.FileField(required=False, allow_null=True)
     application_submitted = serializers.BooleanField(default=False)
+    split_project = serializers.BooleanField(default=False)
     #Project Preference List
     project_preferences = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, max_length=6, required=False

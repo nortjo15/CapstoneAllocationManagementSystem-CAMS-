@@ -16,59 +16,63 @@
 </head>
 <body>
     <div id="navigationBar">
-        
-
-
-
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'admin_dashboard:login_success' %}">Admin Dashboard</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_dashboard:student_view' %}">Students</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_dashboard:groups_view' %}">Groups</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_dashboard:project_dashboard' %}">Projects</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_dashboard:round_view' %}">Round form</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_dashboard:settings' %}">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_dashboard:email_page' %}">Email</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin_dashboard:logout' %}">Logout</a>
-                </li>
-            </ul>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'admin_dashboard:login_success' %}">Admin Dashboard</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:student_view' %}">Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:groups_view' %}">Groups</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:project_dashboard' %}">Projects</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:round_view' %}">Round form</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:settings' %}">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:email_page' %}">Email</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:degree_dashboard' %}">Degrees</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:information_dashboard' %}">Information</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_dashboard:logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            </div>
-        </div>
+        </nav>
+    </div>
 
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
 
-    </nav>
-    <div v-scope id="content">
     <script>
         window.ENDPOINTS = {
             projects: "{% url 'api_admin:project-list' %}",
             rounds: "{% url 'api_admin:round-list' %}",
-            admin_logs: "{% url 'api_admin:admin_log-list' %}",
+            adminLogs: "{% url 'api_admin:admin_log-list' %}",
+            degrees: "{% url 'api_admin:degree-list' %}",
+            majors: "{% url 'api_admin:major-list' %}",
             // Add other endpoints here as you create them
         };
     </script>
     {% block scripts %}{% endblock %}
-    <div id="content">
-        {% block content %}{% endblock %}
-    </div>
+    
 </body>

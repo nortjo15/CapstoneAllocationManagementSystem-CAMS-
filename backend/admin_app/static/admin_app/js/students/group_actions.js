@@ -20,7 +20,7 @@ function confirmDeleteGroup(group, csrfToken, callbacks)
 {
     if (!confirm(`Delete ${group.name}?`)) return; 
 
-    fetch(`/api/suggested_groups/${group.suggestedgroup_id}/delete/`, {
+    fetch(`/api/admin/suggested_groups/${group.suggestedgroup_id}/delete/`, {
         method: "DELETE",
         headers: { "X-CSRFToken": csrfToken },
     })

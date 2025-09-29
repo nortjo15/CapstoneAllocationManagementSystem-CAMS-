@@ -26,8 +26,8 @@ urlpatterns = [
     path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
 
     # Yes - we do need this (Muhammad)
-    path('api/', include('admin_app.urls')),
-    path('api/', include('admin_app.api.urls')),
+    # path('api/', include('admin_app.urls')),
+    # path('api/', include('admin_app.api.urls')),
     # ----------------------------------------
     
     #APIs for student and Admin

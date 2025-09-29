@@ -28,8 +28,9 @@ function formatDateForInput(isoString) {
 }
 
 async function fetchProjects() {
+    const apiUrl = window.ENDPOINTS.projects;
     try {
-        const response = await fetch('/api/admin/projects/');
+        const response = await fetch(apiUrl);
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -41,8 +42,9 @@ async function fetchProjects() {
 }
 
 async function fetchRounds() {
+    const apiUrl = window.ENDPOINTS.rounds;
     try {
-        const response = await fetch('/api/admin/rounds/');
+        const response = await fetch(apiUrl);
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -77,8 +79,9 @@ async function populateRoundsList() {
 }
 
 async function showRoundDetails(roundId) {
+    const apiUrl = window.ENDPOINTS.rounds;
     try {
-        const response = await fetch(`/api/admin/rounds/${roundId}/`);
+        const response = await fetch(`${apiUrl}${roundId}/`);
         const round = await response.json();
         const projects = await fetchProjects();
 
@@ -142,6 +145,7 @@ async function getSelectedProjects() {
 }
 
 createRoundForm.addEventListener('submit', async function(e) {
+    const apiUrl = window.ENDPOINTS.rounds;
     e.preventDefault();
     
     const roundName = document.getElementById('create-round-name').value;
@@ -163,7 +167,7 @@ createRoundForm.addEventListener('submit', async function(e) {
     };
 
     try {
-        const response = await fetch('/api/admin/rounds/', {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newRound)
@@ -189,6 +193,7 @@ createRoundForm.addEventListener('submit', async function(e) {
 
 
 editRoundForm.addEventListener('submit', async function(e) {
+    const apiUrl = window.ENDPOINTS.rounds;
     e.preventDefault();
     const roundId = document.getElementById('edit-round-id').value;
     const roundName = document.getElementById('edit-round-name').value;
@@ -209,7 +214,7 @@ editRoundForm.addEventListener('submit', async function(e) {
     };
 
     try {
-        const response = await fetch(`/api/admin/rounds/${roundId}/`, {
+        const response = await fetch(`${apiUrl}${roundId}/`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedRound)
@@ -228,10 +233,11 @@ editRoundForm.addEventListener('submit', async function(e) {
 });
 
 deleteRoundBtn.addEventListener('click', async function() {
+    const apiUrl = window.ENDPOINTS.rounds;
     const roundId = document.getElementById('edit-round-id').value;
     if (confirm('Are you sure you want to delete this round?')) {
         try {
-            const response = await fetch(`/api/rounds/${roundId}/`, {
+            const response = await fetch(`${apiUrl}${roundId}/`, {
                 method: 'DELETE'
             });
             if (response.status === 204) {
