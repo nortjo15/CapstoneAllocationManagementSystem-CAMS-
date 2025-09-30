@@ -1,62 +1,86 @@
 <!DOCTYPE html>
-<html> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'student_app/css/studentMain.css' %}">
-    {% block extra_css %}{% endblock %}
-    <title>Student Portal</title>
+  <meta charset="UTF-8">
+  <title>Student Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+          crossorigin="anonymous"></script>
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'student_app/css/studentMain.css' %}">
+  {% block extra_css %}{% endblock %}
 </head>
-    <div v-scope id="content">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'students:student_home' %}">Capstone Allocation</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>  
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'students:student_form' %}">Make Application</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'students:student_home' %}">Capstone Information</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'students:project_information' %}">Project Information</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Industry Round</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Internal Round</a>
-                    </li> 
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li>
-                        <a class="nav-link" href="{% url 'admin_dashboard:login' %}">Admin Login </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div id="content">
-    
-    <script>
-        window.ENDPOINTS = {
-            projects: "{% url 'api_student:project-list' %}",
-            students: "{% url 'api_student:student-list' %}",
-            majors: "{% url 'api_student:major-list' %}",
-            success: "{% url 'students:application_success' %}",
-            submit: "{% url 'api_student:form_submission' %}",
-            // Add other endpoints here as you create them
-        };
-    </script>
-    {% block scripts %}{% endblock %}
-    <div v-scope id="content">
-        {% block content %}{% endblock %}
+<body>
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'students:student_home' %}">Capstone Allocation</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#studentNav"
+            aria-controls="studentNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="studentNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'students:student_form' %}">Make Application</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'students:student_home' %}">Capstone Information</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'students:project_information' %}">Project Information</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Industry Round</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Internal Round</a></li>
+      </ul>
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:login' %}">Admin Login</a></li>
+      </ul>
     </div>
+  </div>
+</nav>
+{% endblock %}
+
+<div class="container mt-3">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<div class="container mt-3">
+  {% block page_header %}{% endblock %}
+</div>
+
+<div class="container mb-3">
+  {% block page_toolbar %}{% endblock %}
+  {% block filter_bar %}{% endblock %}
+</div>
+
+<div class="container">
+  {% block content %}{% endblock %}
+</div>
+
+<div class="container mt-3">
+  {% block pagination %}{% endblock %}
+</div>
+
+<script>
+  // Student API endpoints for JS
+  window.ENDPOINTS = {
+    projects: "{% url 'api_student:project-list' %}",
+    students: "{% url 'api_student:student-list' %}",
+    majors:   "{% url 'api_student:major-list' %}",
+    submit:   "{% url 'api_student:form_submission' %}",
+    success:  "{% url 'students:application_success' %}"
+  };
+</script>
+{% block scripts %}{% endblock %}
 </body>
+</html>

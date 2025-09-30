@@ -1,33 +1,45 @@
 {% extends "student_base.html" %}
+
+{% block extra_css %}
+<style>
+  .info-tile{
+    border:1px solid var(--bs-border-color);
+    border-radius:.75rem;
+    background:var(--bs-body-bg);
+    box-shadow:0 .125rem .25rem rgba(0,0,0,.08);
+    transition:transform .15s ease,box-shadow .15s ease
+  }
+  .info-tile:hover{transform:translateY(-4px);box-shadow:0 .5rem 1rem rgba(0,0,0,.15)}
+  .info-tile-box{
+    aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+    padding:1rem; border-radius:.75rem;
+  }
+  .info-tile-title{font-size:1.5rem; font-weight:700; color:#000; text-align:center; margin:0}
+</style>
+{% endblock %}
+
+{% block page_header %}
+<h1 class="h3 mb-0">Capstone Information</h1>
+{% endblock %}
+
 {% block content %}
-{% load humanize %}
-
-<main>
-  {% if sections %}
-    <nav aria-label="Sections">
-      <h1>Capstone Information — Sections</h1>
-      <ul>
-        {% for section in sections %}
-          <li>
-            <a href="{% url 'student_app:section_detail' section.id %}">{{ section.name }}</a>
-            {% with subs=section.subsections.all %}
-              {% if subs %}
-                <ul>
-                  {% for sub in subs %}
-                    <li>
-                      <a href="{% url 'student_app:section_detail' sub.id %}">{{ sub.name }}</a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-            {% endwith %}
-          </li>
-        {% endfor %}
-      </ul>
-    </nav>
-  {% else %}
-    <p>No sections found.</p>
-  {% endif %}
-</main>
-
-{% endblock content %}
+{% if sections %}
+<div class="row g-4 justify-content-center">
+  {% for section in sections %}
+    {% if not section.parent_section %}
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+      <a href="{% url 'student_app:section_detail' section.id %}" class="d-block text-decoration-none">
+        <div class="info-tile">
+          <div class="info-tile-box">
+            <div class="info-tile-title">{{ section.name }}</div>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">No sections found.</div>
+{% endif %}
+{% endblock %}
