@@ -22,7 +22,7 @@
 {% block navbar %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'students:student_home' %}">Capstone Allocation</a>
+    <a class="navbar-brand" href="{% url 'students:student_home' %}">CAS Home</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#studentNav"
             aria-controls="studentNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -30,7 +30,6 @@
     <div class="collapse navbar-collapse" id="studentNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'students:student_form' %}">Make Application</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'students:student_home' %}">Capstone Information</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'students:project_information' %}">Project Information</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Industry Round</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Internal Round</a></li>
