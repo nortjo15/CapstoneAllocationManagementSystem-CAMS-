@@ -144,8 +144,19 @@
         }
         openSlide(elements.majorSlide);
     }
-    
 
+    async function refreshMajors() {
+        const majorData = await apiFetch(window.ENDPOINTS.majors);
+        state.majors = majorData.results || majorData;
+        renderMajorsTable();
+    }
+
+    async function refreshDegrees() {
+        const degreeData = await apiFetch(window.ENDPOINTS.degrees);
+        state.degrees = degreeData.results || degreeData;
+        renderDegreesTable();
+    }
+    
     // Handles the submission for both creating and editing a degree.
     async function handleDegreeSubmit(event) {
         event.preventDefault();
@@ -162,7 +173,7 @@
             });
             closeSlides();
             // Refresh the entire table to show the new/updated data
-            await init(); 
+            await Promise.all([refreshDegrees(), refreshMajors()]);
         } catch (error) {
             alert('Failed to save degree.');
         }
@@ -185,32 +196,50 @@
                 body: JSON.stringify(data),
             });
             closeSlides();
-            await init();
+            await refreshMajors();
         } catch (error) {
             alert('Failed to save major');
         }
     }
 
-    async function handleDeleteMajor(majorId) {
-        if(!confirm('Are you sure you want to delete this major?')) return;
-
-        try{
-            await apiFetch(`${window.ENDPOINTS.majors}${majorId}/`, { method: 'DELETE' });
-            await init();
-        }catch (error) {
-            alert('Failed to delete major.');
-        }
-    }
-
-     async function handleDeleteDegree(degreeId) {
-        if(!confirm('Are you sure you want to delete this Degree?')) return;
+    async function handleDelete(type, id){
+        const isMajor = type === 'major';
+        const message = isMajor 
+            ? 'Are you sure you want to delete this major?'
+            : 'Are you sure you want to delete this degree? This will also delete all associated majors';
         
-        try{
-            await apiFetch(`${window.ENDPOINTS.degrees}${degreeId}/`, { method: 'DELETE' });
-            await init();
-        }catch (error) {
-            alert('Failed to delete degree.');
+        if (!confirm(message)) return;
+
+        const originalState = isMajor ? [...state.majors] : [...state.degrees];
+        const url = isMajor ? `${window.ENDPOINTS.majors}${id}/` : `${window.ENDPOINTS.degrees}${id}/`;
+
+        if(isMajor){
+            state.majors = state.majors.filter(m => m.id !== parseInt(id));
+            renderMajorsTable();
+        } else {
+            state.degrees = state.degrees.filter(d => d.id !== parseInt(id));
+            state.majors = state.majors.filter(m => m.degree !== parseInt(id));
+
+            renderDegreesTable();
+            renderMajorsTable();
         }
+
+        try {
+            await apiFetch(url, {method: 'DELETE'});
+            if(isMajor){
+                await refreshMajors();
+            }
+        } catch (error){
+            alert(`Failed to delete ${type}. Reverting changes`);
+            if(isMajor){
+                state.majors = originalState;
+                renderMajorsTable();
+            } else {
+                state.degrees = originalState;
+                renderDegreesTable();
+            }
+        }
+
     }
 
     function setupEventListeners() {
@@ -233,7 +262,7 @@
                 handleOpenMajorForm(event.target.dataset.id)
             }
             if (event.target.matches('.delete-major-btn')) {
-                handleDeleteMajor(event.target.dataset.id);
+                handleDelete('major', event.target.dataset.id);
             }
         });
 
@@ -242,21 +271,13 @@
                 handleOpenDegreeForm(event.target.dataset.id)
             }
             if (event.target.matches('.delete-degree-btn')) {
-                handleDeleteDegree(event.target.dataset.id);
+                handleDelete('degree', event.target.dataset.id);
             }
         });
     }
 
     async function init() {
-        // Fetch the initial list of majors to display in the table
-        const majorsData = await apiFetch(window.ENDPOINTS.majors);
-        const degreeData = await apiFetch(window.ENDPOINTS.degrees);
-        // Handle both paginated and unpaginated responses
-        state.majors = majorsData.results || majorsData;
-        state.degrees = degreeData.results || degreeData;
-        renderMajorsTable();
-        renderDegreesTable();
-            
+        await Promise.all([refreshDegrees(), refreshMajors()]);
         // Set up all the interactive parts of the page
         setupEventListeners();
     }

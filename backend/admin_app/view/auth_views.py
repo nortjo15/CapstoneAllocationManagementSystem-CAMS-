@@ -50,7 +50,7 @@ def login_success(request):
 
 @login_required
 def logout_view(request):
-    logout(request)
+    
     user_content_type = ContentType.objects.get_for_model(request.user)
     AdminLog.objects.create(
         user=request.user, 
@@ -59,6 +59,7 @@ def logout_view(request):
         target_id=request.user.id,
         notes=f"user logout: {request.user.username}"
     )
+    logout(request)
     return redirect("admin_dashboard:login")
 
 @login_required

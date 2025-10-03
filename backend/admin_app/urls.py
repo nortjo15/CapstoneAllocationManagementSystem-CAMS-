@@ -57,4 +57,6 @@ urlpatterns = [
     path('sections/<int:pk>/delete/',section_views.section_delete, name='section_delete'),
     #Degree and Major
     path('degreeDashboard/', degree_views.degree_view, name='degree_dashboard'),
+    #Information and Sections
+    path('informationDashboard/', information_views.information_view, name='information_dashboard'),
 ]

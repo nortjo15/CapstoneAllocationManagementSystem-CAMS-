@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from rest_framework import viewsets
 from admin_app.models import *
-from admin_app.serializers import *
+from admin_app.api.serializers import *
 from rest_framework import generics  
 from rest_framework.views import APIView
 from admin_app.group_utils import generate_suggestions_from_likes
