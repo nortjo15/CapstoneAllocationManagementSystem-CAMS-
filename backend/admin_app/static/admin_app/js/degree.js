@@ -42,8 +42,13 @@
         }
         const response = await fetch(url, options);
         if(!response.ok){
-            console.error("API Error:", response.status, await response.text());
-            throw new Error('API request failed');
+            const errorData = await response.json();
+            const error = new Error('API request failed');
+
+            error.data = errorData;
+            error.status = response.status;
+
+            throw error;
         }
         // For DELETE requests that return no content
         if (response.status === 204) return null;
@@ -230,7 +235,14 @@
                 await refreshMajors();
             }
         } catch (error){
-            alert(`Failed to delete ${type}. Reverting changes`);
+            let errorMessage = `Failed to delete ${type}`;
+
+            if(error && error.data && error.data.detail){
+                errorMessage = error.data.detail;
+            }
+
+            alert(errorMessage);
+
             if(isMajor){
                 state.majors = originalState;
                 renderMajorsTable();

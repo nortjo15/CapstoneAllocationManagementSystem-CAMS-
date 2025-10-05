@@ -180,7 +180,8 @@ export function renderProjectInfo(group, groupSize, projectName,
     }
     else 
     {
-        fetch("/api/admin/project_list/")
+        const apiUrl = window.ENDPOINTS.projects;
+        fetch(apiUrl)
             .then(res => res.json())
             .then(projects => {
                 cachedProjects = projects;
@@ -205,7 +206,7 @@ export function renderProjectInfo(group, groupSize, projectName,
         window.suggestedGroupsCache.delete(group.suggestedgroup_id);
         loadGroup(group.suggestedgroup_id);
 
-        fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
+        fetch(`/api/admin/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
             method: "PATCH",
             headers: {
