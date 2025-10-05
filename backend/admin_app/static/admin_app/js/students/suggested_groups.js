@@ -212,23 +212,18 @@ export function removeStudentFromGroup(student, group)
 }
 
 //Loading a group onto the center panel
-export function loadGroup(id)
-{
+export function loadGroup(id) {
     showPageLoader();
-    //Display consecutive numbers for groups
 
     const btn = document.querySelector(
-        `#manual-groups-ul button[data-id="${id}"], #suggested-groups-ul button[data-id="${id}"]`   
+        `#manual-groups-ul button[data-id="${id}"], #suggested-groups-ul button[data-id="${id}"]`
     );
-    const displayNum = btn ? btn.dataset.display : id;
 
-    //Set it to load
     if (btn) setButtonLoading(btn, true);
 
-    // Check cache for the group
-    const cached = window.suggestedGroupsCache.get(parseInt(id));
-    if (cached)
-    {
+    // Check cache first
+    const cached = window.suggestedGroupsCache.get(Number(id));
+    if (cached) {
         renderGroupUI(cached, btn);
         if (btn) setButtonLoading(btn, false);
         hidePageLoader();
@@ -236,18 +231,29 @@ export function loadGroup(id)
     }
 
     fetch(`/api/admin/suggested_groups/${id}/`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`Group ${id} not found or deleted`);
+            return res.json();
+        })
         .then(group => {
+            if (!group) throw new Error(`Group ${id} missing in response`);
             window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
             renderGroupUI(group, btn);
         })
         .catch(err => {
-            console.error("Failed to load group:", err);
-            groupTitle.textContent = "Error loading group";
+            console.warn("Group load failed:", err.message);
+
+            // Clear center panel if deleted or failed
+            if (window.activeGroupId == id) {
+                document.getElementById("group-title").textContent = "Select a group";
+                document.getElementById("group-members").innerHTML = "";
+                document.getElementById("group-project-name").innerHTML = "";
+                document.getElementById("group-capacity").innerHTML = "";
+                document.getElementById("group-host").innerHTML = "";
+                document.getElementById("group-size").innerHTML = "";
+            }
         })
-        .finally(() => 
-        {
-            //stop spinner on this button 
+        .finally(() => {
             if (btn) setButtonLoading(btn, false);
             hidePageLoader();
         });
