@@ -6,7 +6,7 @@ import { updateDeleteButton } from "./group_actions.js";
 import { renderGroupUI } from "./suggested_groups.js";
 import { hidePageLoader, showPageLoader } from "../utils.js";
 
-let cachedProjects = null;  
+window.cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
 //Helper functions for suggested_groups.js

@@ -29,7 +29,7 @@ shell:
 
 .PHONY: db
 db:
-	docker exec -e PGPASSWORD=QU5MDe3SOswIcpPdGdmbVzXK7BUhqAYK -it $(CONTAINER_NAME_B) psql \
+	docker exec -e PGPASSWORD=oxh68Dm0EPYorASbiinv12pgRiopLtfm -it $(CONTAINER_NAME_B) psql \
 	  -h $(POSTGRES_HOST) \
 	  -U $(POSTGRES_USER) \
 	  -d $(POSTGRES_DB)

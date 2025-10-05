@@ -1,7 +1,6 @@
 import { setButtonLoading } from "../utils.js";
 import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal, openMemberPreferenceModal } from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
-import { updateGroupUI } from "./render_groups.js";
 
 window.selectedStudentIds = new Set();
 

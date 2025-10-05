@@ -132,7 +132,7 @@ class FinalGroupCreateSerializer(serializers.ModelSerializer):
                 student=m.student,
             )
             # Mark student as allocated
-            m.student.is_allocated = True 
+            m.student.allocated_group = True 
             m.student.save()
 
         # Delete suggested group and its  members

@@ -128,7 +128,6 @@ export function openCreateGroupModal(groupId)
         const notes = document.getElementById("groupNotesInput").value.trim();
 
         finaliseGroup(groupId, name, notes);
-        modal.style.display = "none";
     }
 }
 
