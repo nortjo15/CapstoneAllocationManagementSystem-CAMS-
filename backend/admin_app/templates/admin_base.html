@@ -15,7 +15,7 @@
 <body>
 
 {% block navbar %}
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg" data-bs-theme="dark">
   <div class="container-fluid">
 <a class="navbar-brand" href="{% url 'admin_app:login_success' %}">CAS Admin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,9 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:information_list' %}">Provided Information</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:degree_dashboard' %}">Adjust Degrees</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:settings' %}">Settings</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:information_dashboard' %}">Information</a>
+                        </li>
     </ul>
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
     <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:logout' %}">Logout</a></li>
