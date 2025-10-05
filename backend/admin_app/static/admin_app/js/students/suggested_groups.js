@@ -239,7 +239,7 @@ export function loadGroup(id)
         });
 }
 
-function renderGroupUI(group, btn) 
+export function renderGroupUI(group, btn) 
 {
     // Clear active buttons
     document.querySelectorAll("#manual-groups-ul button, #suggested-groups-ul button")

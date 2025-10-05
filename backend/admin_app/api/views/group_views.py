@@ -80,6 +80,18 @@ class SuggestedGroupUpdateView(generics.UpdateAPIView):
     serializer_class = SuggestedGroupSerializer
     lookup_field = "suggestedgroup_id"
 
+    def update(self, request, *args, **kwargs):
+        super().update(request, *args,**kwargs)
+
+        instance = (
+            SuggestedGroup.objects
+            .select_related("project")
+            .prefetch_related("members__student__major")
+            .get(suggestedgroup_id=kwargs["suggestedgroup_id"])
+        )        
+        serializer = SuggestedGroupLiteSerializer(instance)
+        return Response(serializer.data)
+
 # ManualGroups View
 class ManualGroupListView(generics.ListAPIView):
     serializer_class = SuggestedGroupLiteSerializer

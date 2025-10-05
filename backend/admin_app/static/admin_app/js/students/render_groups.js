@@ -3,6 +3,7 @@ import
     from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
 import { updateDeleteButton } from "./group_actions.js";
+import { renderGroupUI } from "./suggested_groups.js";
 
 let cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -204,7 +205,6 @@ export function renderProjectInfo(group, groupSize, projectName,
 
         group.project = cachedProjects.find(p => p.project_id == projectId) || null;
         window.suggestedGroupsCache.delete(group.suggestedgroup_id);
-        loadGroup(group.suggestedgroup_id);
 
         fetch(`/api/admin/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
@@ -218,6 +218,11 @@ export function renderProjectInfo(group, groupSize, projectName,
         .then(res => {
             if (!res.ok) throw new Error("Failed to update project");
             return res.json();
+        })
+        .then(updatedGroup => {
+            //Update cache & UI only after backend confirms
+            window.suggestedGroupsCache.set(updatedGroup.suggestedgroup_id, updatedGroup);
+            renderGroupUI(updatedGroup);
         })
         .catch(err => {
             console.error("Failed to update project:", err);
