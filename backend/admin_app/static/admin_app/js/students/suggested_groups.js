@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // When tab is activated, run logic
     document.addEventListener("tab:activated", e => {
+        console.log("tab activate");
         if (e.detail.tabId === "suggested-tab") 
         {
             initSuggestedGroups();
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         generateBtn.addEventListener("click", () => {
             setButtonLoading(generateBtn, true);
-
+        
             fetch("/api/admin/generate_suggestions/", {
                 method: "POST",
                 headers: { "X-CSRFToken": csrfToken }
@@ -171,6 +172,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }));
     }
 });
+
+if (document.querySelector("#suggested-tab.tab-content.active")) {
+    document.dispatchEvent(new CustomEvent("tab:activated", { detail: { tabId: "suggested-tab" } }));
+}
 
 export function removeStudentFromGroup(student, group) 
 {
