@@ -81,24 +81,28 @@ export function finaliseGroup(groupId, name, notes)
         const allocatedStudentIds = data.members.map((m) => m.student.student_id);  
         const assignedProjectId = data.project?.project_id;  
 
-        // Remove all overlapping groups
-        document.querySelectorAll("#suggested-groups-ul button, #manual-groups-ul button")
-        .forEach((button) => {
+       // --- Remove all overlapping groups (students or project) ---
+        document.querySelectorAll("#suggested-groups-ul button, #manual-groups-ul button").forEach(button => {
             const gId = parseInt(button.dataset.id);
             const cachedGroup = window.suggestedGroupsCache.get(gId);
             if (!cachedGroup) return;
 
-            const hasOverlap =
-            cachedGroup.members.some((m) =>
-                allocatedStudentIds.includes(m.student.student_id)
-            ) ||
-            (
-                assignedProjectId &&
-                cachedGroup.project &&
-                Number(cachedGroup.project.project_id) === Number(assignedProjectId)
+            const members = cachedGroup.members || [];
+            const projectId = cachedGroup.project?.project_id;
+
+            // refresh 'assigned' status from the DOM if visible
+            const projectIsAssigned = cachedGroup.project?.is_assigned === true;
+
+            const memberOverlap = members.some(m =>
+                allocatedStudentIds.map(String).includes(String(m.student.student_id))
             );
 
-            if (hasOverlap) {
+            const projectOverlap =
+                assignedProjectId &&
+                projectId &&
+                Number(projectId) === Number(assignedProjectId);
+
+            if (memberOverlap || projectOverlap || projectIsAssigned) {
                 button.parentElement.remove();
                 window.suggestedGroupsCache.delete(gId);
             }
