@@ -120,3 +120,53 @@ export function finaliseGroup(groupId, name, notes)
     })
     .finally(() => hidePageLoader());      
 }
+
+const finalGroupsUl = document.createElement("ul");
+finalGroupsUl.id = "final-groups-ul";
+finalGroupsUl.classList.add("list");
+
+function renderFinalGroups(groups) {
+    finalGroupsUl.innerHTML = "";
+    if (!groups.length) {
+        const p = document.createElement("p");
+        p.textContent = "No final groups yet.";
+        finalGroupsUl.appendChild(p);
+        return;
+    }
+
+    groups.forEach((g, idx) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("btn", "list-item-btn");
+        btn.dataset.id = g.finalgroup_id;
+        btn.textContent = g.name || `Final Group ${idx + 1}`;
+        li.appendChild(btn);
+        finalGroupsUl.appendChild(li);
+
+        btn.addEventListener("click", () => {
+            console.log("Selected Final Group:", g.finalgroup_id);
+        });
+    });
+}
+
+function loadFinalGroups() {
+    const container = document.querySelector("#final-tab .panel");
+    if (!container) return;
+
+    container.innerHTML = "<h3>Final Groups</h3>";
+    container.appendChild(finalGroupsUl);
+
+    fetch("/api/admin/final_groups/list/")
+        .then(res => res.json())
+        .then(data => renderFinalGroups(data))
+        .catch(err => {
+            console.error("Failed to load final groups:", err);
+        });
+}
+
+document.addEventListener("tab:activated", e => {
+    if (e.detail.tabId === "final-tab") {
+        loadFinalGroups();
+    }
+});

@@ -52,6 +52,7 @@ urlpatterns = [
     path("suggested_groups/<int:suggestedgroup_id>/delete/", group_views.delete_manual_group, name="delete-manual-group"),
     path("suggested_groups/auto/", group_views.SuggestedGroupLiteListView.as_view(), name="suggested-groups-auto"),
     path("final_groups/", group_views.FinalGroupCreateView.as_view(), name="final-group-create"),
+    path("final_groups/list/", group_views.FinalGroupListView.as_view(), name="final-group-list"),
 
     #Student custom API views
     path("students/", student_api_views.StudentListCreateAPIView.as_view(), name="student_list"),

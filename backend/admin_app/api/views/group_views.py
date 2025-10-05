@@ -27,6 +27,16 @@ class FinalGroupMemberViewSet(viewsets.ModelViewSet):
     queryset = FinalGroupMember.objects.all()
     serializer_class = FinalGroupMemberSerializer
 
+class FinalGroupListView(generics.ListAPIView):
+    serializer_class = FinalGroupSerializer
+
+    def get_queryset(self):
+        return (
+            FinalGroup.objects
+            .select_related("project")
+            .prefetch_related("members__student__major")
+        )
+
 # List + create suggested groups
 class SuggestedGroupListCreateView(generics.ListCreateAPIView):
     queryset = SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major")
