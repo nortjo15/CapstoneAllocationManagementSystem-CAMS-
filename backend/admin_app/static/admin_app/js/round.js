@@ -169,10 +169,7 @@ createRoundForm.addEventListener('submit', async function(e) {
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
-            headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
-            "Content-Type": "application/json",
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newRound)
         });
         if (response.ok) {
@@ -219,10 +216,7 @@ editRoundForm.addEventListener('submit', async function(e) {
     try {
         const response = await fetch(`${apiUrl}${roundId}/`, {
             method: 'PATCH',
-            headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
-            "Content-Type": "application/json",
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedRound)
         });
         if (response.ok) {
@@ -243,13 +237,8 @@ deleteRoundBtn.addEventListener('click', async function() {
     const roundId = document.getElementById('edit-round-id').value;
     if (confirm('Are you sure you want to delete this round?')) {
         try {
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             const response = await fetch(`${apiUrl}${roundId}/`, {
-                method: 'DELETE',
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                    "Content-Type": "application/json"
-                }
+                method: 'DELETE'
             });
             if (response.status === 204) {
                 //showMessage('Round deleted successfully!', 'error');

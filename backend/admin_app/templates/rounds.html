@@ -2,166 +2,83 @@
 {% load static %}
 
 {% block extra_css %}
-<style>
-/* left list spacing */
-#rounds-list{display:grid;gap:.75rem}
-#rounds-list > *{
-  padding:.5rem .75rem;border:1px solid var(--bs-border-color);
-  border-radius:.5rem;background:var(--bs-body-bg)}
-#rounds-list > *:hover{background:var(--bs-tertiary-bg)}
-/* utility */
-.hidden{display:none!important}
-</style>
-{% endblock %}
-
-{% block page_header %}
-<h1 class="h3 mb-0">Capstone rounds</h1>
-{% endblock %}
-
-{% block page_toolbar %}
-<button id="create-new-round-btn" type="button" class="btn btn-primary">+ Create new round</button>
+    <link rel="stylesheet" href="{% static '../static/admin_app/css/rounds.css' %}"> 
 {% endblock %}
 
 {% block content %}
-<div class="row g-4">
-
-  <!-- Left list -->
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">Rounds</div>
-      <div class="card-body">
-        <div id="rounds-list" class="vstack gap-2"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right pane (hidden until a round is clicked) -->
-  <div class="col-md-8">
-    <div id="right-pane-card" class="card hidden">
-      <div class="card-header">
-        <span id="right-pane-title">Select a round</span>
-      </div>
-      <div class="card-body">
-
-        <!-- Edit view -->
-        <div id="round-details-view" class="hidden">
-          <form id="edit-round-form" novalidate>
-            {% csrf_token %}
-            <input type="hidden" id="edit-round-id">
-
-            <div class="mb-3">
-              <label for="edit-round-name" class="form-label">Round name</label>
-              <input type="text" id="edit-round-name" class="form-control">
-            </div>
-
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="edit-open-date" class="form-label">Open date</label>
-                <input type="datetime-local" id="edit-open-date" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label for="edit-close-date" class="form-label">Close date</label>
-                <input type="datetime-local" id="edit-close-date" class="form-control">
-              </div>
-            </div>
-
-            <div class="mb-3 mt-3">
-              <label for="edit-status" class="form-label">Status</label>
-              <input type="text" id="edit-status" class="form-control">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label" for="edit-round-projects">Projects</label>
-              <div id="edit-round-projects" class="vstack gap-2"></div>
-            </div>
-
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary">Save changes</button>
-              <button type="button" id="delete-round-btn" class="btn btn-outline-danger">Delete</button>
-            </div>
-          </form>
+    {% csrf_token %}
+    <div class="container">
+        <div id="left-pane">
+            <h1>Capstone Rounds</h1>
+            <button id="create-new-round-btn">+ Create New Round</button>
+            <div id="rounds-list"> </div>
         </div>
 
-        <!-- Create view -->
-        <div id="create-round-view" class="hidden">
-          <form id="create-round-form" novalidate>
-            {% csrf_token %}
+        <div id="right-pane">
+            <h1 id='right-pane-title'>Select a Round</h1>
 
-            <div class="mb-3">
-              <label for="create-round-name" class="form-label">Round name</label>
-              <input type="text" id="create-round-name" class="form-control">
+            <div id="round-details-view" class="hidden">
+                <form id="edit-round-form">
+                    <input type="hidden" id="edit-round-id">
+                    <div>
+                        <label for="edit-round-name">Round Name</label>
+                        <input type="text" id="edit-round-name">
+                    </div>
+                    <div>
+                        <label for="edit-open-date">Open Date</label>
+                        <input type="datetime-local" id="edit-open-date">
+                    </div>
+                    <div>
+                        <label for="edit-close-date">Close Date</label>
+                        <input type="datetime-local" id="edit-close-date">
+                    </div>
+                    <div>
+                        <label for="edit-status">temp status</label>
+                        <input type="text" id="edit-status">
+                    </div>
+                    <div>
+                        <label for="edit-round-projects">Projects</label>
+                        <div id="edit-round-projects"></div>
+                    </div>
+                    <div>
+                        <button type="submit">Save Changes</button>
+                        <button type="button" id="delete-round-btn">Delete</button>
+                    </div>
+                </form>
             </div>
 
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="create-open-date" class="form-label">Open date</label>
-                <input type="datetime-local" id="create-open-date" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label for="create-close-date" class="form-label">Close date</label>
-                <input type="datetime-local" id="create-close-date" class="form-control">
-              </div>
+            <div id="create-round-view" class="hidden">
+                <form id="create-round-form">
+                    <div>
+                        <label for="create-round-name">Round Name</label>
+                        <input type="text" id="create-round-name">
+                    </div>
+                    <div>
+                        <label for="create-open-date">Open Date</label>
+                        <input type="datetime-local" id="create-open-date">
+                    </div>
+                    <div>
+                        <label for="create-close-date">Close Date</label>
+                        <input type="datetime-local" id="create-close-date">
+                    </div>
+                    <div>
+                        <label for="create-status">temp status</label>
+                        <input type="text" id="create-status">
+                    </div>
+                    <div>
+                        <label for="create-round-projects"></div>
+                        <div id="create-round-projects"></div>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit">Create Round</button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3 mt-3">
-              <label for="create-status" class="form-label">Status</label>
-              <input type="text" id="create-status" class="form-control">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label" for="create-round-projects">Projects</label>
-              <div id="create-round-projects" class="vstack gap-2"></div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Create round</button>
-          </form>
         </div>
-
-      </div>
     </div>
-  </div>
-
-</div>
-{% endblock %}
-
+{% endblock content %}
 {% block scripts %}
-<script src="{% static 'admin_app/js/round.js' %}"></script>
-<script>
-/* Reveal right pane on selection and show a spinner on the clicked item
-   Spinner clears automatically when details view updates. */
-(function(){
-  const list = document.getElementById('rounds-list');
-  const pane = document.getElementById('right-pane-card');
-  const details = document.getElementById('round-details-view');
-  const createV = document.getElementById('create-round-view');
+    <script src="{% static '../static/admin_app/js/round.js' %}"></script>
+{% endblock scripts %}
 
-  function clearSpinners(){
-    list?.querySelectorAll('.spinner-border').forEach(s=>s.remove());
-  }
-
-  list?.addEventListener('click', e=>{
-    const item = e.target.closest('#rounds-list > *');
-    if(!item) return;
-    clearSpinners();
-    // show pane
-    pane?.classList.remove('hidden');
-    // add spinner to clicked item
-    const sp = document.createElement('span');
-    sp.className = 'spinner-border spinner-border-sm ms-2';
-    sp.setAttribute('role','status');
-    sp.setAttribute('aria-hidden','true');
-    item.appendChild(sp);
-  });
-
-  // When details subtree changes (after data loads), remove spinner
-  const mo = new MutationObserver(()=>clearSpinners());
-  details && mo.observe(details,{subtree:true,childList:true,characterData:true});
-
-  // If user clicks "Create new round", show pane too
-  document.getElementById('create-new-round-btn')?.addEventListener('click', ()=>{
-    pane?.classList.remove('hidden');
-    clearSpinners();
-  });
-})();
-</script>
-{% endblock %}

@@ -1,184 +1,64 @@
 {% extends "admin_base.html" %}
 {% load static %}
-
 {% block extra_css %}
-<style>
-/* Card grid */
-#project-container{display:grid;gap:1.25rem}
-/* Each project as a card */
-#project-container> *{
-  border:1px solid var(--bs-border-color);
-  border-radius:.75rem;background:var(--bs-body-bg);
-  box-shadow:0 .125rem .25rem rgba(0,0,0,.08);
-  padding:1.25rem 1.25rem 0;transition:.2s ease}
-#project-container> *:hover{transform:translateY(-2px);box-shadow:0 .5rem 1rem rgba(0,0,0,.12)}
-/* Typography */
-#project-container> * h1,#project-container> * h2,#project-container> * h3{margin-bottom:.25rem;font-weight:600}
-#project-container> * p{margin-bottom:.5rem;color:var(--bs-secondary-color)}
-/* Action bar (assumes last child) */
-#project-container> * > :last-child{
-  margin-top:1rem;padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;
-  gap:.75rem;border-top:1px solid var(--bs-border-color);background:var(--bs-tertiary-bg);
-  border-radius:0 0 .75rem .75rem}
-/* Buttons without touching your JS */
-#project-container> * > :last-child a,
-#project-container> * > :last-child button{
-  padding:.35rem .65rem;border-radius:.5rem;border:1px solid var(--bs-border-color);background:var(--bs-body-bg)}
-#project-container> * > :last-child a:nth-last-child(2),
-#project-container> * > :last-child button:nth-last-child(2){
-  /* Edit */
-  color:var(--bs-primary);background:var(--bs-primary-bg-subtle);border-color:var(--bs-primary-border-subtle)}
-#project-container> * > :last-child a:last-child,
-#project-container> * > :last-child button:last-child{
-  /* Delete */
-  color:var(--bs-danger);background:var(--bs-danger-bg-subtle);border-color:var(--bs-danger-border-subtle)}
-/* Capacity badge look */
-#project-container> * > :last-child{--cap:inherit}
-#project-container> * > :last-child::before{
-  content:attr(data-capacity);font-size:.875rem;color:var(--bs-secondary-color)}
-</style>
+    <link rel="stylesheet" href="{% static 'admin_app/css/project.css' %}">
 {% endblock %}
-
-{% block page_header %}
-<h1 class="h3 mb-0">Project dashboard</h1>
-{% endblock %}
-
-{% block page_toolbar %}
-<div class="d-flex gap-2">
-  <button id="openModalBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pModal">
-    Add a new project
-  </button>
-</div>
-{% endblock %}
-
 {% block content %}
-<div class="card">
-  <div class="card-body">
-    <!-- Each project your JS inserts becomes a separate card via CSS above -->
-    <div id="project-container">
-      <p class="mb-0">Loading projects...</p>
-    </div>
-  </div>
-</div>
-{% endblock %}
+<h1> Project Dashboard </h1>
 
-{% block modals %}
-<!-- Create project modal -->
-<div id="pModal" class="modal fade" tabindex="-1" aria-labelledby="pModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="pModalLabel" class="modal-title fs-5">Add a project</h2>
-        <button type="button" class="btn-close close-button" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="add-project-modal-form">
-          {% csrf_token %}
-          <input type="hidden" id="projectId" name="id">
-          <div class="mb-3">
-            <label for="title" class="form-label">Project title</label>
-            <input type="text" id="title" name="title" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label for="description" class="form-label">Project description</label>
-            <textarea id="description" name="description" class="form-control" rows="4"></textarea>
-          </div>
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label for="capacity" class="form-label">Capacity</label>
-              <input type="number" id="capacity" name="capacity" class="form-control" min="1" max="10" step="1" value="1">
-            </div>
-            <div class="col-md-4">
-              <label for="hostname" class="form-label">Host name</label>
-              <input type="text" id="hostname" name="host_name" class="form-control">
-            </div>
-            <div class="col-md-4">
-              <label for="hostemail" class="form-label">Host email</label>
-              <input type="email" id="hostemail" name="host_email" class="form-control">
-            </div>
-          </div>
-          <div class="mt-3">
-            <label for="hostphone" class="form-label">Host phone</label>
-            <input type="tel" id="hostphone" name="host_phone" class="form-control" pattern="[0-9]{10}">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button form="add-project-modal-form" type="submit" class="btn btn-primary">Submit</button>
-        <button type="button" class="btn btn-outline-secondary close-button" data-bs-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
+<div id="project-container">
+    <p>Loading projects...</p>
 </div>
 
-<!-- Edit project modal -->
-<div id="editProjectModal" class="modal fade" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="editProjectModalLabel" class="modal-title fs-5">Edit project</h2>
-        <button type="button" class="btn-close close-button" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="edit-project-modal-form">
-          {% csrf_token %}
-          <input type="hidden" id="edit-project-id" name="id">
-          <div class="mb-3">
-            <label for="edit-project-title" class="form-label">Project title</label>
-            <input type="text" id="edit-project-title" name="title" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label for="edit-project-description" class="form-label">Project description</label>
-            <textarea id="edit-project-description" name="description" class="form-control" rows="4"></textarea>
-          </div>
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label for="edit-project-capacity" class="form-label">Capacity</label>
-              <input type="number" id="edit-project-capacity" name="capacity" class="form-control" min="1" max="10" step="1" value="1">
-            </div>
-            <div class="col-md-4">
-              <label for="edit-host-name" class="form-label">Host name</label>
-              <input type="text" id="edit-host-name" name="host_name" class="form-control">
-            </div>
-            <div class="col-md-4">
-              <label for="edit-host-email" class="form-label">Host email</label>
-              <input type="email" id="edit-host-email" name="host_email" class="form-control">
-            </div>
-          </div>
-          <div class="mt-3">
-            <label for="edit-host-phone" class="form-label">Host phone</label>
-            <input type="tel" id="edit-host-phone" name="host_phone" class="form-control" pattern="[0-9]{10}">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button form="edit-project-modal-form" type="submit" class="btn btn-primary">Save changes</button>
-        <button type="button" class="btn btn-outline-secondary close-button" data-bs-dismiss="modal">Cancel</button>
-      </div>
+<div id="modal-container">
+    <button id="openModalBtn">Add a new Project</button>
+    <div id='pModal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-button'>&times;</span>
+            <h2> Add a project </h2>
+            <form id='add-project-modal-form'>
+                {% csrf_token %}
+                <input type="hidden" id='projectId' name='id'>
+                <label for="title">Project Title:</label><br>
+                <input type="text" id="title" name="title"><br><br>
+                <label for="description">Project Description:</label><br>
+                <input type="textarea" id="description" name="description"><br><br>
+                <label for="capacity">Capacity:</label><br>
+                <input type="number" id="capacity" name="capacity" min="1" max="10" step="1" value="1"><br><br>  
+                <label for="hostname">Host Name:</label><br>
+                <input type="text" id="hostname" name="host_name"><br><br>
+                <label for="hostemail">Host Email:</label><br>
+                <input type="email" id="hostemail" name="host_email"><br><br>
+                <label for="hostphone">Host Phone:</label><br>
+                <input type="tel" id="hostphone" name="host_phone" pattern="[0-9]{10}"><br><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
     </div>
-  </div>
-</div>
-{% endblock %}
 
-{% block scripts %}
+    <div id='editProjectModal' class='modal'>
+        <div class='modal-content'>
+            <span class='close-button'>&times;</span>
+            <h2> Editproject </h2>
+            <form id='edit-project-modal-form'>
+                {% csrf_token %}
+                <input type="hidden" id='edit-project-id' name='id'>
+                <label for="edit-project-title">Project Title:</label><br>
+                <input type="text" id="edit-project-title" name="title"><br><br>
+                <label for="edit-project-description">Project Description:</label><br>
+                <input type="textarea" id="edit-project-description" name="description"><br><br>
+                <label for="edit-project-capacity">Capacity:</label><br>
+                <input type="number" id="edit-project-capacity" name="capacity" min="1" max="10" step="1" value="1"><br><br>  
+                <label for="edit-host-name">Host Name:</label><br>
+                <input type="text" id="edit-host-name" name="host_name"><br><br>
+                <label for="edit-host-email">Host Email:</label><br>
+                <input type="email" id="edit-host-email" name="host_email"><br><br>
+                <label for="edit-host-phone">Host Phone:</label><br>
+                <input type="tel" id="edit-host-phone" name="host_phone" pattern="[0-9]{10}"><br><br>
+                <input type="submit" value="Save Changes">
+            </form>
+        </div>
+    </div>
+</div> 
 <script src="{% static 'admin_app/js/project.js' %}"></script>
-<script>
-(function () {
-  const wrap = document.getElementById('project-container');
-  if (!wrap) return;
-
-  function decorate() {
-    [...wrap.children].forEach(card => {
-      const bar = card.lastElementChild;
-      if (!bar) return;
-      const t = [...bar.childNodes].find(n => n.nodeType === 3 && n.textContent.trim().startsWith('Capacity'));
-      if (t) { bar.setAttribute('data-capacity', t.textContent.trim()); t.remove(); }
-    });
-  }
-
-  new MutationObserver(decorate).observe(wrap, { childList: true, subtree: true });
-  decorate();
-})();
-</script>
 {% endblock %}
-

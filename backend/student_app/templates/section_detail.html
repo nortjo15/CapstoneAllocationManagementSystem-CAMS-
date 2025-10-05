@@ -1,59 +1,46 @@
 {% extends "student_base.html" %}
-
-{% block page_header %}
-<h1 class="h3 mb-0">{{ section.name }}</h1>
-{% endblock %}
-
-{% block page_toolbar %}
-<a href="{% url 'students:student_home' %}" class="btn btn-outline-secondary">← Back to Sections</a>
-{% endblock %}
-
 {% block content %}
-<div class="row g-4">
+
+<nav>
+  <a href="{% url 'student_app:student_home' %}">← Back to Sections</a>
+</nav>
+
+<header>
+  <h1>{{ section.name }}</h1>
+</header>
+
+<main>
   {% if subsections %}
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">Subsections</div>
-      <div class="list-group list-group-flush">
+    <section>
+      <h2>Subsections</h2>
+      <ul>
         {% for sub in subsections %}
-          <a href="{% url 'student_app:section_detail' sub.id %}" class="list-group-item list-group-item-action">
-            {{ sub.name }}
-          </a>
+          <li><a href="{% url 'student_app:section_detail' sub.id %}">{{ sub.name }}</a></li>
         {% endfor %}
-      </div>
-    </div>
-  </div>
+      </ul>
+    </section>
   {% endif %}
 
-  <div class="{% if subsections %}col-md-8{% else %}col-12{% endif %}">
-    <div class="card">
-      <div class="card-header">Contents</div>
-      <div class="card-body">
-        {% if contents %}
-          <div class="vstack gap-3">
-            {% for item in contents %}
-            <article class="card">
-              <div class="card-body">
-                <h3 class="h5 mb-1">
-                  {% if item.pinned %}<span class="badge text-bg-warning me-2">Pinned</span>{% endif %}
-                  {{ item.title }}
-                </h3>
-                <div class="text-muted small mb-2">
-                  {% if item.published_at %}Published: {{ item.published_at|date:"Y-m-d H:i" }} · {% endif %}
-                  Author: {{ item.author }}
-                </div>
-                <div class="lh-base">
-                  {{ item.body|linebreaks }}
-                </div>
-              </div>
-            </article>
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="alert alert-info mb-0">No content available for this section.</div>
-        {% endif %}
+  <section aria-label="Section contents">
+    <h2>Contents</h2>
+    {% if contents %}
+      <div>
+        {% for item in contents %}
+          <article>
+            <h3>{% if item.pinned %}[Pinned] {% endif %}{{ item.title }}</h3>
+            <div>
+              {% if item.published_at %}<small>Published: {{ item.published_at }}</small><br>{% endif %}
+              <small>Author: {{ item.author }}</small>
+            </div>
+            <div>{{ item.body|linebreaks }}</div>
+          </article>
+          <hr>
+        {% endfor %}
       </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+    {% else %}
+      <p>No content available for this section.</p>
+    {% endif %}
+  </section>
+</main>
+
+{% endblock content %}

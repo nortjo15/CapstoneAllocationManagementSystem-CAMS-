@@ -1,78 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
+    crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" 
+    crossorigin="anonymous"></script>
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'admin_app/css/main.css' %}">
-  {% block extra_css %}{% endblock %}
+    <meta charset="UTF-8">
+    <title>Admin Portal</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin_app/css/main.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-
-{% block navbar %}
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-<a class="navbar-brand" href="{% url 'admin_app:login_success' %}">CAS Admin</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:student_view' %}">Students</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:groups_view' %}">Groups</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:project_dashboard' %}">Projects</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:round_view' %}">Rounds</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:email_page' %}">Email Students</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:information_list' %}">Provided Information</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:degree_dashboard' %}">Adjust Degrees</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:settings' %}">Settings</a></li>
-    </ul>
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-    <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:logout' %}">Logout</a></li>
-    </ul>
+    <div id="navigationBar">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'admin_dashboard:login_success' %}">Admin Dashboard</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:student_view' %}">Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:groups_view' %}">Groups</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:project_dashboard' %}">Projects</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:round_view' %}">Round form</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:settings' %}">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:email_page' %}">Email</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:degree_dashboard' %}">Degrees</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard:information_dashboard' %}">Information</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_dashboard:logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
-  </div>
-</nav>
-{% endblock %}
-
-<div class="container mt-3">
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
-</div>
-
-<div class="container mt-3">
-  {% block page_header %}{% endblock %}
-</div>
-
-<div class="container mb-3">
-  {% block page_toolbar %}{% endblock %}
-  {% block filter_bar %}{% endblock %}
-</div>
 
     <div id="content">
         {% block content %}{% endblock %}
     </div>
 
-<script>
-  window.ENDPOINTS = {
-    projects: "{% url 'api_admin:project-list' %}",
-    rounds: "{% url 'api_admin:round-list' %}",
-    adminLogs: "{% url 'api_admin:admin_log-list' %}",
-    degrees: "{% url 'api_admin:degree-list' %}",
-    majors: "{% url 'api_admin:major-list' %}"
-  };
-</script>
-{% block scripts %}{% endblock %}
+    <script>
+        window.ENDPOINTS = {
+            projects: "{% url 'api_admin:project-list' %}",
+            rounds: "{% url 'api_admin:round-list' %}",
+            adminLogs: "{% url 'api_admin:admin_log-list' %}",
+            degrees: "{% url 'api_admin:degree-list' %}",
+            majors: "{% url 'api_admin:major-list' %}",
+            // Add other endpoints here as you create them
+        };
+    </script>
+    {% block scripts %}{% endblock %}
+    
 </body>
-</html>
