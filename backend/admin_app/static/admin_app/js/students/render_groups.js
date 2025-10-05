@@ -206,7 +206,7 @@ export function renderProjectInfo(group, groupSize, projectName,
         window.suggestedGroupsCache.delete(group.suggestedgroup_id);
         loadGroup(group.suggestedgroup_id);
 
-        fetch(`/api/suggested_groups/${group.suggestedgroup_id}/update/`, 
+        fetch(`/api/admin/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
             method: "PATCH",
             headers: {
