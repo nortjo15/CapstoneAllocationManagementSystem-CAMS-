@@ -5,18 +5,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer, FullFormSerializer
-from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent, UnitContacts
+from .serializers import StudentSerializer, MajorSerializer, FullFormSerializer
+from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent
 from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse 
 from django.db.models import Prefetch, Q
 from django.core.paginator import Paginator
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET
-from django.http import HttpResponse
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
