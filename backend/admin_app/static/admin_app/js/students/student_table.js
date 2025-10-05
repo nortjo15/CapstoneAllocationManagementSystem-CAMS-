@@ -241,7 +241,7 @@ addBtn.addEventListener("click", (e) =>
 
     Promise.all(
         selectedIds.map(id => 
-            fetch(`/api/suggested_groups/${activeGroupId}/add_student/`,
+            fetch(`/api/admin/suggested_groups/${activeGroupId}/add_student/`,
             {
                 method: "POST",
                 headers: {

@@ -180,7 +180,8 @@ export function renderProjectInfo(group, groupSize, projectName,
     }
     else 
     {
-        fetch("/api/admin/project_list/")
+        const apiUrl = window.ENDPOINTS.projects;
+        fetch(apiUrl)
             .then(res => res.json())
             .then(projects => {
                 cachedProjects = projects;
