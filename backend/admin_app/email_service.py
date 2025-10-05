@@ -26,17 +26,7 @@ def generate_mailto_link(subject, body, audience="students", project_id=None):
 
         recipients = [project.host_email] if project.host_email else []
 
-        final_groups = project.final_groups.all().prefetch_related("members__student")
-        resume_links = []
-        for group in final_groups:
-            for member in group.members.all():
-                if member.student.resume:
-                    resume_links.append(f"{settings.MEDIA_URL}{member.student.resume}")
-
-        if resume_links:
-            body += "\n\nAttached CVs/Resumes (please download from links):\n" + "\n".join(resume_links)
-        else:
-            body += "\n\n(No resumes found for this project)"
+        
 
     if not recipients:
         return None
