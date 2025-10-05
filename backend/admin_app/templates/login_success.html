@@ -1,77 +1,93 @@
-<!DOCTYPE html>
-
 {% extends "admin_base.html" %}
 
+{% block content %}
+<style>
+    /* Isolate styling under .welcome-page to prevent admin layout conflicts */
+    .welcome-page {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: calc(100vh - 70px); /* subtract navbar height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1rem;
+    }
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - CAS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-size: 2.5rem;
-        }
-        .user-greeting {
-            color: #667eea;
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .nav-link {
-            background: #667eea;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        .nav-link:hover {
-            background: #5a6fd8;
-        }
-        .welcome-message {
-            margin: 2rem 0;
-            color: #666;
-            line-height: 1.6;
-        }
-    </style>
-</head>
-<body>
+    .welcome-page .container {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .welcome-page h1 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 2.2rem;
+    }
+
+    .welcome-page .user-greeting {
+        color: #667eea;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .welcome-page .welcome-message {
+        margin: 1rem 0 1.5rem 0;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    /* New clock style */
+    .clock {
+        font-size: 1rem;
+        color: #555;
+        background: #f5f5f5;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .welcome-page .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: center;
+    }
+
+    .welcome-page .nav-link {
+        background: #667eea;
+        color: white;
+        padding: 0.7rem 1.2rem;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.3s;
+        width: 70%;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .welcome-page .nav-link:hover {
+        background: #5a6fd8;
+    }
+</style>
+
+<div class="welcome-page">
     <div class="container">
         <h1>Welcome to CAS</h1>
-        
+
         {% if user.is_authenticated %}
             <div class="user-greeting">
                 Hello, {{ user.username }}! 👋
             </div>
             <div class="welcome-message">
-                You are successfully logged in to the Campus Administration System.
+                You are successfully logged in to the Capstone Allocation System.
             </div>
         {% else %}
             <div class="user-greeting">
@@ -82,18 +98,36 @@
             </div>
         {% endif %}
 
+        <!-- Clock -->
+        <div id="clock" class="clock">Loading time...</div>
+
         <div class="nav-links">
             {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                    <a href="/admin/" class="nav-link">Admin Panel</a>
-                {% endif %}
-
-                <a href="{% url 'admin_dashboard:student_view' %}" class="nav-link">Student View</a>
+                <a href="{% url 'admin_dashboard:student_view' %}" class="nav-link">Student List</a>
                 <a href="{% url 'admin_dashboard:logout' %}" class="nav-link">Logout</a>
             {% else %}
                 <a href="{% url 'admin_dashboard:login' %}" class="nav-link">Login</a>
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<!-- JS for real-time clock -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        document.getElementById('clock').textContent = now.toLocaleString('en-US', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+{% endblock %}
