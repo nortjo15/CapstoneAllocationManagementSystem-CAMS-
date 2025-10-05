@@ -4,6 +4,7 @@ import
 import { loadGroup } from "./suggested_groups.js";
 import { updateDeleteButton } from "./group_actions.js";
 import { renderGroupUI } from "./suggested_groups.js";
+import { hidePageLoader, showPageLoader } from "../utils.js";
 
 let cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -201,6 +202,7 @@ export function renderProjectInfo(group, groupSize, projectName,
     //Update backend
     select.addEventListener("change", () => 
     {
+        showPageLoader()
         const projectId = select.value;
 
         group.project = cachedProjects.find(p => p.project_id == projectId) || null;
@@ -227,7 +229,8 @@ export function renderProjectInfo(group, groupSize, projectName,
         .catch(err => {
             console.error("Failed to update project:", err);
             loadGroup(group.suggestedgroup_id)
-        });
+        })
+        .finally(() => hidePageLoader());
     });
 
     const errorBox = document.getElementById("group-errors");

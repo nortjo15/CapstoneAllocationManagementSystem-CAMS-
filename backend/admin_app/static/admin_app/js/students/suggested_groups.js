@@ -1,4 +1,4 @@
-import { setButtonLoading } from "./utils.js";
+import { hidePageLoader, setButtonLoading, showPageLoader } from "../utils.js";
 import { updateGroupUI } from "./render_groups.js";
 import { openCreateGroupModal } from "./modal_function.js";
 
@@ -60,13 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (suggestedGroupsInitialised) return; 
         suggestedGroupsInitialised = true; 
 
+        showPageLoader();
         // --- Load existing auto-suggested groups on page reload ---
         fetch("/api/admin/suggested_groups/auto/")
             .then(res => res.json())
             .then(data => {
                 renderSuggestedGroups(data);
             })
-            .catch(err => console.error("Failed to load suggested groups:", err));
+            .catch(err => console.error("Failed to load suggested groups:", err))
+            .finally(() => hidePageLoader());
 
         // --- Finalise button skeleton ---
         finaliseBtn.addEventListener("click", () => 
