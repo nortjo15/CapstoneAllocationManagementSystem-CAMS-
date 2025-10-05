@@ -205,6 +205,7 @@ export function removeStudentFromGroup(student, group)
 //Loading a group onto the center panel
 export function loadGroup(id)
 {
+    showPageLoader();
     //Display consecutive numbers for groups
 
     const btn = document.querySelector(
@@ -221,6 +222,7 @@ export function loadGroup(id)
     {
         renderGroupUI(cached, btn);
         if (btn) setButtonLoading(btn, false);
+        hidePageLoader();
         return;
     }
 
@@ -238,6 +240,7 @@ export function loadGroup(id)
         {
             //stop spinner on this button 
             if (btn) setButtonLoading(btn, false);
+            hidePageLoader();
         });
 }
 

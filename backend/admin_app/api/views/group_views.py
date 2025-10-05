@@ -137,7 +137,7 @@ def add_student_to_group(request, suggestedgroup_id):
 
     SuggestedGroupMember.objects.create(suggested_group=group, student=student)
     group.refresh_from_db()
-    serializer = SuggestedGroupLiteSerializer(group)
+    serializer = SuggestedGroupSerializer(group)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(["POST"])

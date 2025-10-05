@@ -202,7 +202,7 @@ export function renderProjectInfo(group, groupSize, projectName,
     //Update backend
     select.addEventListener("change", () => 
     {
-        showPageLoader()
+        showPageLoader();
         const projectId = select.value;
 
         group.project = cachedProjects.find(p => p.project_id == projectId) || null;
