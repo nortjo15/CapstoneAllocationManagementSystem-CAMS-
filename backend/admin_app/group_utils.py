@@ -333,11 +333,6 @@ def build_mutual_like_graph():
 # Generates candidate groups from mutual-like groups, classifies them, returns results
 @transaction.atomic
 def generate_suggestions_from_likes():
-
-    import sys
-    print(">>> Generator started <<<", file=sys.stderr)
-    sys.stderr.flush()
-    
     # Clear out old suggested groups & members
     SuggestedGroupMember.objects.filter(
         suggested_group__is_manual=False
