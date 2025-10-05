@@ -15,6 +15,8 @@ function getGroupCapacityInfo() {
 }
 
 export function fetchStudents(targetId = "studentsTableBody", params = "") {
+    console.log("FETCH URL:", `/api/admin/students/${params}`);
+
     fetch(`/api/admin/students/${params}`)
         .then(res => res.json())
         .then(data => {
@@ -290,6 +292,11 @@ function applyFiltersAndSearch(targetId, searchVal= "")
 {
     const form = document.getElementById("studentFilterForm");
     const params = new URLSearchParams();
+
+    if (targetId === "studentsTableBodyModal") 
+    {
+        params.append("allocated_group", "false");
+    }
 
     //Collect filter form data
     if (form)
