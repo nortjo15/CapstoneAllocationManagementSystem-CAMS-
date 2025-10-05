@@ -1,3 +1,7 @@
+const pathParts = window.location.pathname.split('/').filter(Boolean);
+const roundId = pathParts[pathParts.length - 1];
+
+
 //get the list of majors from API
 async function getMajors(){
     try{
@@ -28,18 +32,37 @@ async function getStudents(){
     }
 }
 //get list of projects from API
-async function getProjects(){
-   try{
-        const response = await fetch(window.ENDPOINTS.projects);
-        if(!response.ok){
-            throw new Error('Failed to fetch projects');
-        } 
+// async function getProjects(){
+//    try{
+//         const response = await fetch(window.ENDPOINTS.projects);
         
-        return await response.json();
+//         if(!response.ok){
+//             throw new Error('Failed to fetch projects');
+//         } 
+        
+//         return await response.json();
 
-    }catch(error){
-        console.error('Error fetching project data:', error);
-        return[];
+//     }catch(error){
+//         console.error('Error fetching project data:', error);
+//         return[];
+//     }
+// }
+
+//get list of projects from API
+async function getProjects(){
+    try {
+        const response  = await fetch(`/api/student/rounds/${roundId}/`);
+
+        if(!response.ok) {
+            throw new Error('Failed to fetch round');
+        }
+
+        const json = await response.json();
+        return json.projects || [];
+
+    } catch(error) {
+        console.error(error);
+        return [];
     }
 }
 
@@ -413,7 +436,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     //Majors list
     const majors = await getMajors();
     const projects = await getProjects();
-
+    
     populateProjectDropdown(projects);
     populateMajorDropdown(majors);
 

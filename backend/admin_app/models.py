@@ -64,6 +64,10 @@ class Round(models.Model):
     open_date = models.DateTimeField()
     close_date = models.DateTimeField()
 
+    def save(self, *args, **kwargs):
+        self.is_active = True if self.status == 'open' else False
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Round {self.round_id} - {self.status}"
 

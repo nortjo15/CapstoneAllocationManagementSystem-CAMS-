@@ -31,8 +31,11 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'students:student_form' %}">Make Application</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'students:project_information' %}">Project Information</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Industry Round</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Internal Round</a></li>
+        {% for round in active_rounds %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'students:student_form2' round.round_id %}">{{ round.round_name }}</a>
+          </li>
+        {% endfor %}
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:login' %}">Admin Login</a></li>

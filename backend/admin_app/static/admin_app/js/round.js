@@ -9,7 +9,6 @@ const createRoundForm = document.getElementById('create-round-form');
 const editRoundForm = document.getElementById('edit-round-form');
 const deleteRoundBtn = document.getElementById('delete-round-btn');
 
-
 function showRightPane(view) {
     roundDetailsView.classList.add('hidden');
     createRoundView.classList.add('hidden');
