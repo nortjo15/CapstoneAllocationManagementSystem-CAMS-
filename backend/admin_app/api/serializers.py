@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from student_app.api.serializers import StudentSerializer, StudentListSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
 from ..models import Project, ProjectPreference, Round, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Degree, Major, AdminLog, CapstoneInformationContent, CapstoneInformationSection, UnitContacts
-from django.contrib.auth import get_user_model
+from django.db import transaction
 
 class AdminLogSerializer(serializers.ModelSerializer):
     #Get the string representation of user
@@ -112,37 +112,51 @@ class FinalGroupCreateSerializer(serializers.ModelSerializer):
         model = FinalGroup
         fields = ["finalgroup_id", "name", "notes", "suggestedgroup_id"]
 
+    @transaction.atomic  # ensures all-or-nothing database updates
     def create(self, validated_data):
         suggestedgroup_id = validated_data.pop("suggestedgroup_id")
-        sg = SuggestedGroup.objects.prefetch_related("members__student", "project").get(suggestedgroup_id=suggestedgroup_id)
 
-        # Create Final Group
+        # Prefetch for efficiency
+        sg = SuggestedGroup.objects.prefetch_related(
+            "members__student",
+            "project"
+        ).get(suggestedgroup_id=suggestedgroup_id)
+
+        # --- Create the FinalGroup ---
         final_group = FinalGroup.objects.create(
             name=validated_data.get("name"),
             notes=validated_data.get("notes"),
             project=sg.project,
         )
 
-        # Copy members
-        from admin_app.models import SuggestedGroupMember, FinalGroupMember
-        members = sg.members.all()
-        for m in members:
-            FinalGroupMember.objects.create(
-                final_group=final_group,
-                student=m.student,
-            )
-            # Mark student as allocated
-            m.student.allocated_group = True 
+        # --- Copy members and mark as allocated ---
+        for m in sg.members.all():
+            FinalGroupMember.objects.create(final_group=final_group, student=m.student)
+            m.student.allocated_group = True
             m.student.save()
 
-        # Delete suggested group and its  members
+        # --- Delete the suggested group being finalized ---
         sg.delete()
 
+        allocated_student_ids = list(
+            final_group.members.values_list("student__student_id", flat=True)
+        )
+        assigned_project = final_group.project
+
+        # Remove groups sharing any allocated student
+        SuggestedGroup.objects.filter(
+            members__student__student_id__in=allocated_student_ids
+        ).delete()
+
+        # Remove groups with the same project
+        if assigned_project:
+            SuggestedGroup.objects.filter(project=assigned_project).delete()
+
         return final_group
-    
+
     def to_representation(self, instance):
         return FinalGroupSerializer(instance, context=self.context).data
-
+    
 class FinalGroupMemberSerializer(serializers.ModelSerializer):
     student = StudentListSerializer(read_only=True) 
 
@@ -171,6 +185,7 @@ class RoundSerializer(serializers.ModelSerializer):
         model = Round
         fields = '__all__'
 
+    @transaction.atomic
     def create(self, validated_data):
         project_ids = validated_data.pop('project_ids', [])
         round_instance = Round.objects.create(**validated_data)

@@ -15,6 +15,53 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 let suggestedGroupsInitialised = false;
 window.suggestedGroupsCache = new Map(); 
 
+export function renderManualGroup(group)
+{
+    //Add it to the sidebar 
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.classList.add("btn", "list-item-btn");
+    btn.classList.add("strength-manual");
+    btn.dataset.id = group.suggestedgroup_id;
+    btn.dataset.display = group.name; 
+    btn.textContent = group.name; 
+    li.appendChild(btn);
+    manualGroupsUl.appendChild(li);
+
+    btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+}
+
+export function renderSuggestedGroups(groups) 
+{
+    const order = {strong: 1, medium: 2, weak: 3};
+    groups.sort((a, b) => order[a.strength] - order[b.strength]);
+
+    suggestedGroupsUl.innerHTML = "";
+    groups.forEach((group, idx) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+
+        btn.classList.add("btn", "list-item-btn");
+        btn.dataset.id = group.suggestedgroup_id;
+        btn.dataset.display = idx + 1;
+        btn.textContent = `Group ${idx+1}`;
+        btn.classList.add(`strength-${group.strength.toLowerCase()}`);
+
+        btn.dataset.projectId = group.project ? group.project.project_id : "";
+        btn.dataset.isAssigned = group.project ? group.project.is_assigned : false;
+        btn.dataset.members = JSON.stringify(group.members || []);
+
+        li.appendChild(btn);
+        suggestedGroupsUl.appendChild(li);
+    });
+
+    suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
     //Variable to track the active group
@@ -29,32 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
             initManualGroups();
         }
     });
-
-    function renderSuggestedGroups(groups) 
-    {
-        const order = {strong: 1, medium: 2, weak: 3};
-        groups.sort((a, b) => order[a.strength] - order[b.strength]);
-
-        suggestedGroupsUl.innerHTML = "";
-        groups.forEach((group, idx) => {
-            const li = document.createElement("li");
-            const btn = document.createElement("button");
-            btn.type = "button";
-
-            btn.classList.add("btn", "list-item-btn");
-            btn.dataset.id = group.suggestedgroup_id;
-            btn.dataset.display = idx + 1;
-            btn.textContent = `Group ${idx+1}`;
-            btn.classList.add(`strength-${group.strength.toLowerCase()}`);
-
-            li.appendChild(btn);
-            suggestedGroupsUl.appendChild(li);
-        });
-
-        suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
-            btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-        });
-    }
 
     function initSuggestedGroups() 
     {
@@ -145,23 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 groups.forEach(group => renderManualGroup(group));
             })
             .catch(err => console.error("Failed to load manual groups:", err));
-    }
-
-    function renderManualGroup(group)
-    {
-        //Add it to the sidebar 
-        const li = document.createElement("li");
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.classList.add("btn", "list-item-btn");
-        btn.classList.add("strength-manual");
-        btn.dataset.id = group.suggestedgroup_id;
-        btn.dataset.display = group.name; 
-        btn.textContent = group.name; 
-        li.appendChild(btn);
-        manualGroupsUl.appendChild(li);
-
-        btn.addEventListener("click", () => loadGroup(btn.dataset.id));
     }
 
     //Trigger tab:activated if SuggestedGroups is active on load 

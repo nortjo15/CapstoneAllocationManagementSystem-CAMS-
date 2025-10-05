@@ -222,8 +222,24 @@ export function renderProjectInfo(group, groupSize, projectName,
             return res.json();
         })
         .then(updatedGroup => {
-            //Update cache & UI only after backend confirms
+            // --- Update cache ---
             window.suggestedGroupsCache.set(updatedGroup.suggestedgroup_id, updatedGroup);
+
+            // --- Sync DOM button attributes so finaliseGroup() sees correct data ---
+            const btn = document.querySelector(
+                `#suggested-groups-ul button[data-id="${updatedGroup.suggestedgroup_id}"], #manual-groups-ul button[data-id="${updatedGroup.suggestedgroup_id}"]`
+            );
+            if (btn) {
+                btn.dataset.projectId = updatedGroup.project
+                    ? updatedGroup.project.project_id
+                    : "";
+                btn.dataset.isAssigned = updatedGroup.project
+                    ? updatedGroup.project.is_assigned
+                    : false;
+                btn.dataset.members = JSON.stringify(updatedGroup.members || []);
+            }
+
+            // --- Re-render UI for the updated group ---
             renderGroupUI(updatedGroup);
         })
         .catch(err => {
