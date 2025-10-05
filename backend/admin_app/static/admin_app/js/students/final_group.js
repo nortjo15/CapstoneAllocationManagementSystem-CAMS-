@@ -1,4 +1,5 @@
 import { showPageLoader, hidePageLoader } from "../utils.js";
+import { updateGroupUI } from "./render_groups.js";
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
@@ -81,26 +82,27 @@ export function finaliseGroup(groupId, name, notes)
         const assignedProjectId = data.project?.project_id;  
 
         // Remove all overlapping groups
-        document
-            .querySelectorAll("#suggested-groups-ul button, #manual-groups-ul button")
-            .forEach((button) => {
-                const gId = parseInt(button.dataset.id);
-                const cachedGroup = window.suggestedGroupsCache.get(gId);
-                if (!cachedGroup) return;
+        document.querySelectorAll("#suggested-groups-ul button, #manual-groups-ul button")
+        .forEach((button) => {
+            const gId = parseInt(button.dataset.id);
+            const cachedGroup = window.suggestedGroupsCache.get(gId);
+            if (!cachedGroup) return;
 
-                const hasOverlap =
-                    cachedGroup.members.some((m) =>
-                        allocatedStudentIds.includes(m.student.student_id)
-                    ) ||
-                    (assignedProjectId &&
-                        cachedGroup.project &&
-                        cachedGroup.project.project_id === assignedProjectId);
+            const hasOverlap =
+            cachedGroup.members.some((m) =>
+                allocatedStudentIds.includes(m.student.student_id)
+            ) ||
+            (
+                assignedProjectId &&
+                cachedGroup.project &&
+                Number(cachedGroup.project.project_id) === Number(assignedProjectId)
+            );
 
-                if (hasOverlap) {
-                    button.parentElement.remove();
-                    window.suggestedGroupsCache.delete(gId);
-                }
-            });
+            if (hasOverlap) {
+                button.parentElement.remove();
+                window.suggestedGroupsCache.delete(gId);
+            }
+        });
 
         window.cachedProjects = null; 
 
@@ -145,7 +147,7 @@ function renderFinalGroups(groups) {
         finalGroupsUl.appendChild(li);
 
         btn.addEventListener("click", () => {
-            console.log("Selected Final Group:", g.finalgroup_id);
+            loadFinalGroup(g.finalgroup_id);
         });
     });
 }
@@ -170,3 +172,113 @@ document.addEventListener("tab:activated", e => {
         loadFinalGroups();
     }
 });
+
+function loadFinalGroup(id) {
+    showPageLoader();
+
+    fetch(`/api/admin/final_groups/${id}/`)
+        .then(res => res.json())
+        .then(group => {
+            renderFinalGroupUI(group);
+        })
+        .catch(err => console.error("Failed to load final group:", err))
+        .finally(() => hidePageLoader());
+}
+
+function renderFinalGroupUI(group) {
+    // --- clear old content before rendering ---
+    document.getElementById("final-group-title").textContent = group.name || "Unnamed Final Group";
+    document.getElementById("final-group-size").innerHTML = `<p><strong>Group Size:</strong> ${group.members.length}</p>`;
+
+    const projectBox = document.getElementById("final-group-project-name");
+    projectBox.innerHTML = group.project
+        ? `<p><strong>Project:</strong> ${group.project.title}</p>`
+        : `<p><strong>Project:</strong> None</p>`;
+
+    const hostBox = document.getElementById("final-group-host");
+    hostBox.innerHTML = group.project
+        ? `<p><strong>Host:</strong> ${group.project.host_name}</p>`
+        : `<p><strong>Host:</strong> N/A</p>`;
+
+    const membersContainer = document.querySelector("#final-group-members .members-container");
+    membersContainer.innerHTML = ""; // clear previous
+
+    if (group.members && group.members.length) {
+        group.members.forEach(m => {
+            const div = document.createElement("div");
+            div.classList.add("card", "member-card");
+            div.innerHTML = `
+                <p><span class="member-label">Name:</span> ${m.student.name}</p>
+                <p><span class="member-label">ID:</span> ${m.student.student_id}</p>
+                <p><span class="member-label">CWA:</span> ${m.student.cwa ?? "N/A"}</p>
+                <p><span class="member-label">Major:</span> ${m.student.major ? m.student.major.name : "N/A"}</p>
+            `;
+            membersContainer.appendChild(div);
+        });
+    } else {
+        const empty = document.createElement("p");
+        empty.textContent = "No members found.";
+        membersContainer.appendChild(empty);
+    }
+
+    // --- notes handling ---
+    const notesArea = document.getElementById("final-notes-area");
+    if (notesArea) notesArea.value = group.notes || "";
+
+    // --- delete handler ---
+    const deleteBtn = document.getElementById("delete-final-group-btn");
+    deleteBtn.onclick = () => deleteFinalGroup(group.finalgroup_id);
+
+    // --- save handler ---
+    const saveBtn = document.getElementById("save-final-notes-btn");
+    saveBtn.onclick = () => {
+        const updatedNotes = notesArea.value.trim();
+        saveFinalGroupNotes(group.finalgroup_id, updatedNotes);
+    };
+}
+
+function deleteFinalGroup(id) {
+    if (!confirm("Delete this final group?")) return;
+    showPageLoader();
+
+    fetch(`/api/admin/final_groups/${id}/`, {
+        method: "DELETE",
+        headers: { "X-CSRFToken": csrfToken }
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to delete final group");
+
+            // refresh sidebar list
+            loadFinalGroups();
+
+            // clear center panel
+            document.getElementById("final-group-title").textContent = "Select a group";
+            document.getElementById("final-group-size").innerHTML = "";
+            document.querySelector("#final-group-members .members-container").innerHTML = "";
+            document.getElementById("final-group-project-name").innerHTML = "";
+            document.getElementById("final-group-host").innerHTML = "";
+            document.getElementById("final-notes-area").value = "";
+        })
+        .catch(err => console.error(err))
+        .finally(() => hidePageLoader());
+}
+
+function saveFinalGroupNotes(id, notes) {
+    showPageLoader();
+
+    fetch(`/api/admin/final_groups/${id}/`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({ notes })
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to update notes");
+            console.log("Notes saved for Final Group", id);
+        })
+        .then(() => loadFinalGroups()) // refresh list to reflect updates
+        .catch(err => console.error(err))
+        .finally(() => hidePageLoader());
+}
