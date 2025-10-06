@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import Student
 from .serializers import StudentSerializer, ProjectSerializer, MajorSerializer, FullFormSerializer
-from admin_app.models import Project, Major
+from admin_app.models import Project, Major, Round
+from admin_app.api.serializers import RoundSerializer
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -17,6 +18,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class MajorViewSet(viewsets.ModelViewSet):
     queryset = Major.objects.all()
     serializer_class = MajorSerializer
+
+class RoundViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Round.objects.all()
+    serializer_class = RoundSerializer
+
+# class RoundViewSet(viewsets.ModelViewSet):
 
 class StudentApplicationView(APIView):
     def post(self, request):

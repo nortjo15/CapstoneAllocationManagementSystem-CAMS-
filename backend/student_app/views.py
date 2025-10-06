@@ -12,6 +12,9 @@ from django.views.decorators.http import require_GET
 def student_form_view(request):
     return render(request, "student_form.html")
 
+def student_form_view2(request, round_id):
+    return render(request, "student_form.html")
+
 def student_form_success(request):
     return render(request, "student_form_success.html")
     
