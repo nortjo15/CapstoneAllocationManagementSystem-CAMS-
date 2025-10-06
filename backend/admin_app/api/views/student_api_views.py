@@ -142,6 +142,8 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
     filterset_class = StudentFilter
 
     def get_queryset(self):
+        print("allocated_group param:", self.request.query_params.get("allocated_group"))
+        
         qs = (
             Student.objects.all()
             .select_related("major")

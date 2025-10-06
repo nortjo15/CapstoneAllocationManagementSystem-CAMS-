@@ -58,4 +58,4 @@ class GroupPreference(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.student} → {self.target_student} ({self.preference_type})"
+        return f"{self.student} → {self.target_student} ({self.preference_type})"        

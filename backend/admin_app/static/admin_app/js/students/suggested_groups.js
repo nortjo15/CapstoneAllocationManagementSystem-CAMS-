@@ -1,4 +1,4 @@
-import { setButtonLoading } from "./utils.js";
+import { hidePageLoader, setButtonLoading, showPageLoader } from "../utils.js";
 import { updateGroupUI } from "./render_groups.js";
 import { openCreateGroupModal } from "./modal_function.js";
 
@@ -15,6 +15,53 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 let suggestedGroupsInitialised = false;
 window.suggestedGroupsCache = new Map(); 
 
+export function renderManualGroup(group)
+{
+    //Add it to the sidebar 
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.classList.add("btn", "list-item-btn");
+    btn.classList.add("strength-manual");
+    btn.dataset.id = group.suggestedgroup_id;
+    btn.dataset.display = group.name; 
+    btn.textContent = group.name; 
+    li.appendChild(btn);
+    manualGroupsUl.appendChild(li);
+
+    btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+}
+
+export function renderSuggestedGroups(groups) 
+{
+    const order = {strong: 1, medium: 2, weak: 3};
+    groups.sort((a, b) => order[a.strength] - order[b.strength]);
+
+    suggestedGroupsUl.innerHTML = "";
+    groups.forEach((group, idx) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+
+        btn.classList.add("btn", "list-item-btn");
+        btn.dataset.id = group.suggestedgroup_id;
+        btn.dataset.display = idx + 1;
+        btn.textContent = `Group ${idx+1}`;
+        btn.classList.add(`strength-${group.strength.toLowerCase()}`);
+
+        btn.dataset.projectId = group.project ? group.project.project_id : "";
+        btn.dataset.isAssigned = group.project ? group.project.is_assigned : false;
+        btn.dataset.members = JSON.stringify(group.members || []);
+
+        li.appendChild(btn);
+        suggestedGroupsUl.appendChild(li);
+    });
+
+    suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => loadGroup(btn.dataset.id));
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
     //Variable to track the active group
@@ -22,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // When tab is activated, run logic
     document.addEventListener("tab:activated", e => {
+        console.log("tab activate");
         if (e.detail.tabId === "suggested-tab") 
         {
             initSuggestedGroups();
@@ -29,44 +77,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function renderSuggestedGroups(groups) 
-    {
-        const order = {strong: 1, medium: 2, weak: 3};
-        groups.sort((a, b) => order[a.strength] - order[b.strength]);
-
-        suggestedGroupsUl.innerHTML = "";
-        groups.forEach((group, idx) => {
-            const li = document.createElement("li");
-            const btn = document.createElement("button");
-            btn.type = "button";
-
-            btn.classList.add("btn", "list-item-btn");
-            btn.dataset.id = group.suggestedgroup_id;
-            btn.dataset.display = idx + 1;
-            btn.textContent = `Group ${idx+1}`;
-            btn.classList.add(`strength-${group.strength.toLowerCase()}`);
-
-            li.appendChild(btn);
-            suggestedGroupsUl.appendChild(li);
-        });
-
-        suggestedGroupsUl.querySelectorAll("button").forEach(btn => {
-            btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-        });
-    }
-
     function initSuggestedGroups() 
     {
         if (suggestedGroupsInitialised) return; 
         suggestedGroupsInitialised = true; 
 
+        showPageLoader();
         // --- Load existing auto-suggested groups on page reload ---
         fetch("/api/admin/suggested_groups/auto/")
             .then(res => res.json())
             .then(data => {
                 renderSuggestedGroups(data);
             })
-            .catch(err => console.error("Failed to load suggested groups:", err));
+            .catch(err => console.error("Failed to load suggested groups:", err))
+            .finally(() => hidePageLoader());
 
         // --- Finalise button skeleton ---
         finaliseBtn.addEventListener("click", () => 
@@ -83,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         generateBtn.addEventListener("click", () => {
             setButtonLoading(generateBtn, true);
-
+        
             fetch("/api/admin/generate_suggestions/", {
                 method: "POST",
                 headers: { "X-CSRFToken": csrfToken }
@@ -144,23 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error("Failed to load manual groups:", err));
     }
 
-    function renderManualGroup(group)
-    {
-        //Add it to the sidebar 
-        const li = document.createElement("li");
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.classList.add("btn", "list-item-btn");
-        btn.classList.add("strength-manual");
-        btn.dataset.id = group.suggestedgroup_id;
-        btn.dataset.display = group.name; 
-        btn.textContent = group.name; 
-        li.appendChild(btn);
-        manualGroupsUl.appendChild(li);
-
-        btn.addEventListener("click", () => loadGroup(btn.dataset.id));
-    }
-
     //Trigger tab:activated if SuggestedGroups is active on load 
     if (document.querySelector("#suggested-tab.tab-content.active"))
     {
@@ -169,6 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }));
     }
 });
+
+if (document.querySelector("#suggested-tab.tab-content.active")) {
+    document.dispatchEvent(new CustomEvent("tab:activated", { detail: { tabId: "suggested-tab" } }));
+}
 
 export function removeStudentFromGroup(student, group) 
 {
@@ -201,45 +212,54 @@ export function removeStudentFromGroup(student, group)
 }
 
 //Loading a group onto the center panel
-export function loadGroup(id)
-{
-    //Display consecutive numbers for groups
+export function loadGroup(id) {
+    showPageLoader();
 
     const btn = document.querySelector(
-        `#manual-groups-ul button[data-id="${id}"], #suggested-groups-ul button[data-id="${id}"]`   
+        `#manual-groups-ul button[data-id="${id}"], #suggested-groups-ul button[data-id="${id}"]`
     );
-    const displayNum = btn ? btn.dataset.display : id;
 
-    //Set it to load
     if (btn) setButtonLoading(btn, true);
 
-    // Check cache for the group
-    const cached = window.suggestedGroupsCache.get(parseInt(id));
-    if (cached)
-    {
+    // Check cache first
+    const cached = window.suggestedGroupsCache.get(Number(id));
+    if (cached) {
         renderGroupUI(cached, btn);
         if (btn) setButtonLoading(btn, false);
+        hidePageLoader();
         return;
     }
 
     fetch(`/api/admin/suggested_groups/${id}/`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`Group ${id} not found or deleted`);
+            return res.json();
+        })
         .then(group => {
+            if (!group) throw new Error(`Group ${id} missing in response`);
             window.suggestedGroupsCache.set(group.suggestedgroup_id, group);
             renderGroupUI(group, btn);
         })
         .catch(err => {
-            console.error("Failed to load group:", err);
-            groupTitle.textContent = "Error loading group";
+            console.warn("Group load failed:", err.message);
+
+            // Clear center panel if deleted or failed
+            if (window.activeGroupId == id) {
+                document.getElementById("group-title").textContent = "Select a group";
+                document.getElementById("group-members").innerHTML = "";
+                document.getElementById("group-project-name").innerHTML = "";
+                document.getElementById("group-capacity").innerHTML = "";
+                document.getElementById("group-host").innerHTML = "";
+                document.getElementById("group-size").innerHTML = "";
+            }
         })
-        .finally(() => 
-        {
-            //stop spinner on this button 
+        .finally(() => {
             if (btn) setButtonLoading(btn, false);
+            hidePageLoader();
         });
 }
 
-function renderGroupUI(group, btn) 
+export function renderGroupUI(group, btn) 
 {
     // Clear active buttons
     document.querySelectorAll("#manual-groups-ul button, #suggested-groups-ul button")

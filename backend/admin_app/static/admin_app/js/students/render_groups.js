@@ -3,8 +3,10 @@ import
     from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
 import { updateDeleteButton } from "./group_actions.js";
+import { renderGroupUI } from "./suggested_groups.js";
+import { hidePageLoader, showPageLoader } from "../utils.js";
 
-let cachedProjects = null;  
+window.cachedProjects = null;  
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
 //Helper functions for suggested_groups.js
@@ -200,11 +202,11 @@ export function renderProjectInfo(group, groupSize, projectName,
     //Update backend
     select.addEventListener("change", () => 
     {
+        showPageLoader();
         const projectId = select.value;
 
         group.project = cachedProjects.find(p => p.project_id == projectId) || null;
         window.suggestedGroupsCache.delete(group.suggestedgroup_id);
-        loadGroup(group.suggestedgroup_id);
 
         fetch(`/api/admin/suggested_groups/${group.suggestedgroup_id}/update/`, 
         {
@@ -219,10 +221,32 @@ export function renderProjectInfo(group, groupSize, projectName,
             if (!res.ok) throw new Error("Failed to update project");
             return res.json();
         })
+        .then(updatedGroup => {
+            // --- Update cache ---
+            window.suggestedGroupsCache.set(updatedGroup.suggestedgroup_id, updatedGroup);
+
+            // --- Sync DOM button attributes so finaliseGroup() sees correct data ---
+            const btn = document.querySelector(
+                `#suggested-groups-ul button[data-id="${updatedGroup.suggestedgroup_id}"], #manual-groups-ul button[data-id="${updatedGroup.suggestedgroup_id}"]`
+            );
+            if (btn) {
+                btn.dataset.projectId = updatedGroup.project
+                    ? updatedGroup.project.project_id
+                    : "";
+                btn.dataset.isAssigned = updatedGroup.project
+                    ? updatedGroup.project.is_assigned
+                    : false;
+                btn.dataset.members = JSON.stringify(updatedGroup.members || []);
+            }
+
+            // --- Re-render UI for the updated group ---
+            renderGroupUI(updatedGroup);
+        })
         .catch(err => {
             console.error("Failed to update project:", err);
             loadGroup(group.suggestedgroup_id)
-        });
+        })
+        .finally(() => hidePageLoader());
     });
 
     const errorBox = document.getElementById("group-errors");

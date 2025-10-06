@@ -27,6 +27,16 @@ class FinalGroupMemberViewSet(viewsets.ModelViewSet):
     queryset = FinalGroupMember.objects.all()
     serializer_class = FinalGroupMemberSerializer
 
+class FinalGroupListView(generics.ListAPIView):
+    serializer_class = FinalGroupSerializer
+
+    def get_queryset(self):
+        return (
+            FinalGroup.objects
+            .select_related("project")
+            .prefetch_related("members__student__major")
+        )
+
 # List + create suggested groups
 class SuggestedGroupListCreateView(generics.ListCreateAPIView):
     queryset = SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major")
@@ -80,6 +90,12 @@ class SuggestedGroupUpdateView(generics.UpdateAPIView):
     serializer_class = SuggestedGroupSerializer
     lookup_field = "suggestedgroup_id"
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        instance = self.get_object()                
+        serializer = self.get_serializer(instance)  
+        return Response(serializer.data)
+
 # ManualGroups View
 class ManualGroupListView(generics.ListAPIView):
     serializer_class = SuggestedGroupLiteSerializer
@@ -131,7 +147,7 @@ def add_student_to_group(request, suggestedgroup_id):
 
     SuggestedGroupMember.objects.create(suggested_group=group, student=student)
     group.refresh_from_db()
-    serializer = SuggestedGroupLiteSerializer(group)
+    serializer = SuggestedGroupSerializer(group)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(["POST"])

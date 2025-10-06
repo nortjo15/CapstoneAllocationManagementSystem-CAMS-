@@ -112,6 +112,7 @@ export function openStudentModal()
     const filterForm = document.getElementById("studentFilterForm");
     if (filterForm) filterForm.reset();
 
+    console.log("Fetching:", "/api/admin/students/?allocated_group=false");
     fetchStudents("studentsTableBodyModal", "?allocated_group=false");
 }
 
@@ -128,7 +129,6 @@ export function openCreateGroupModal(groupId)
         const notes = document.getElementById("groupNotesInput").value.trim();
 
         finaliseGroup(groupId, name, notes);
-        modal.style.display = "none";
     }
 }
 
