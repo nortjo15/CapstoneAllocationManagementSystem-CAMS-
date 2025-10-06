@@ -143,11 +143,32 @@
                     <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" id="split_project" name="split_project">
                         <label class="form-check-label" for="split_project">I am completing a split project this year</label>
+                        <a tabindex="0" 
+                            class="ms-2" 
+                            role="button" 
+                            data-bs-toggle="popover" 
+                            data-bs-trigger=="focus" 
+                            data-bs-title="Split Project"
+                            data-bs-content="By selecting this, you will be completing a split project. Please read the above information for what a split project is.
+                            If you have anymore questions please contact the Unit Coordinator">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                        </a>
+                        <div class="invalid-feedback"></div>
                     </div>
 
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
                         <label class="form-check-label" for="terms">Agree to Terms</label>
+                        <a tabindex="0" 
+                            class="ms-2" 
+                            role="button" 
+                            data-bs-toggle="popover" 
+                            data-bs-trigger=="focus" 
+                            data-bs-title="Terms and Conditions"
+                            data-bs-content="By submitting this form, you agree to the allocation process and read the terms and conditions above">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                        </a>
+                        <div class="invalid-feedback"></div>
                         <div class="invalid-feedback"></div>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -252,6 +273,12 @@
 <script defer src="{% static 'student_app/js/form.js' %}"></script>
 
 <script>
+
+// Find all elements that are configured to be popovers
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+
+// Initialize each popover
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 document.addEventListener('DOMContentLoaded', function () {
     const $ = (id) => document.getElementById(id);
 
