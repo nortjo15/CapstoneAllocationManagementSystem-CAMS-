@@ -9,6 +9,9 @@ const createRoundForm = document.getElementById('create-round-form');
 const editRoundForm = document.getElementById('edit-round-form');
 const deleteRoundBtn = document.getElementById('delete-round-btn');
 
+const createAlertBox = document.getElementById('create-submit-alert');
+const editAlertBox = document.getElementById('edit-submit-alert');
+
 function showRightPane(view) {
     roundDetailsView.classList.add('hidden');
     createRoundView.classList.add('hidden');
@@ -24,6 +27,11 @@ function formatDateForInput(isoString) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function showSuccessAlert(alertBox) {
+    alertBox.style.display = 'block';
+    setTimeout(() => alertBox.style.display = 'none', 3000);
 }
 
 async function fetchProjects() {
@@ -89,6 +97,7 @@ async function showRoundDetails(roundId) {
         document.getElementById('edit-open-date').value = formatDateForInput(round.open_date);
         document.getElementById('edit-close-date').value = formatDateForInput(round.close_date);
         document.getElementById('edit-status').value = round.status;
+        document.getElementById('edit-type').value = round.is_internal;
 
         const editProjectsSelect = document.getElementById('edit-round-projects');
         editProjectsSelect.innerHTML = '';
@@ -150,7 +159,9 @@ createRoundForm.addEventListener('submit', async function(e) {
     const roundName = document.getElementById('create-round-name').value;
     const openDate = document.getElementById('create-open-date').value;
     const closeDate = document.getElementById('create-close-date').value;
-    const isInternal = 'False';
+    const status = document.getElementById('edit-status').value;
+    //const isInternal = 'False';
+    const type = document.getElementById('create-type').value;
 
     let selectedProjects = Array.from(
         document.querySelectorAll('#create-round-projects input[type="checkbox"]:checked')
@@ -161,7 +172,8 @@ createRoundForm.addEventListener('submit', async function(e) {
         round_name: roundName,
         open_date: openDate,
         close_date: closeDate,
-        is_internal: isInternal,
+        status: status,
+        is_internal: type,
         project_ids: selectedProjects
     };
 
@@ -176,6 +188,7 @@ createRoundForm.addEventListener('submit', async function(e) {
         });
         if (response.ok) {
             console.log('Round created successfully!', 'success');
+            showSuccessAlert(createAlertBox);
             createRoundForm.reset();
             populateRoundsList(); 
             rightPaneTitle.textContent = 'Select a Round';
@@ -202,6 +215,7 @@ editRoundForm.addEventListener('submit', async function(e) {
     const openDate = document.getElementById('edit-open-date').value;
     const closeDate = document.getElementById('edit-close-date').value;
     const status = document.getElementById('edit-status').value;
+    const type = document.getElementById('create-type').value;
 
     let selectedProjects = Array.from(
         document.querySelectorAll('#edit-round-projects input[type="checkbox"]:checked')
@@ -212,6 +226,7 @@ editRoundForm.addEventListener('submit', async function(e) {
         open_date: openDate,
         close_date: closeDate,
         status: status,
+        is_internal: type,
         project_ids: selectedProjects
     };
 
@@ -226,6 +241,7 @@ editRoundForm.addEventListener('submit', async function(e) {
         });
         if (response.ok) {
             //showMessage('Round updated successfully!', 'info');
+            showSuccessAlert(editAlertBox);
             populateRoundsList();
         } else {
             console.error('Error updating round:', response.statusText);
