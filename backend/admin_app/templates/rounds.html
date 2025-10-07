@@ -64,14 +64,24 @@
                 <input type="datetime-local" id="edit-close-date" class="form-control">
               </div>
             </div>
+            
+            <div class="row mb-3 mt-3">
+              <div class="col md-6">
+                <label for="edit-status" class="form-label">Status</label>
+                <select id="edit-status" class="form-control">
+                  <option value="upcoming">Upcoming</option>  
+                  <option value="open">Open</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
 
-            <div class="mb-3 mt-3">
-              <label for="edit-status" class="form-label">Status</label>
-              <select id="edit-status" class="form-control">
-                <option value="upcoming">Upcoming</option>  
-                <option value="open">Open</option>
-                <option value="closed">Closed</option>
-              </select>
+              <div class="col md-6">
+                <label for="edit-type" class="form-label">Round Type</label>
+                <select id="edit-type" class="form-control">
+                  <option value="true">Client</option>  
+                  <option value="false">External</option>
+                </select>
+              </div>
             </div>
                 
             <div class="mb-3">
@@ -80,12 +90,15 @@
             </div>
 
             <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button id="edit-submit-btn" type="submit" class="btn btn-primary">Save changes</button>
               <button type="button" id="delete-round-btn" class="btn btn-outline-danger">Delete</button>
+            </div>
+            <div id="edit-submit-alert" class="alert alert-success mt-3" style="display:none; width: fit-content;">
+              Saved
             </div>
           </form>
         </div>
-
+        
         <!-- Create view -->
         <div id="create-round-view" class="hidden">
           <form id="create-round-form" novalidate>
@@ -107,9 +120,25 @@
               </div>
             </div>
 
-            <div class="mb-3 mt-3">
-              <label for="create-status" class="form-label">Status</label>
-              <input type="text" id="create-status" class="form-control">
+            <div class="row mb-3 mt-3">
+              <div class="col-md-6">
+                <label for="create-status" class="form-label">Status</label>
+                <select id="create-status" class="form-control" required>
+                  <option value="" selected disabled hidden>-- Select Status --</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="open">Open</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="create-type" class="form-label">Round Type</label>
+                <select id="create-type" class="form-control" required>
+                  <option value="" selected disabled hidden>-- Select Status --</option>
+                  <option value="true">Client</option>
+                  <option value="false">External</option>
+                </select>
+              </div>
             </div>
 
             <div class="mb-3">
@@ -117,7 +146,10 @@
               <div id="create-round-projects" class="vstack gap-2"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Create round</button>
+            <button id="create-submit-btn" type="submit" class="btn btn-primary">Create round</button>
+            <div id="create-submit-alert" class="alert alert-success mt-3" style="display:none; width: fit-content;">
+              Round Created
+            </div>
           </form>
         </div>
 
