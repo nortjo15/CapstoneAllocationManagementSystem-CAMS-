@@ -165,7 +165,7 @@ class FullFormSerializer(serializers.Serializer):
         try:
             student = Student.objects.get(student_id=student_id)
         except Student.DoesNotExist:
-            raise serializers.ValidationError({"student_id":"A student with this ID does not exist"})
+            raise serializers.ValidationError({"student_id":"A student with this ID does not exist, Please contact the Unit Coordinator!"})
         #check if student exists
 
         #update student details
