@@ -251,25 +251,23 @@ function setupProjectPreferences(projects){
 
 function showError(elementId, message){
     const element = document.getElementById(elementId);
+    if(!element) return;
 
-    const existingError = element.nextElementSibling;
-    if(existingError && existingError.classList.contains('error-message')){
-        existingError.remove();
+    element.classList.add('is-invalid');
+    const errorContainer = element.parentElement.querySelector('.invalid-feedback');
+    if(errorContainer){
+        errorContainer.textContent = message;
     }
 
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.textContent = message;
-    element.parentElement.insertBefore(errorElement, element.nextSibling);
 }
 
 function clearError(elementId){
     const element = document.getElementById(elementId);
-    const existingError = element.nextElementSibling;
-    if(existingError && existingError.classList.contains('error-message')){
-        existingError.remove();
-    }
+    if(!element) return;
+
+    element.classList.remove('is-invalid');
 }
+
 
 //Validate StudentId
 function validateStudentId() {
