@@ -215,7 +215,7 @@ editRoundForm.addEventListener('submit', async function(e) {
     const openDate = document.getElementById('edit-open-date').value;
     const closeDate = document.getElementById('edit-close-date').value;
     const status = document.getElementById('edit-status').value;
-    const type = document.getElementById('create-type').value;
+    const type = document.getElementById('edit-type').value;
 
     let selectedProjects = Array.from(
         document.querySelectorAll('#edit-round-projects input[type="checkbox"]:checked')
@@ -229,7 +229,8 @@ editRoundForm.addEventListener('submit', async function(e) {
         is_internal: type,
         project_ids: selectedProjects
     };
-
+    //console.log("is_internal value: ", is_internal);
+    console.log("type value: ", type);
     try {
         const response = await fetch(`${apiUrl}${roundId}/`, {
             method: 'PATCH',
