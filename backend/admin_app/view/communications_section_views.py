@@ -19,7 +19,7 @@ def communications_section_create(request):
             return redirect("admin_app:communications_section_list")
     else:
         form = CommunicationsSectionForm()
-    return render(request, "communications_section_form.html", {"form": form})
+    return render(request, "communications/communications_section_form.html", {"form": form})
 
 @staff_member_required
 def communications_section_edit(request, pk):
@@ -32,7 +32,7 @@ def communications_section_edit(request, pk):
             return redirect("admin_app:communications_section_list")
     else:
         form = CommunicationsSectionForm(instance=obj)
-    return render(request, "communications_section_form.html", {"form": form})
+    return render(request, "communications/communications_section_form.html", {"form": form})
 
 @staff_member_required
 def communications_section_delete(request, pk):
@@ -42,4 +42,4 @@ def communications_section_delete(request, pk):
         obj.delete()
         messages.success(request, f'Section “{name}” deleted.')
         return redirect("admin_app:communications_section_list")
-    return render(request, "communications_section_confirm_delete.html", {"obj": obj})
+    return render(request, "communications/communications_section_confirm_delete.html", {"obj": obj})
