@@ -1,6 +1,22 @@
 const pathParts = window.location.pathname.split('/').filter(Boolean);
 const roundId = pathParts[pathParts.length - 1];
 
+let roundData = null;
+
+async function getRoundData() {
+    if (roundData) return roundData;
+
+    try {
+        const response = await fetch(`/api/student/rounds/${roundId}/`);
+        if (!response.ok) throw new Error("Failed to fetch round");
+
+        roundData = await response.json();
+        return roundData;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
 //get the list of majors from API
 async function getMajors(){
@@ -49,22 +65,28 @@ async function getStudents(){
 // }
 
 //get list of projects from API
-async function getProjects(){
-    try {
-        const response  = await fetch(`/api/student/rounds/${roundId}/`);
+// async function getProjects(){
+//     try {
+//         const response  = await fetch(`/api/student/rounds/${roundId}/`);
 
-        if(!response.ok) {
-            throw new Error('Failed to fetch round');
-        }
+//         if(!response.ok) {
+//             throw new Error('Failed to fetch round');
+//         }
 
-        const json = await response.json();
-        return json.projects || [];
+//         const json = await response.json();
+//         return json.projects || [];
 
-    } catch(error) {
-        console.error(error);
-        return [];
-    }
+//     } catch(error) {
+//         console.error(error);
+//         return [];
+//     }
+// }
+
+async function getProjects() {
+    const round = await getRoundData();
+    return round?.projects || [];
 }
+
 
 function populateMajorDropdown(majors){
     const majorDropdown = document.getElementById('major');
@@ -77,7 +99,6 @@ function populateMajorDropdown(majors){
         option.textContent = major.name;
         majorDropdown.appendChild(option);
     });
-
 }
 
 function populateProjectDropdown(projects){
@@ -320,11 +341,18 @@ function validateCWA() {
     return true;
 }
 //Validate file name
-function validateFile(fileInput, keyword){
+function validateFile(fileInput, keyword, required = false){
     clearError(fileInput.id);
 
     const file = fileInput.files[0];
-    if(!file) return true;
+    
+    if (!file) {
+        if (required) {
+            showError(fileInput.id, `Please upload a ${keyword.toUpperCase()} file`);
+            return false;
+        }
+        return true;
+    }
 
     if (file.type !== 'application/pdf'){
         showError(fileInput.id, 'File must be in PDF format');
@@ -426,14 +454,22 @@ function validateEntireForm() {
     const isStudentIdValid = validateStudentId();
     const isEmailValid = validateEmail();
     const isCwaValid = validateCWA();
-    const isResumeValid = validateFile(document.getElementById('resume'), 'resume');
-    
-    return isStudentIdValid && isEmailValid && isCwaValid && isResumeValid;
+    const isResumeValid = validateFile(document.getElementById('resume'), 'resume', true);
+    if(!roundData?.is_internal)
+    {
+        console.log("External round: CV required");
+        const isCvValid = validateFile(document.getElementById('cv'), 'cv', true);
+        return isStudentIdValid && isEmailValid && isCwaValid && isResumeValid && isCvValid;
+    }
+    const isCvValid = validateFile(document.getElementById('cv'), 'cv', false);
+    return isStudentIdValid && isEmailValid && isCwaValid && isResumeValid && isCvValid;
 }
 
 //Document listener
 document.addEventListener('DOMContentLoaded', async() => {
     //Majors list
+    getRoundData(roundId);
+
     const majors = await getMajors();
     const projects = await getProjects();
     
@@ -452,6 +488,12 @@ document.addEventListener('DOMContentLoaded', async() => {
     resumeInput.addEventListener('change', () => {
         validateFile(resumeInput, 'resume'); 
     });
+
+    const cvInput = document.getElementById('cv');
+    resumeInput.addEventListener('change', () => {
+        validateFile(cvInput, 'cv'); 
+    });
+
     //Submit form
     document.getElementById('application-form').addEventListener('submit', (event) => {
         event.preventDefault();
