@@ -8,7 +8,7 @@
   <h1>Delete “{{ obj.name }}”?</h1>
   <form method="post">{% csrf_token %}
     <button type="submit">Confirm delete</button>
-    <a href="{% url 'admin_app:section_list' %}">Cancel</a>
+    <a href="{% url 'admin_app:communications_section_list' %}">Cancel</a>
   </form>
 </body>
 </html>

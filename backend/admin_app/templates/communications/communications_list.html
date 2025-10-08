@@ -1,0 +1,85 @@
+{% extends "admin_base.html" %}
+{% load static form_extras %}
+
+{% block page_header %}
+<h1 class="h3 mb-0">{% if form.instance.pk %}Edit communication{% else %}New communication{% endif %}</h1>
+{% endblock %}
+
+{% block page_toolbar %}
+<a href="{% url 'admin_app:communications_list' %}" class="btn btn-outline-secondary">Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+        {{ form.title|add_class:"form-control" }}
+        {% if form.title.errors %}<div class="invalid-feedback d-block">{{ form.title.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.section_id.id_for_label }}" class="form-label">Section</label>
+        {{ form.section_id|add_class:"form-select" }}
+        {% if form.section_id.errors %}<div class="invalid-feedback d-block">{{ form.section_id.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.body.id_for_label }}" class="form-label">Body</label>
+        {{ form.body|add_class:"form-control" }}
+        {% if form.body.errors %}<div class="invalid-feedback d-block">{{ form.body.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+          {{ form.status|add_class:"form-select" }}
+          {% if form.status.errors %}<div class="invalid-feedback d-block">{{ form.status.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label for="{{ form.priority.id_for_label }}" class="form-label">Priority</label>
+          {{ form.priority|add_class:"form-control" }}
+          {% if form.priority.errors %}<div class="invalid-feedback d-block">{{ form.priority.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <div class="form-check mt-4">
+            {{ form.pinned|add_class:"form-check-input" }}
+            <label for="{{ form.pinned.id_for_label }}" class="form-check-label">Pinned</label>
+            {% if form.pinned.errors %}<div class="invalid-feedback d-block">{{ form.pinned.errors|join:", " }}</div>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label for="{{ form.author.id_for_label }}" class="form-label">Author</label>
+          {{ form.author|add_class:"form-control" }}
+          {% if form.author.errors %}<div class="invalid-feedback d-block">{{ form.author.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.published_at.id_for_label }}" class="form-label">Publish at</label>
+          {{ form.published_at|add_class:"form-control" }}
+          {% if form.published_at.errors %}<div class="invalid-feedback d-block">{{ form.published_at.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.expires_at.id_for_label }}" class="form-label">Expires at</label>
+          {{ form.expires_at|add_class:"form-control" }}
+          {% if form.expires_at.errors %}<div class="invalid-feedback d-block">{{ form.expires_at.errors|join:", " }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'admin_app:communications_list' %}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
