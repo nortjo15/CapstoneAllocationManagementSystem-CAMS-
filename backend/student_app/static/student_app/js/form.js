@@ -454,22 +454,27 @@ function validateEntireForm() {
     const isStudentIdValid = validateStudentId();
     const isEmailValid = validateEmail();
     const isCwaValid = validateCWA();
-    const isResumeValid = validateFile(document.getElementById('resume'), 'resume', true);
+    
     if(!roundData?.is_internal)
     {
-        console.log("External round: CV required");
+        console.log("External round: CV and Resume required");
+        const isResumeValid = validateFile(document.getElementById('resume'), 'resume', true);
         const isCvValid = validateFile(document.getElementById('cv'), 'cv', true);
         return isStudentIdValid && isEmailValid && isCwaValid && isResumeValid && isCvValid;
     }
+
+    const isResumeValid = validateFile(document.getElementById('resume'), 'resume', false);
     const isCvValid = validateFile(document.getElementById('cv'), 'cv', false);
+    
     return isStudentIdValid && isEmailValid && isCwaValid && isResumeValid && isCvValid;
 }
 
 //Document listener
 document.addEventListener('DOMContentLoaded', async() => {
-    //Majors list
+    
     getRoundData(roundId);
 
+    //Majors list
     const majors = await getMajors();
     const projects = await getProjects();
     
@@ -478,6 +483,16 @@ document.addEventListener('DOMContentLoaded', async() => {
 
     setupProjectPreferences(projects);
     setupSearchFunctionality();
+
+    if (roundData?.is_internal) {
+        //Hides CV and Resume upload areas
+        document.getElementById('resume-section').classList.add('d-none');
+        document.getElementById('cv-section').classList.add('d-none');
+    } else {
+        //Keeps/Shows CV and Resume upload areas
+        document.getElementById('resume-section').classList.remove('d-none');
+        document.getElementById('cv-section').classList.remove('d-none');
+    }
 
     //Input validation
     document.getElementById('student_id').addEventListener('blur', validateStudentId);
@@ -502,7 +517,6 @@ document.addEventListener('DOMContentLoaded', async() => {
         } else {
             alert('Please correct the errors before submitting');
         }
-        
     });
     
 });
