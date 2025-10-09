@@ -138,7 +138,7 @@ class FullFormSerializer(serializers.Serializer):
     major = serializers.PrimaryKeyRelatedField(queryset=Major.objects.all())
     cwa = serializers.FloatField()
     email = serializers.EmailField()
-    resume = serializers.FileField()
+    resume = serializers.FileField(required=False, allow_null=True)
     cv = serializers.FileField(required=False, allow_null=True)
     application_submitted = serializers.BooleanField(default=False)
     split_project = serializers.BooleanField(default=False)
