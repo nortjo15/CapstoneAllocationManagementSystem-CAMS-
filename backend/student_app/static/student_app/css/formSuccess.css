@@ -1,0 +1,26 @@
+.success-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    background-color: #cdffcd; 
+    border-radius: 50%;
+}
+
+.success-icon-wrapper .bi {
+    font-size: 3.5rem; 
+    color: #90ee90;    
+}
+
+.btn-custom {
+    background-color: #465ac2;
+    border-color: #465ac2;
+    color: #fff;
+}
+
+.btn-custom:hover {
+    background-color: #7D8BD4;
+    border-color: #7D8BD4;
+    color: #fff;
+}

@@ -5,119 +5,125 @@
 <h1 class="h3 mb-0">Project Application</h1>
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'student_app/css/studentForm.css' %}"> 
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <div class="card-body">
-        <p class="text-muted">Complete all required fields to submit a valid application.</p>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted">Complete all required fields to submit a valid application.</p>
 
-        <form id="application-form" enctype="multipart/form-data">
-            {% csrf_token %}
+                <form id="application-form" enctype="multipart/form-data">
+                    {% csrf_token %}
 
-            <div class="mb-3">
-                <label for="student_id" class="form-label">Student ID</label>
-                <input
-                    type="text"
-                    pattern="[0-9]{8}"
-                    maxlength="8"
-                    class="form-control"
-                    id="student_id"
-                    name="student_id"
-                    required
-                >
-                <div class="form-text">8 digits, e.g. 12345678.</div>
-                <div class="invalid-feedback"></div>
-            </div>
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label">Student ID</label>
+                        <input
+                            type="text"
+                            pattern="[0-9]{8}"
+                            maxlength="8"
+                            class="form-control"
+                            id="student_id"
+                            name="student_id"
+                            required
+                        >
+                        <div class="form-text">8 digits, e.g. 12345678.</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Student email</label>
-                <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                    placeholder="firstname.lastname@student.curtin.edu.au"
-                    required
-                >
-                <div class="invalid-feedback"></div>
-            </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Student email</label>
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            placeholder="firstname.lastname@student.curtin.edu.au"
+                            required
+                        >
+                        <div class="invalid-feedback"></div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="major" class="form-label">Major</label>
-                <select id="major" name="major" class="form-select" required>
-                    <option value="">Loading majors…</option>
-                </select>
-                <div class="invalid-feedback"></div>
-            </div>
+                    <div class="mb-3">
+                        <label for="major" class="form-label">Major</label>
+                        <select id="major" name="major" class="form-select" required>
+                            <option value="">Loading majors…</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="cwa" class="form-label">Current CWA</label>
-                <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="100"
-                    class="form-control"
-                    id="cwa"
-                    name="cwa"
-                    required
-                >
-                <div class="form-text">Example: 85.34</div>
-                <div class="invalid-feedback"></div>
-            </div>
+                    <div class="mb-3">
+                        <label for="cwa" class="form-label">Current CWA</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            max="100"
+                            class="form-control"
+                            id="cwa"
+                            name="cwa"
+                            required
+                        >
+                        <div class="form-text">Example: 85.34</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
 
-            <!-- Projects box -->
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Project preferences</span>
-                    <span class="text-muted small">Choose up to 6</span>
-                </div>
-                <div class="card-body">
-                    <select id="project" name="project" class="form-select">
-                        <option value="">Loading projects…</option>
-                    </select>
-                    <ul id="preference-list" class="list-unstyled mt-3"></ul>
-                    <input type="hidden" id="project_preferences" name="project_preferences">
-                    <div id="pref-error" class="invalid-feedback d-block" style="display: none"></div>
-                </div>
-            </div>
-
-            <!-- Student search -->
-            <div class="mb-3">
-                <label for="user-search" class="form-label">Search students</label>
-                <div class="position-relative search-wrap">
-                    <input
-                        id="user-search"
-                        class="form-control"
-                        type="text"
-                        placeholder="Search students by full name"
-                        autocomplete="off"
-                        aria-expanded="false"
-                    >
-                    <ul id="autocomplete-results" class="dropdown-menu w-100"></ul>
-                </div>
-            </div>
-
-            <!-- Preferred / Avoided students -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">Preferred students (max 5)</div>
-                        <div class="card-body p-3">
-                            <ul id="preferred-list" class="list-unstyled mb-0"></ul>
-                            <input type="hidden" id="preferred_students" name="preferred_students">
+                    <!-- Projects box -->
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Project preferences</span>
+                            <span class="text-muted small">Choose up to 6</span>
+                        </div>
+                        <div class="card-body">
+                            <select id="project" name="project" class="form-select">
+                                <option value="">Loading projects…</option>
+                            </select>
+                            <ul id="preference-list" class="list-unstyled mt-3"></ul>
+                            <input type="hidden" id="project_preferences" name="project_preferences">
+                            <div id="pref-error" class="invalid-feedback d-block" style="display: none"></div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">Avoided students (max 5)</div>
-                        <div class="card-body p-3">
-                            <ul id="avoided-list" class="list-unstyled mb-0"></ul>
-                            <input type="hidden" id="avoided_students" name="avoided_students">
+
+                    <!-- Student search -->
+                    <div class="mb-3">
+                        <label for="user-search" class="form-label">Search students</label>
+                        <div class="position-relative search-wrap">
+                            <input
+                                id="user-search"
+                                class="form-control"
+                                type="text"
+                                placeholder="Search students by full name"
+                                autocomplete="off"
+                                aria-expanded="false"
+                            >
+                            <ul id="autocomplete-results" class="dropdown-menu w-100"></ul>
                         </div>
                     </div>
-                </div>
-            </div>
+
+                    <!-- Preferred / Avoided students -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header">Preferred students (max 5)</div>
+                                <div class="card-body p-3">
+                                    <ul id="preferred-list" class="list-unstyled mb-0"></ul>
+                                    <input type="hidden" id="preferred_students" name="preferred_students">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header">Avoided students (max 5)</div>
+                                <div class="card-body p-3">
+                                    <ul id="avoided-list" class="list-unstyled mb-0"></ul>
+                                    <input type="hidden" id="avoided_students" name="avoided_students">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
             <div id="resume-section" class="mt-2 mb-3">
                 <label for="resume" class="form-label">Resume (PDF)</label>
@@ -129,454 +135,71 @@
                 <input id="cv" name="cv" type="file" accept=".pdf" class="form-control">
             </div>
 
-            <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="split_project" name="split_project">
-                <label class="form-check-label" for="split_project">I am completing a split project this year</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="split_project" name="split_project">
+                        <label class="form-check-label" for="split_project">I am completing a split project this year</label>
+                        <a tabindex="0" 
+                            class="ms-2" 
+                            role="button" 
+                            data-bs-toggle="popover" 
+                            data-bs-trigger="focus" 
+                            data-bs-title="Split Project"
+                            data-bs-content="By selecting this, you will be completing a split project. Please read the above information for what a split project is.
+                            If you have anymore questions please contact the Unit Coordinator">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                        </a>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">Agree to Terms</label>
+                        <a tabindex="0" 
+                            class="ms-2" 
+                            role="button" 
+                            data-bs-toggle="popover" 
+                            data-bs-trigger="focus" 
+                            data-bs-title="Terms and Conditions"
+                            data-bs-content="By submitting this form, you agree to the allocation process and read the terms and conditions above">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                        </a>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
-
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
-                <label class="form-check-label" for="terms">Agree to Terms</label>
-                <div class="invalid-feedback"></div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-
+        </div>
     </div>
+
+    <div class="col-lg-5">
+        <div class="card bg-light h-100">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">Important Information & Terms</h5>
+                <p>Please read the following tips and conditions carefully before submitting your application.</p>
+                
+                <h6>Tips for Success</h6>
+                <ul>
+                    <li>Organizing yourself into a group helps, especially if the group is appropriate.</li>
+                    <li>Ensure you and your group members submit the same group and project preferences.</li>
+                    <li>Projects will have a specific capacity thus try to form a group that matches preferred project's capacity </li>
+                    <li>Try your best to have a group with a variety of majors</li>
+                </ul>
+
+                <h6>Terms and Conditions</h6>
+                <ul>
+                    <li>All information submitted must be accurate and truthful.</li>
+                    <li>If project requires, you are able to provide proof of working rights in Australia</li>
+                    <li>By submitting this form, you agree to the allocation process as determined by the faculty.</li>
+                    <li>File uploads must be in PDF format and named according to the specified convention.</li>
+                </ul>
+            </div>
+        </div>
+    </div> 
 </div>
 {% endblock %}
 
-{% block extra_css %}
-<style>
-    /* Smaller search box */
-    .search-wrap { max-width: 420px; }
-
-    /* Dropdown rows styled as boxes */
-    #autocomplete-results { max-height: 18rem; overflow: auto; padding: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
-    #autocomplete-results .student-result {
-        border: 1px solid var(--bs-border-color); border-radius: .5rem; background: var(--bs-body-bg);
-        margin: .25rem; padding: .5rem .75rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
-    }
-    #autocomplete-results .student-result:hover { background: var(--bs-tertiary-bg); }
-    #autocomplete-results .student-name { font-weight: 500; color: var(--bs-body-color); }
-    #autocomplete-results .actions .btn { padding: .2rem .6rem; }
-
-    /* Selected item tiles */
-    .list-tile {
-        border: 1px solid var(--bs-border-color); border-radius: .5rem; background: var(--bs-body-bg);
-        padding: .5rem .75rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
-        box-shadow: 0 .125rem .25rem rgba(0,0,0,.05);
-    }
-    .list-tile + .list-tile { margin-top: .5rem; }
-
-    /* Preference list tiles with numbering + controls */
-    #preference-list .pref-item { display: flex; align-items: center; gap: .75rem; }
-    .pref-num {
-        width: 2rem; height: 2rem; flex: 0 0 2rem; display: flex; align-items: center; justify-content: center;
-        border-radius: 50%; background: var(--bs-primary-bg-subtle); color: var(--bs-primary); font-weight: 600;
-    }
-    .pref-title { flex: 1 1 auto; }
-    .pref-controls .btn { padding: .15rem .45rem; }
-
-    /* Grey out name + background for chosen projects */
-    #project option[disabled],
-    #project option[data-chosen="1"] {
-        color: var(--bs-secondary-color);
-        background-color: var(--bs-tertiary-bg) !important;
-    }
-</style>
-<style>
-    /* modern chip buttons */
-    .chip-btn {
-        border: 1px solid var(--bs-border-color);
-        background: var(--bs-body-bg);
-        border-radius: 9999px;
-        padding: .3rem .7rem;
-        font-weight: 500;
-        display: inline-flex; align-items: center; gap: .4rem;
-        transition: transform .12s ease, box-shadow .12s ease, background-color .12s;
-    }
-    .chip-btn:hover { transform: translateY(-1px); box-shadow: 0 .25rem .5rem rgba(0,0,0,.08); }
-    .chip-success {
-        color: var(--bs-success);
-        background: var(--bs-success-bg-subtle);
-        border-color: var(--bs-success-border-subtle);
-    }
-    .chip-danger {
-        color: var(--bs-danger);
-        background: var(--bs-danger-bg-subtle);
-        border-color: var(--bs-danger-border-subtle);
-    }
-    .chip-btn svg { width: 14px; height: 14px; }
-</style>
-{% endblock %}
-
 {% block scripts %}
-<script defer src="{% static 'student_app/js/form.js' %}"></script>
+    <script defer src="{% static 'student_app/js/form.js' %}"></script>
+{% endblock scripts%}
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const $ = (id) => document.getElementById(id);
 
-    const prefList   = $('preference-list');
-    const preferred  = $('preferred-list');
-    const avoided    = $('avoided-list');
-    const hiddenPref = $('project_preferences');
-    const select     = $('project');
-    const results    = $('autocomplete-results');
-    const search     = $('user-search');
-
-    const MAX_PREF  = 5;
-    const MAX_AVOID = 5;
-
-    /* ---------- one-time preload + cached searches for students ---------- */
-    const studentsEndpoint = (window.ENDPOINTS && window.ENDPOINTS.students) || null;
-    const nativeFetch = window.fetch.bind(window);
-    let studentsCache = null; // { list: [...], paginated: bool }
-
-    async function preloadStudents() {
-        if (studentsCache !== null) return studentsCache;
-        if (!studentsEndpoint) return null;
-
-        const all = [];
-        let paginated = false;
-        let url = studentsEndpoint;
-
-        try {
-            while (url) {
-                const res = await nativeFetch(url, { credentials: 'same-origin' });
-                if (!res.ok) break;
-
-                const json = await res.json();
-
-                if (Array.isArray(json)) {
-                    all.push(...json);
-                    url = null;
-                } else if (json && Array.isArray(json.results)) {
-                    all.push(...json.results);
-                    paginated = true;
-                    url = json.next ? new URL(json.next, window.location.origin).toString() : null;
-                } else {
-                    url = null;
-                }
-            }
-
-            studentsCache = { list: all, paginated };
-        } catch (e) {
-            studentsCache = null;
-        }
-
-        return studentsCache;
-    }
-
-    if (studentsEndpoint && search) {
-        const kick = async () => { await preloadStudents(); };
-        search.addEventListener('focus', kick, { once: true });
-        search.addEventListener('input', kick, { once: true });
-    }
-
-    window.fetch = async function (input, init) {
-        const url = (typeof input === 'string') ? input : (input && input.url) || '';
-
-        if (studentsEndpoint && url.startsWith(studentsEndpoint)) {
-            await preloadStudents();
-
-            if (studentsCache && Array.isArray(studentsCache.list)) {
-                const u = new URL(url, window.location.origin);
-                const q = (u.searchParams.get('q') || u.searchParams.get('search') || '').toLowerCase();
-
-                const nameOf = (s) => (s.full_name || s.name || [s.first_name, s.last_name].filter(Boolean).join(' ')).toLowerCase();
-                const filtered = q ? studentsCache.list.filter((s) => nameOf(s).includes(q)) : [];
-
-                const payload = studentsCache.paginated
-                    ? { results: filtered, next: null, previous: null, count: filtered.length }
-                    : filtered;
-
-                return new Response(
-                    new Blob([JSON.stringify(payload)], { type: 'application/json' }),
-                    { status: 200, headers: { 'Content-Type': 'application/json' } }
-                );
-            }
-        }
-
-        return nativeFetch(input, init);
-    };
-    /* --------------------------- end cache layer -------------------------- */
-
-    /* ---------------------------- selected tiles -------------------------- */
-    function decorateTile(li) {
-        if (!li || li.dataset.decorated) return;
-
-        li.classList.add('list-tile');
-
-        li.querySelectorAll('button').forEach((b) => {
-            const txt = (b.textContent || '').trim().toLowerCase();
-            b.classList.add('btn', 'btn-sm', 'rounded-pill');
-            if (txt.startsWith('remove')) b.classList.add('btn-outline-danger');
-        });
-
-        if (!li.dataset.cleaned) {
-            li.childNodes.forEach((n) => {
-                if (n.nodeType === 3) n.textContent = n.textContent.replace(/^\s*\d+\.?\s*/, '');
-            });
-            li.dataset.cleaned = '1';
-        }
-
-        li.dataset.decorated = '1';
-    }
-
-    function observeList(list) {
-        if (!list) return;
-
-        new MutationObserver((muts) => {
-            muts.forEach((m) => {
-                m.addedNodes.forEach((n) => { if (n.nodeType === 1) decorateTile(n); });
-            });
-            updateResultButtons();
-        }).observe(list, { childList: true });
-
-        [...list.children].forEach(decorateTile);
-    }
-
-    observeList(preferred);
-    observeList(avoided);
-
-    /* -------- preferences: numbering + controls + hidden sync ------------ */
-    function liId(li) {
-        const btn = li.querySelector('button[data-id]');
-        return (btn && btn.getAttribute('data-id')) || li.dataset.projectId || '';
-    }
-
-    function renumber() {
-        if (!prefList) return;
-        [...prefList.children].forEach((li, i) => {
-            const b = li.querySelector('.pref-num');
-            if (b) b.textContent = i + 1;
-        });
-    }
-
-    function syncHidden() {
-        if (!prefList || !hiddenPref) return;
-
-        const ids = [...prefList.children]
-            .map((li) => {
-                const id = liId(li);
-                if (id && !li.dataset.projectId) li.dataset.projectId = id;
-                return id;
-            })
-            .filter(Boolean);
-
-        hiddenPref.value = JSON.stringify(ids);
-    }
-
-    function decoratePrefItem(li) {
-        if (li.classList.contains('pref-item')) return;
-
-        decorateTile(li);
-        li.classList.add('pref-item');
-
-        if (!li.querySelector('.pref-title')) {
-            const t = document.createElement('div');
-            t.className = 'pref-title';
-
-            const raw = [...li.childNodes]
-                .filter((n) => n.nodeType === 3)
-                .map((n) => n.textContent)
-                .join(' ');
-
-            [...li.childNodes].forEach((n) => { if (n.nodeType === 3) li.removeChild(n); });
-
-            t.textContent = (raw || '').replace(/^\s*\d+\.?\s*/, '').trim();
-            li.insertBefore(t, li.firstChild);
-        }
-
-        if (!li.querySelector('.pref-num')) {
-            const num = document.createElement('span');
-            num.className = 'pref-num';
-            num.textContent = '0';
-            li.insertBefore(num, li.firstChild);
-        }
-
-        if (!li.querySelector('.pref-controls')) {
-            const grp  = document.createElement('div');
-            const up   = document.createElement('button');
-            const down = document.createElement('button');
-
-            grp.className = 'pref-controls btn-group ms-2';
-
-            up.type  = 'button';
-            down.type = 'button';
-
-            up.className   = 'btn btn-sm btn-outline-secondary';
-            down.className = 'btn btn-sm btn-outline-secondary';
-
-            up.title   = 'Move up';
-            down.title = 'Move down';
-
-            up.innerHTML   = '&#9650;';
-            down.innerHTML = '&#9660;';
-
-            grp.appendChild(up);
-            grp.appendChild(down);
-
-            const removeBtn = li.querySelector('button.btn-outline-danger');
-            li.insertBefore(grp, removeBtn || null);
-
-            up.addEventListener('click', () => {
-                const prev = li.previousElementSibling;
-                if (prev) prefList.insertBefore(li, prev);
-                renumber(); syncHidden(); syncOptions();
-            });
-
-            down.addEventListener('click', () => {
-                const next = li.nextElementSibling;
-                if (next) prefList.insertBefore(next, li);
-                renumber(); syncHidden(); syncOptions();
-            });
-        }
-    }
-
-    if (prefList) {
-        new MutationObserver((m) => {
-            m.forEach((x) => x.addedNodes.forEach((n) => { if (n.nodeType === 1) decoratePrefItem(n); }));
-            renumber(); syncHidden(); syncOptions();
-        }).observe(prefList, { childList: true });
-
-        [...prefList.children].forEach(decoratePrefItem);
-        renumber();
-        syncHidden();
-    }
-
-    /* -------------------- autocomplete dropdown: style only --------------- */
-    if (results && search) {
-        function decorateResultItem(li) {
-            if (li.dataset.decorated) return;
-
-            li.classList.add(
-                'student-result', 'dropdown-item', 'd-flex',
-                'align-items-center', 'px-3', 'py-2'
-            );
-
-            const btns = [...li.querySelectorAll('button')];
-            if (btns[0]) btns[0].classList.add('ms-auto');
-
-            btns.forEach((b) => {
-                const lbl = (b.textContent || '').trim().toLowerCase();
-                b.classList.add('chip-btn');
-                if (lbl.startsWith('prefer')) b.classList.add('chip-success');
-                if (lbl.startsWith('avoid'))  b.classList.add('chip-danger');
-            });
-
-            li.dataset.decorated = '1';
-        }
-
-        function decorateAll() {
-            [...results.children].forEach(decorateResultItem);
-            updateResultButtons();
-        }
-
-        function syncDropdown() {
-            const has     = results.children.length > 0;
-            const focused = document.activeElement === search;
-
-            results.classList.toggle('show', has && focused);
-            search.setAttribute('aria-expanded', String(has && focused));
-
-            decorateAll();
-        }
-
-        // Keep dropdown open during clicks so original handlers fire
-        results.addEventListener('mousedown', (e) => e.preventDefault());
-        results.addEventListener('click', () => setTimeout(() => results.classList.remove('show'), 150));
-
-        new MutationObserver((m) => {
-            if (m.some((x) => x.addedNodes.length || x.removedNodes.length)) syncDropdown();
-        }).observe(results, { childList: true });
-
-        search.addEventListener('focus', syncDropdown);
-        search.addEventListener('blur',  () => setTimeout(() => results.classList.remove('show'), 120));
-    }
-
-    /* ---------------- cap lists at 5 each + disable buttons --------------- */
-    function updateResultButtons() {
-        if (!results) return;
-
-        const prefFull  = preferred && preferred.children.length >= MAX_PREF;
-        const avoidFull = avoided   && avoided.children.length   >= MAX_AVOID;
-
-        [...results.querySelectorAll('button')].forEach((b) => {
-            const lbl = (b.textContent || '').trim().toLowerCase();
-            if (lbl.startsWith('prefer')) {
-                b.disabled = prefFull;
-                b.title = prefFull ? `Limit ${MAX_PREF} reached` : '';
-            }
-            if (lbl.startsWith('avoid')) {
-                b.disabled = avoidFull;
-                b.title = avoidFull ? `Limit ${MAX_AVOID} reached` : '';
-            }
-        });
-    }
-
-    if (results) {
-        new MutationObserver(() => updateResultButtons()).observe(results, { childList: true, subtree: true });
-
-        results.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-
-            const lbl = (btn.textContent || '').trim().toLowerCase();
-
-            if (lbl.startsWith('prefer') && preferred.children.length >= MAX_PREF) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-            }
-
-            if (lbl.startsWith('avoid') && avoided.children.length >= MAX_AVOID) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-            }
-        });
-    }
-
-    /* ----------------- grey-out already chosen project options ------------- */
-    function chosenIds() {
-        return new Set(prefList ? [...prefList.children].map(liId).filter(Boolean) : []);
-    }
-
-    function stripTag(t) {
-        return t.replace(/\s+\(chosen\)$/, '');
-    }
-
-    function syncOptions() {
-        if (!select) return;
-
-        const chosen = chosenIds();
-
-        [...select.options].forEach((opt) => {
-            if (!opt.value) return; // skip placeholder
-
-            const used = chosen.has(opt.value);
-
-            if (opt.disabled !== used) opt.disabled = used;
-
-            const clean = stripTag(opt.textContent);
-            opt.textContent = used ? `${clean} (chosen)` : clean;
-        });
-
-        // Reset if user had a now-disabled option selected
-        if (select.selectedOptions[0] && select.selectedOptions[0].disabled) {
-            select.value = '';
-        }
-    }
-
-    if (select) {
-        new MutationObserver(() => syncOptions()).observe(select, { childList: true });
-        syncOptions();
-    }
-
-    // Initial state
-    updateResultButtons();
-});
-</script>
-{% endblock %}
