@@ -315,6 +315,8 @@ function deleteFinalGroup(id) {
             // clear center panel
             document.getElementById("final-group-title").textContent = "Select a group";
             document.getElementById("final-group-size").innerHTML = "";
+            document.getElementById("final-group-cwa-range").innerHTML = "";
+            document.getElementById("final-group-cwa-average").innerHTML = "";
             document.querySelector("#final-group-members .members-container").innerHTML = "";
             document.getElementById("final-group-project-name").innerHTML = "";
             document.getElementById("final-group-host").innerHTML = "";
