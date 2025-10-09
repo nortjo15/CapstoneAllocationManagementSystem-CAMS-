@@ -7,7 +7,7 @@
 
 {% block page_toolbar %}
 <div class="d-flex gap-2">
-  <a href="{% url 'admin_app:communications_section_create' %}" class="btn btn-primary">+ New communications_section</a>
+  <a href="{% url 'admin_app:section_create' %}" class="btn btn-primary">+ New section</a>
 </div>
 {% endblock %}
 
@@ -31,14 +31,14 @@
             <td>{{ section.parent_section|default:"-" }}</td>
             <td>{{ section.order }}</td>
             <td class="text-end">
-              <a href="{% url 'admin_app:communications_section_edit' section.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-              <a href="{% url 'admin_app:communications_section_delete' section.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              <a href="{% url 'admin_app:section_edit' section.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+              <a href="{% url 'admin_app:section_delete' section.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
             </td>
           </tr>
           {% empty %}
           <tr>
             <td colspan="4" class="text-center p-4">
-              No sections. <a href="{% url 'admin_app:communications_section_create' %}">Create one</a>.
+              No sections. <a href="{% url 'admin_app:section_create' %}">Create one</a>.
             </td>
           </tr>
           {% endfor %}

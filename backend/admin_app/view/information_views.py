@@ -9,6 +9,10 @@ from django.contrib.auth.decorators import login_required
 from admin_app.models import CapstoneInformationContent, CapstoneInformationSection
 from admin_app.forms.admin_forms import InformationForm
 
+@login_required
+def information_view(request):
+    return render(request, 'information_dashboard.html')
+
 @staff_member_required
 def information_list(request):
     """Admin list with filters + search + pagination."""
@@ -40,7 +44,7 @@ def information_list(request):
     page = Paginator(qs, 20).get_page(request.GET.get("page"))
 
     sections = CapstoneInformationSection.objects.order_by("order", "id")
-    return render(request, "communications_list.html", {
+    return render(request, "information_list.html", {
         "page": page,
         "items": page.object_list,
         "sections": sections,
@@ -49,7 +53,7 @@ def information_list(request):
 @staff_member_required
 def information_create(request):
     if not CapstoneInformationSection.objects.exists():
-        messages.warning(request, "Please create a section before adding a communications section.")
+        messages.warning(request, "Please create a section before adding an information section.")
         return redirect("admin_app:section_create")
     if request.method == "POST":
         form = InformationForm(request.POST)
@@ -60,12 +64,12 @@ def information_create(request):
             if not obj.published_at:
                 obj.published_at = timezone.now()
             obj.save()
-            messages.success(request, f"Communication section “{obj.title}” created.")
+            messages.success(request, f"Information section “{obj.title}” created.")
             # (Optional) call admin log helper here
             return redirect("admin_app:information_list")
     else:
         form = InformationForm()
-    return render(request, "communications_form.html", {"form": form})
+    return render(request, "information_form.html", {"form": form})
 
 @staff_member_required
 def information_edit(request, pk):
@@ -81,10 +85,10 @@ def information_edit(request, pk):
             obj.save()
             messages.success(request, f"Updated “{obj.title}”.")
             # (Optional) call admin log helper here
-            return redirect("admin_app:communications_list")
+            return redirect("admin_app:information_list")
     else:
         form = InformationForm(instance=obj)
-    return render(request, "communications_form.html", {"form": form})
+    return render(request, "information_form.html", {"form": form})
 
 @staff_member_required
 def information_delete(request, pk):
@@ -94,5 +98,5 @@ def information_delete(request, pk):
         obj.delete()
         messages.success(request, f"Deleted “{title}”.")
         # (Optional) call admin log helper here
-        return redirect("admin_app:communications_list")
-    return render(request, "communications_confirm_delete.html", {"obj": obj})
+        return redirect("admin_app:information_list")
+    return render(request, "information_confirm_delete.html", {"obj": obj})

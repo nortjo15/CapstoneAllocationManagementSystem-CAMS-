@@ -2,11 +2,11 @@
 {% load static form_extras %}
 
 {% block page_header %}
-<h1 class="h3 mb-0">{% if form.instance.pk %}Edit communication{% else %}New communication{% endif %}</h1>
+<h1 class="h3 mb-0">{% if form.instance.pk %}Edit information{% else %}New information{% endif %}</h1>
 {% endblock %}
 
 {% block page_toolbar %}
-<a href="{% url 'admin_app:communications_list' %}" class="btn btn-outline-secondary">Back</a>
+<a href="{% url 'admin_app:information_list' %}" class="btn btn-outline-secondary">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -77,7 +77,7 @@
 
       <div class="d-flex gap-2 mt-3">
         <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url 'admin_app:communications_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        <a href="{% url 'admin_app:information_list' %}" class="btn btn-outline-secondary">Cancel</a>
       </div>
     </form>
   </div>

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf import settings 
 from django.urls import path, include
 #Import all required views
-from admin_app.view import admin_views, auth_views, communications_section_views, round_views, student_views, project_views, group_views, degree_views, communications_views
+from admin_app.view import admin_views, auth_views, information_views, section_views, round_views, student_views, project_views, group_views, degree_views
 from django.views.generic import RedirectView
 
 #App namespace
@@ -46,15 +46,17 @@ urlpatterns = [
     #Settings_views
     path('settings/', admin_views.settings_view, name='settings'),
     #Information CRUD
-    path('information/',              communications_views.communications_list,  name='communications_list'),
-    path('information/new/',          communications_views.communications_create, name='communications_create'),
-    path('information/<int:pk>/edit/',   communications_views.communications_edit,   name='communications_edit'),
-    path('information/<int:pk>/delete/', communications_views.communications_delete, name='communications_delete'),
+    path('information/',              information_views.information_list,  name='information_list'),
+    path('information/new/',          information_views.information_create, name='information_create'),
+    path('information/<int:pk>/edit/',   information_views.information_edit,   name='information_edit'),
+    path('information/<int:pk>/delete/', information_views.information_delete, name='information_delete'),
     #Sections CRUD
-    path('sections/',                communications_section_views.communications_section_list,  name='communications_section_list'),
-    path('sections/new/',            communications_section_views.communications_section_create, name='communications_section_create'),
-    path('sections/<int:pk>/edit/',  communications_section_views.communications_section_edit,   name='communications_section_edit'),
-    path('sections/<int:pk>/delete/',communications_section_views.communications_section_delete, name='communications_section_delete'),
+    path('sections/',                section_views.section_list,  name='section_list'),
+    path('sections/new/',            section_views.section_create, name='section_create'),
+    path('sections/<int:pk>/edit/',  section_views.section_edit,   name='section_edit'),
+    path('sections/<int:pk>/delete/',section_views.section_delete, name='section_delete'),
     #Degree and Major
     path('degreeDashboard/', degree_views.degree_view, name='degree_dashboard'),
+    #Information and Sections
+    path('informationDashboard/', information_views.information_view, name='information_dashboard'),
 ]
