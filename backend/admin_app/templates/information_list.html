@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block page_header %}
-<h1 class="h3 mb-0">Information</h1>
+<h1 class="h3 mb-0">Communications to Students</h1>
 {% endblock %}
 
 {% block page_toolbar %}
 <div class="d-flex gap-2">
-  <a href="{% url 'admin_app:information_create' %}" class="btn btn-primary">+ New information</a>
+  <a href="{% url 'admin_app:information_create' %}" class="btn btn-primary">+ New Communication</a>
   <a href="{% url 'admin_app:section_list' %}" class="btn btn-outline-secondary">Manage sections</a>
 </div>
 {% endblock %}
@@ -83,7 +83,7 @@
       </table>
     </div>
     {% else %}
-      <div class="p-4 text-center">No information content found.</div>
+      <div class="p-4 text-center">No communication content found.</div>
     {% endif %}
   </div>
 </div>
