@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
           crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
   {% load static %}
   <link rel="stylesheet" href="{% static 'student_app/css/studentMain.css' %}">
@@ -29,11 +30,10 @@
     </button>
     <div class="collapse navbar-collapse" id="studentNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{% url 'students:student_form' %}">Make Application</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'students:project_information' %}">Project Information</a></li>
         {% for round in active_rounds %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_form2' round.round_id %}">{{ round.round_name }}</a>
+            <a class="nav-link" href="{% url 'students:student_form' round.round_id %}">{{ round.round_name }}</a>
           </li>
         {% endfor %}
       </ul>

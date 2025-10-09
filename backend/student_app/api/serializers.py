@@ -138,10 +138,11 @@ class FullFormSerializer(serializers.Serializer):
     major = serializers.PrimaryKeyRelatedField(queryset=Major.objects.all())
     cwa = serializers.FloatField()
     email = serializers.EmailField()
-    resume = serializers.FileField()
+    resume = serializers.FileField(required=False, allow_null=True)
     cv = serializers.FileField(required=False, allow_null=True)
     application_submitted = serializers.BooleanField(default=False)
     split_project = serializers.BooleanField(default=False)
+    notes = serializers.CharField(max_length=10000, required=False, allow_null=True)
     #Project Preference List
     project_preferences = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, max_length=6, required=False
@@ -164,7 +165,7 @@ class FullFormSerializer(serializers.Serializer):
         try:
             student = Student.objects.get(student_id=student_id)
         except Student.DoesNotExist:
-            raise serializers.ValidationError({"student_id":"A student with this ID does not exist"})
+            raise serializers.ValidationError({"student_id":"A student with this ID does not exist, Please contact the Unit Coordinator!"})
         #check if student exists
 
         #update student details
