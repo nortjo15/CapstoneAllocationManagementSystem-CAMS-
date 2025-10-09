@@ -2,6 +2,8 @@ from rest_framework import serializers
 from student_app.api.serializers import StudentSerializer, StudentListSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
 from ..models import Project, ProjectPreference, Round, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Degree, Major, AdminLog, CapstoneInformationContent, CapstoneInformationSection, UnitContacts
 from django.db import transaction
+from admin_app.models import AdminLog
+from django.contrib.contenttypes.models import ContentType
 
 class AdminLogSerializer(serializers.ModelSerializer):
     #Get the string representation of user
@@ -128,6 +130,23 @@ class FinalGroupCreateSerializer(serializers.ModelSerializer):
             notes=validated_data.get("notes"),
             project=sg.project,
         )
+
+        # Log suggested group before deletion
+        request = self.context.get("request")
+        if request and request.user and request.user.is_authenticated:
+            ct = ContentType.objects.get_for_model(final_group)
+            AdminLog.objects.create(
+                user=request.user,
+                action="GROUP_CREATED",
+                target_content_type=ct,
+                target_id=final_group.pk,
+                notes=(
+                    f"Final group created: name='{final_group.name}',strength='{getattr(sg, 'strength', '')}', notes='{final_group.notes or ''}' | "
+                    f"from SuggestedGroup(id={sg.suggestedgroup_id}, name='{getattr(sg, 'name', '')}', "
+                    f"strength='{getattr(sg, 'strength', '')}', notes='{getattr(sg, 'notes', '')}', "
+                    f"members={list(sg.members.values_list('student__student_id', flat=True))})"
+                ),
+            )
 
         # --- Copy members and mark as allocated ---
         for m in sg.members.all():
