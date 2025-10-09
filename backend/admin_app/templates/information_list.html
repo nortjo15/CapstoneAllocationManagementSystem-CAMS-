@@ -29,15 +29,13 @@
     </select>
   </div>
   <div class="col-auto">
-    {% with cur=request.GET.status|default:'published' %}
     <label for="status" class="visually-hidden">Status</label>
     <select id="status" name="status" class="form-select">
-      <option value=""          {% if cur == "" %}selected{% endif %}>Any status</option>
-      <option value="draft"     {% if cur == "draft" %}selected{% endif %}>Draft</option>
-      <option value="published" {% if cur == "published" %}selected{% endif %}>Published</option>
-      <option value="archived"  {% if cur == "archived" %}selected{% endif %}>Archived</option>
+      <option value=""          {% if current_status == "" %}selected{% endif %}>Any status</option>
+      <option value="draft"     {% if current_status == "draft" %}selected{% endif %}>Draft</option>
+      <option value="published" {% if current_status == "published" %}selected{% endif %}>Published</option>
+      <option value="archived"  {% if current_status == "archived" %}selected{% endif %}>Archived</option>
     </select>
-    {% endwith %}
   </div>
   <div class="col-auto">
     <button class="btn btn-outline-secondary" type="submit">Apply</button>
@@ -65,8 +63,13 @@
         </thead>
         <tbody>
           {% for a in items %}
-          <tr>
-            <td>{{ a.title }}</td>
+          <tr class="{% if a.expired_flag %}expired-row{% endif %}">
+            <td>
+              {{ a.title }}
+              {% if a.expired_flag %}
+                <span class="badge text-bg-danger ms-2">Expired</span>
+              {% endif %}
+            </td>
             <td>{{ a.section_id.name }}</td>
             <td>{{ a.pinned }}</td>
             <td>{{ a.priority }}</td>
