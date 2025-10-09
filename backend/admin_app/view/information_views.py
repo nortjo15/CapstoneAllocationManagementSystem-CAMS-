@@ -1,4 +1,4 @@
-# admin_app/view/communications_views.py
+# admin_app/view/informations_views.py
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,10 +7,10 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from admin_app.models import CapstoneInformationContent, CapstoneInformationSection
-from admin_app.forms.admin_forms import CommunicationsForm
+from admin_app.forms.admin_forms import InformationForm
 
 @staff_member_required
-def communications_list(request):
+def information_list(request):
     """Admin list with filters + search + pagination."""
     now = timezone.now()
 
@@ -40,19 +40,19 @@ def communications_list(request):
     page = Paginator(qs, 20).get_page(request.GET.get("page"))
 
     sections = CapstoneInformationSection.objects.order_by("order", "id")
-    return render(request, "communications/communications_list.html", {
+    return render(request, "communications_list.html", {
         "page": page,
         "items": page.object_list,
         "sections": sections,
     })
 
 @staff_member_required
-def communications_create(request):
+def information_create(request):
     if not CapstoneInformationSection.objects.exists():
-        messages.warning(request, "Please create a section before adding an information section.")
+        messages.warning(request, "Please create a section before adding a communications section.")
         return redirect("admin_app:section_create")
     if request.method == "POST":
-        form = CommunicationsForm(request.POST)
+        form = InformationForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
             if not obj.author and request.user.is_authenticated:
@@ -62,16 +62,16 @@ def communications_create(request):
             obj.save()
             messages.success(request, f"Communication section “{obj.title}” created.")
             # (Optional) call admin log helper here
-            return redirect("admin_app:communications_list")
+            return redirect("admin_app:information_list")
     else:
-        form = CommunicationsForm()
-    return render(request, "communications/communications_form.html", {"form": form})
+        form = InformationForm()
+    return render(request, "communications_form.html", {"form": form})
 
 @staff_member_required
-def communications_edit(request, pk):
+def information_edit(request, pk):
     obj = get_object_or_404(CapstoneInformationContent, pk=pk)
     if request.method == "POST":
-        form = CommunicationsForm(request.POST, instance=obj)
+        form = InformationForm(request.POST, instance=obj)
         if form.is_valid():
             obj = form.save(commit=False)
             if not obj.author and request.user.is_authenticated:
@@ -83,11 +83,11 @@ def communications_edit(request, pk):
             # (Optional) call admin log helper here
             return redirect("admin_app:communications_list")
     else:
-        form = CommunicationsForm(instance=obj)
-    return render(request, "communications/communications_form.html", {"form": form})
+        form = InformationForm(instance=obj)
+    return render(request, "communications_form.html", {"form": form})
 
 @staff_member_required
-def communications_delete(request, pk):
+def information_delete(request, pk):
     obj = get_object_or_404(CapstoneInformationContent, pk=pk)
     if request.method == "POST":
         title = obj.title
@@ -95,4 +95,4 @@ def communications_delete(request, pk):
         messages.success(request, f"Deleted “{title}”.")
         # (Optional) call admin log helper here
         return redirect("admin_app:communications_list")
-    return render(request, "communications/communications_confirm_delete.html", {"obj": obj})
+    return render(request, "communications_confirm_delete.html", {"obj": obj})

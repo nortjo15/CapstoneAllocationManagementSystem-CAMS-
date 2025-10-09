@@ -46,10 +46,10 @@ urlpatterns = [
     #Settings_views
     path('settings/', admin_views.settings_view, name='settings'),
     #Information CRUD
-    path('communications/',              communications_views.communications_list,  name='communications_list'),
-    path('communications/new/',          communications_views.communications_create, name='communications_create'),
-    path('communications/<int:pk>/edit/',   communications_views.communications_edit,   name='communications_edit'),
-    path('communications/<int:pk>/delete/', communications_views.communications_delete, name='communications_delete'),
+    path('information/',              communications_views.communications_list,  name='communications_list'),
+    path('information/new/',          communications_views.communications_create, name='communications_create'),
+    path('information/<int:pk>/edit/',   communications_views.communications_edit,   name='communications_edit'),
+    path('information/<int:pk>/delete/', communications_views.communications_delete, name='communications_delete'),
     #Sections CRUD
     path('sections/',                communications_section_views.communications_section_list,  name='communications_section_list'),
     path('sections/new/',            communications_section_views.communications_section_create, name='communications_section_create'),
