@@ -230,7 +230,27 @@ function renderFinalGroupUI(group) {
     // --- clear old content before rendering ---
     document.getElementById("final-group-title").textContent = group.name || "Unnamed Final Group";
     document.getElementById("final-group-size").innerHTML = `<p><strong>Group Size:</strong> ${group.members.length}</p>`;
+    
+    const cwaRange = document.getElementById("final-group-cwa-range");
+    const cwaAverage = document.getElementById("final-group-cwa-average");
 
+    const cwas = group.members
+        .map(m => parseFloat(m.student.cwa))
+        .filter(c => !isNaN(c));
+
+    if (cwas.length > 0)
+    {
+        const minCwa = Math.min(...cwas);
+        const maxCwa = Math.max(...cwas);
+
+        const sum = cwas.reduce((total, c) => total + c, 0);
+        const averageCwa = Math.round((sum / cwas.length) * 100) / 100;
+
+        cwaRange.innerHTML = `<strong>CWA Range:</strong> ${minCwa} - ${maxCwa}`;
+        cwaAverage.innerHTML = `<strong>Average CWA:</strong> ${averageCwa}`;
+
+    }
+    
     const projectBox = document.getElementById("final-group-project-name");
     projectBox.innerHTML = group.project
         ? `<p><strong>Project:</strong> ${group.project.title}</p>`
@@ -295,6 +315,8 @@ function deleteFinalGroup(id) {
             // clear center panel
             document.getElementById("final-group-title").textContent = "Select a group";
             document.getElementById("final-group-size").innerHTML = "";
+            document.getElementById("final-group-cwa-range").innerHTML = "";
+            document.getElementById("final-group-cwa-average").innerHTML = "";
             document.querySelector("#final-group-members .members-container").innerHTML = "";
             document.getElementById("final-group-project-name").innerHTML = "";
             document.getElementById("final-group-host").innerHTML = "";

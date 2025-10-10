@@ -291,6 +291,9 @@ export function renderCWARange(group, groupSize)
         const existing = document.getElementById("cwa-range");
         if (existing) existing.remove();
 
+        const existingAverage = document.getElementById("cwa-average");
+        if(existingAverage) existing.remove();
+
         const cwas = group.members.map(m => m.student.cwa).filter(c => c!= null);
         if (cwas.length > 0)
         {
@@ -301,7 +304,14 @@ export function renderCWARange(group, groupSize)
             cwaElem.id = "cwa-range";
             cwaElem.innerHTML = `<strong>CWA Range:</strong> ${minCwa} - ${maxCwa}`;
 
+            const cwaElem2 = document.createElement("p");
+            const sum = cwas.reduce((total, c) => total + c, 0);
+            const averageCwa = Math.round((sum / cwas.length) * 100) / 100;
+            cwaElem2.id = "cwa-average";
+            cwaElem2.innerHTML = `<strong>Average CWA:</strong> ${averageCwa}`;
+        
             groupSize.appendChild(cwaElem);
+            groupSize.appendChild(cwaElem2);
         }
     }
 }
