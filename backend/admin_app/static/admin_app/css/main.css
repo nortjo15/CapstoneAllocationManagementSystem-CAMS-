@@ -1,3 +1,9 @@
 .navbar{
     background-color: #465ac2;
 }
+
+/* Admin information list: red outline for expired rows */
+.expired-row > * {
+    border-top: 2px solid var(--bs-danger);
+    border-bottom: 2px solid var(--bs-danger);
+}

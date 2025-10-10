@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block page_header %}
-<h1 class="h3 mb-0">Information</h1>
+<h1 class="h3 mb-0">Communications to Students</h1>
 {% endblock %}
 
 {% block page_toolbar %}
 <div class="d-flex gap-2">
-  <a href="{% url 'admin_app:information_create' %}" class="btn btn-primary">+ New information</a>
+  <a href="{% url 'admin_app:information_create' %}" class="btn btn-primary">+ New Communication</a>
   <a href="{% url 'admin_app:section_list' %}" class="btn btn-outline-secondary">Manage sections</a>
 </div>
 {% endblock %}
@@ -29,15 +29,13 @@
     </select>
   </div>
   <div class="col-auto">
-    {% with cur=request.GET.status|default:'published' %}
     <label for="status" class="visually-hidden">Status</label>
     <select id="status" name="status" class="form-select">
-      <option value=""          {% if cur == "" %}selected{% endif %}>Any status</option>
-      <option value="draft"     {% if cur == "draft" %}selected{% endif %}>Draft</option>
-      <option value="published" {% if cur == "published" %}selected{% endif %}>Published</option>
-      <option value="archived"  {% if cur == "archived" %}selected{% endif %}>Archived</option>
+      <option value=""          {% if current_status == "" %}selected{% endif %}>Any status</option>
+      <option value="draft"     {% if current_status == "draft" %}selected{% endif %}>Draft</option>
+      <option value="published" {% if current_status == "published" %}selected{% endif %}>Published</option>
+      <option value="archived"  {% if current_status == "archived" %}selected{% endif %}>Archived</option>
     </select>
-    {% endwith %}
   </div>
   <div class="col-auto">
     <button class="btn btn-outline-secondary" type="submit">Apply</button>
@@ -65,8 +63,13 @@
         </thead>
         <tbody>
           {% for a in items %}
-          <tr>
-            <td>{{ a.title }}</td>
+          <tr class="{% if a.expired_flag %}expired-row{% endif %}">
+            <td>
+              {{ a.title }}
+              {% if a.expired_flag %}
+                <span class="badge text-bg-danger ms-2">Expired</span>
+              {% endif %}
+            </td>
             <td>{{ a.section_id.name }}</td>
             <td>{{ a.pinned }}</td>
             <td>{{ a.priority }}</td>
@@ -83,7 +86,7 @@
       </table>
     </div>
     {% else %}
-      <div class="p-4 text-center">No information content found.</div>
+      <div class="p-4 text-center">No communication content found.</div>
     {% endif %}
   </div>
 </div>
