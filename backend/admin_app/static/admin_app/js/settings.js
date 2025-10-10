@@ -38,6 +38,18 @@ async function loadAdminLogs(url) {
 
 }
 
+// Safely escape HTML to avoid injecting markup when rendering notes
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, (s) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[s]);
+}
+
 function displayAdminLogs(data, container) {
     
     if (!container) {
@@ -59,16 +71,21 @@ function displayAdminLogs(data, container) {
         'DELETE': { color: '#f8d7da' },
         'LOGIN': { color: '#cce5ff' },
         'LOGOUT': { color: '#d1ecf1' },
+        'CREATE_GROUP': { color: '#d30d98ff' },
+        'GROUP_UPDATED': { color: '#fff3cd' },
+        'GROUP_DELETED': { color: '#ec0404ff' },
         'default': { color: '#e2e3e5' }
     }; 
 
-    const truncate = (str, num) => {
-        if (!str) return '<em>No notes</em>';
-        return str.length <= num ? str : str.slice(0, num) + '...';
-    };
-
     const tableRows = logs.map(log => {
         const style = ACTION_STYLES[log.action] || ACTION_STYLES['default'];
+        // Debug: verify notes length is not truncated from API
+        if (log && typeof log.notes === 'string') {
+            try { console.debug('[AdminLogs] notes length:', log.notes.length, 'sample:', log.notes.slice(0, 80)); } catch (_) {}
+        }
+        const notesCell = log.notes
+            ? `<div style="white-space: pre-wrap !important; overflow-wrap: anywhere !important; word-break: break-word !important;">${escapeHTML(log.notes)}</div>`
+            : '<em>No notes</em>';
 
         return `
             <tr>
@@ -80,7 +97,7 @@ function displayAdminLogs(data, container) {
                 </td>
                 <td style="padding: 8px; border: 1px solid #ddd;">${log.target || '<em>No target</em>'}</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">${formatDate(log.timestamp)}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">${truncate(log.notes, 50)}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; width: 65%; white-space: normal !important; overflow: visible !important; text-overflow: clip !important;">${notesCell}</td>
             </tr>
         `;
 
@@ -94,15 +111,15 @@ function displayAdminLogs(data, container) {
     `;
 
     container.innerHTML = `
-        <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
-                <table style="width: 100%; border-collapse: collapse;">
+        <div style="max-height: 500px; overflow-y: auto; overflow-x: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+                <table style="width: 100%; border-collapse: collapse; table-layout: auto;">
                     <thead>
                         <tr style="background-color: #e9ecef;">
                             <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">User</th>
                             <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Action</th>
                             <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Target</th>
                             <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Timestamp</th>
-                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Notes</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left; width: 60%;">Notes</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
+from admin_app.models import AdminLog
+from django.contrib.contenttypes.models import ContentType
 
 class SuggestedGroupViewSet(viewsets.ModelViewSet):
     queryset = SuggestedGroup.objects.all()
@@ -171,6 +173,16 @@ def create_manual_group(request):
         project=None,
         is_manual=True
     )
+
+     #log admin action
+    user_content_type = ContentType.objects.get_for_model(request.user)
+    AdminLog.objects.create(
+                user=request.user, 
+                action='GROUP_CREATED',
+                target_content_type=user_content_type,
+                target_id=next_num,
+                notes=f"New group created (Manually Created): {group.name}"
+            )
     return Response(SuggestedGroupLiteSerializer(group).data)
 
 @api_view(["DELETE"])
@@ -183,6 +195,18 @@ def delete_manual_group(request, suggestedgroup_id):
 class FinalGroupCreateView(generics.CreateAPIView):
     queryset = FinalGroup.objects.all()
     serializer_class = FinalGroupCreateSerializer
+
+    #log the creation of a final group
+    def perform_create(self, serializer):
+        group = serializer.save()
+        content_type = ContentType.objects.get_for_model(group)
+        AdminLog.objects.create(
+            user=self.request.user,
+            action='CREATE_GROUP',
+            target_content_type=content_type,
+            target_id=group.pk,
+            notes=f"Final group created: {getattr(group, 'name', group.pk)}",
+        )
 
 
 class ProjectListCreateView(generics.ListCreateAPIView):
