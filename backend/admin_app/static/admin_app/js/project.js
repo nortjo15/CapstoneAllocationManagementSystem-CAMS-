@@ -1,208 +1,185 @@
-
-async function getProjectData() {
-    const projectContainer = document.getElementById('project-container');
-    const apiUrl = window.ENDPOINTS.projects;
-
-    try {
-        const response = await fetch(apiUrl);
-        const projects = await response.json();
-        projectContainer.innerHTML = ''; // Clear loading
-
-        if (projects.length === 0) {
-            projectContainer.innerHTML = '<li>No Projects Found</li>';
-        } else {
-            projects.forEach(project => {
-                const card = document.createElement('div');
-                card.classList.add('project-card');
-                card.innerHTML = `
-                    <h3>${project.title}</h3>
-                    <p>${project.description}</p>
-                    <h4>${project.host_name}</h4>
-                    <h4>${project.host_email}</h4>
-                    <h4>${project.host_phone}</h4>
-                    <div class="card-footer">
-                        <span>Capacity: ${project.capacity}</span>
-
-                        <div class="card-actions">
-                            <button class="edit-btn" data-id="${project.project_id}"> Edit </button>
-                            <button class="delete-btn" data-id="${project.project_id}"> Delete </button>
-                        </div>
-                    </div>  
-                `;
-                projectContainer.appendChild(card);
-            });
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        projectContainer.innerHTML = '<li>Could not load projects</li>';
-    }
-}
-
-async function handleAddProject(event) {
-    event.preventDefault(); // Stop the page from reloading
-
-    const apiUrl = window.ENDPOINTS.projects;
-    const form = event.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            getProjectData(); // Refresh the project list
-            form.reset(); // Clear the form
-            document.getElementById('pModal').style.display = 'none'; // Close the modal
-            
-        } else {
-            const errorData = await response.json();
-            console.error('Failed to add project', errorData);
-            alert('Error: Could not add Project');
-        }
-
-    } catch (error) {
-        console.error('Network error:', error);
-    }
-}
-
-async function deleteProject(projectId){
-    if(!confirm('Are you sure you want to delete this project?')){
-        return;
-    }
-
-    const projectUrl = `${window.ENDPOINTS.projects}${projectId}/`;
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    try {
-        const response = await fetch(projectUrl, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
-        });
-
-        if(response.ok){
-            getProjectData();
-        } else {
-            alert('Error: Could not delete Project')
-        }
-    } catch (error){
-        console.error('Error deleting project', error)
-    }
-}
-
-async function openEditModal(projectId){
-    const projectUrl = `${window.ENDPOINTS.projects}${projectId}/`;
-    const response = await fetch(projectUrl);
-    const project = await response.json();
-
-    document.getElementById('edit-project-id').value = project.project_id; // Use a hidden input for the ID
-    document.getElementById('edit-project-title').value = project.title;
-    document.getElementById('edit-project-description').value = project.description;
-    document.getElementById('edit-project-capacity').value = project.capacity;
-    document.getElementById('edit-host-name').value = project.host_name;
-    document.getElementById('edit-host-email').value = project.host_email;
-    document.getElementById('edit-host-phone').value = project.host_phone;
-
-    document.getElementById('editProjectModal').style.display = 'block';
-}
-
-async function editProject(event){
-    event.preventDefault();
-    const form = document.getElementById('edit-project-modal-form');
-    const projectId = form.querySelector('#edit-project-id').value;
-    const projectUrl = `${window.ENDPOINTS.projects}${projectId}/`;
-    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    const updatedData = {
-        title: form.querySelector('#edit-project-title').value,
-        description: form.querySelector('#edit-project-description').value,
-        capacity: form.querySelector('#edit-project-capacity').value,
-        host_name: form.querySelector('#edit-host-name').value,
-        host_email: form.querySelector('#edit-host-email').value,
-        host_phone: form.querySelector('#edit-host-phone').value,
-    };
-
-    const response = await fetch(projectUrl, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(updatedData)
-    });
-
-    if(response.ok){
-        document.getElementById('editProjectModal').style.display = 'none';
-        getProjectData();
-    } else {
-        alert('Failed to update project.');
-        console.error('Update failed:', await response.json());
-    }
-}
-
+// static/admin_app/js/project.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial data load
-    getProjectData();
+  const wrap = document.getElementById('project-container');
+  const apiUrl = window.ENDPOINTS?.projects || null;
 
-    // Set an interval to refresh data every 30 seconds (30000 milliseconds)
-    setInterval(getProjectData, 30000);
+  // ---------- helpers ----------
+  function getCsrfToken() {
+    const m = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : (document.querySelector('[name=csrfmiddlewaretoken]')?.value || '');
+  }
+  function joinDetailUrl(listUrl, id) {
+    // "/api/projects/" + "<id>/" → "/api/projects/123/"
+    const base = listUrl.endsWith('/') ? listUrl : listUrl + '/';
+    return base + String(id).replace(/^\/|\/$/g, '') + '/';
+  }
 
-    // Get modal elements
-    const addModal = document.getElementById('pModal');
-    const editModal = document.getElementById('editProjectModal');
-    
-    const openBtn = document.getElementById('openModalBtn');
-    const addModalCloseBtn = addModal.querySelector('.close-button');
-    const editModalCloseBtn = editModal.querySelector('.close-button');
+  // ---------- list loader ----------
+  async function getProjectData() {
+    if (!wrap || !apiUrl) return;
+    wrap.innerHTML = '<div class="text-secondary">Loading…</div>';
 
-    const editForm = document.getElementById('edit-project-modal-form');
-    const addProjectForm = document.getElementById('add-project-modal-form');
-    const projectContainer = document.getElementById('project-container');
+    try {
+      const rsp = await fetch(apiUrl, {
+        headers: { 'Accept': 'application/json' },
+        credentials: 'same-origin',
+        cache: 'no-store',
+      });
 
-    
-    // Attach event listeners
-    addProjectForm.addEventListener('submit', handleAddProject);
-    editForm.addEventListener('submit', editProject);
+      if (!rsp.ok) {
+        const txt = await rsp.text();
+        wrap.innerHTML = `<div class="text-danger">GET ${rsp.status}</div>`;
+        console.error('List error', rsp.status, txt);
+        return;
+      }
 
+      const data = await rsp.json();
+      const items = Array.isArray(data) ? data : (data.results || []);
+      wrap.innerHTML = '';
 
-    projectContainer.addEventListener('click', function(event) {
-        if(event.target.matches('.delete-btn')){
-            const projectId = event.target.dataset.id;
-            deleteProject(projectId);
+      if (!items.length) {
+        wrap.innerHTML = '<div class="text-secondary">No Projects Found</div>';
+        return;
+      }
+
+      items.forEach(p => wrap.appendChild(renderCard(p)));
+    } catch (e) {
+      wrap.innerHTML = '<div class="text-danger">Network error</div>';
+      console.error(e);
+    }
+  }
+
+  // ---------- card renderer ----------
+  function renderCard(p) {
+    const el = document.createElement('div');
+    el.className = 'project-card';
+    el.innerHTML = `
+      <h3 class="h5 mb-1">${p.title ?? 'Untitled project'}</h3>
+      <div class="meta">Host: ${p.host_name ?? 'N/A'} · Email: ${p.host_email ?? 'N/A'}</div>
+      <p class="mb-3">${p.description ?? ''}</p>
+      <div class="actions">
+        <div class="d-flex gap-2">
+          <button
+            type="button"
+            class="btn btn-outline-primary btn-sm js-edit"
+            data-bs-toggle="modal"
+            data-bs-target="#editProjectModal"
+            data-payload='${JSON.stringify(p)}'
+          >Edit</button>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm js-delete"
+            data-id="${p.project_id ?? p.id ?? ''}"
+          >Delete</button>
+        </div>
+        <span class="text-secondary ms-auto">Capacity: ${p.capacity ?? '—'}</span>
+      </div>
+    `;
+    return el;
+  }
+
+  // ---------- add-project submit ----------
+  const addForm = document.getElementById('add-project-form');
+  if (addForm && apiUrl) {
+    addForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const csrf = addForm.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+      const data = Object.fromEntries(new FormData(addForm).entries());
+
+      try {
+        const rsp = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
+          },
+          credentials: 'same-origin',
+          cache: 'no-store',
+          body: JSON.stringify(data),
+        });
+
+        const bodyText = await rsp.clone().text();
+        console.log('Create:', rsp.status, bodyText);
+
+        if (!rsp.ok) {
+          alert(`Create failed (${rsp.status})\n${bodyText}`);
+          return;
         }
 
-        if (event.target.matches('.edit-btn')) {
-            const projectId = event.target.dataset.id;
-            openEditModal(projectId);
+        await getProjectData();
+
+        const modalEl = document.getElementById('pModal');
+        if (modalEl && window.bootstrap?.Modal) {
+          window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
         }
+        addForm.reset();
+      } catch (err) {
+        console.error(err);
+        alert('Network error during create');
+      }
     });
+  }
 
-    openBtn.onclick = function() {
-        addModal.style.display = 'block';
+  // ---------- edit prefill + delete delegate ----------
+  document.addEventListener('click', async (ev) => {
+    // prefill edit
+    const editBtn = ev.target.closest('.js-edit');
+    if (editBtn) {
+      const payload = JSON.parse(editBtn.getAttribute('data-payload') || '{}');
+      const modalEl = document.getElementById('editProjectModal');
+      if (modalEl) {
+        modalEl.querySelector('#edit-project-id')?.setAttribute('value', payload.id ?? payload.project_id ?? '');
+        modalEl.querySelector('#edit-project-title')?.setAttribute('value', payload.title ?? '');
+        const desc = modalEl.querySelector('#edit-project-description');
+        if (desc) desc.value = payload.description ?? '';
+        modalEl.querySelector('#edit-project-capacity')?.setAttribute('value', payload.capacity ?? '');
+        modalEl.querySelector('#edit-host-name')?.setAttribute('value', payload.host_name ?? '');
+        modalEl.querySelector('#edit-host-email')?.setAttribute('value', payload.host_email ?? '');
+        modalEl.querySelector('#edit-host-phone')?.setAttribute('value', payload.host_phone ?? '');
+      }
+      return;
     }
 
-    addModalCloseBtn.onclick = function() {
-        addModal.style.display = 'none';
-    }
-    editModalCloseBtn.onclick = function() {
-        editModal.style.display = 'none';
-    }
+    // delete
+    const delBtn = ev.target.closest('.js-delete');
+    if (delBtn) {
+      ev.preventDefault();
+      const id = delBtn.getAttribute('data-id');
+      if (!id) return;
 
-    window.onclick = function(event) {
-        if (event.target == addModal) {
-            addModal.style.display = 'none';
+      if (!confirm('Delete this project? This cannot be undone.')) return;
+
+      const detailUrl = joinDetailUrl(apiUrl, id);
+
+      try {
+        const rsp = await fetch(detailUrl, {
+          method: 'DELETE',
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRFToken': getCsrfToken(),
+          },
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+
+        if (rsp.status === 204 || rsp.status === 200) {
+          const card = delBtn.closest('.project-card') || delBtn.closest('#project-container > *');
+          if (card) card.remove();
+          return;
         }
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
+
+        const txt = await rsp.text();
+        alert(`Delete failed (${rsp.status})\n${txt}`);
+      } catch (e) {
+        console.error(e);
+        alert('Network error during delete');
+      }
     }
+  });
+
+  // ---------- initial load ----------
+  getProjectData();
 });

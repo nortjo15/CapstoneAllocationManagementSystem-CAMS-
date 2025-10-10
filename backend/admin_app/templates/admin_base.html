@@ -12,38 +12,37 @@
   <link rel="stylesheet" href="{% static 'admin_app/css/main.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
+{% block modals %}{% endblock %}
 <body>
 
 {% block navbar %}
 <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
   <div class="container-fluid">
-<a class="navbar-brand" href="{% url 'admin_app:login_success' %}">CAS Admin</a>
+    <a class="navbar-brand" href="{% url 'admin_app:login_success' %}">CAS Admin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:student_view' %}">Students</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:groups_view' %}">Groups</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:project_dashboard' %}">Projects</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:round_view' %}">Rounds</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:email_page' %}">Email Students</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:information_list' %}">Provided Information</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:information_list' %}">Communications</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:degree_dashboard' %}">Adjust Degrees</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:settings' %}">Settings</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin_dashboard:information_dashboard' %}">Information</a>
-                        </li>
-    </ul>
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-    <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:logout' %}">Logout</a></li>
-    </ul>
+      </ul>
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'admin_app:logout' %}">Logout</a></li>
+      </ul>
     </div>
   </div>
 </nav>
 {% endblock %}
 
-<div class="container mt-3">
+<main class="container-xxl my-3">
+
   {% if messages %}
     {% for message in messages %}
       <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
@@ -52,29 +51,30 @@
       </div>
     {% endfor %}
   {% endif %}
-</div>
 
-<div class="container mt-3">
-  {% block page_header %}{% endblock %}
-</div>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    {% block page_header %}{% endblock %}
+    {% block page_toolbar %}{% endblock %}
+  </div>
 
-<div class="container mb-3">
-  {% block page_toolbar %}{% endblock %}
   {% block filter_bar %}{% endblock %}
+
+  <div id="content">
+    {% block content %}{% endblock %}
+  </div>
+
+  {% block pagination %}{% endblock %}
+
+</main>
+
+<!-- Global Bootstrap page loader -->
+<div id="page-loader" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-none" style="z-index:1055;">
+  <div class="d-flex justify-content-center align-items-center h-100">
+    <div class="spinner-border text-light" role="status" style="width:4rem;height:4rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
 </div>
-
-    <div id="content">
-        {% block content %}{% endblock %}
-    </div>
-
-    <!-- Global Bootstrap page loader -->
-    <div id="page-loader" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-none" style="z-index:1055;">
-      <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="spinner-border text-light" role="status" style="width:4rem;height:4rem;">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    </div>
 
 <script>
   window.ENDPOINTS = {

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 # from networkx import project
 from student_app.models import Student
 from django.core.validators import MinValueValidator
@@ -210,20 +211,21 @@ class CapstoneInformationSection(models.Model):
 # Stores actual information that is displayed on Capstone Information pages
 # Each section can have multiple pieces of content, and each piece can be pinned or have a priority
 # Content can be published, archived or in draft state
+# Expired content will not be shown to users 
 class CapstoneInformationContent(models.Model):
     section_id = models.ForeignKey(CapstoneInformationSection, on_delete=models.CASCADE, related_name='contents')
     title = models.CharField(max_length=200, null=False)
     body = models.TextField(null=False)
-    status = models.CharField(max_length=20, default= 'published', 
-        choices=[
-        ('draft', 'Draft'),
-        ('published', 'Published'),
-        ('archived', 'Archived')
-        ])
-    pinned = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20,
+        default='published',
+        choices=[('draft', 'Draft'), ('published', 'Published'), ('archived', 'Archived')],
+        db_index=True,
+    )
+    pinned = models.BooleanField(default=False, db_index=True)
     priority = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    published_at = models.DateTimeField(null=True, blank=True)
-    expires_at = models.DateTimeField(null=True, blank=True)    # Content needs to be converted to archived after this date
+    published_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    expires_at = models.DateTimeField(null=True, blank=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.CharField(max_length=120, null=False)
@@ -233,6 +235,34 @@ class CapstoneInformationContent(models.Model):
             models.Index(fields=["section_id", "-pinned", "priority", "-published_at"]),
             models.Index(fields=["status", "published_at", "expires_at"]),
         ]
- 
+
     def __str__(self):
         return self.title
+
+    # Auto-stamp when moved to published. Never auto-change later.
+    def save(self, *args, **kwargs):
+        now = timezone.now()
+
+        old_status = None
+        if self.pk:
+            old = type(self).objects.only("status").filter(pk=self.pk).first()
+            old_status = old.status if old else None
+
+        # Transition logic
+        if self.status == "published":
+            # Set/refresh timestamp only when entering published
+            if old_status != "published":
+                self.published_at = now
+            # If creating directly as published and no stamp yet
+            if self.published_at is None:
+                self.published_at = now
+        else:
+            # If leaving published → clear stamp
+            if old_status == "published":
+                self.published_at = None
+
+        super().save(*args, **kwargs)
+
+    @property
+    def is_expired(self):
+        return self.expires_at is not None and self.expires_at <= timezone.now()
