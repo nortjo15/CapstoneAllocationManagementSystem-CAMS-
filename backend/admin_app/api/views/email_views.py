@@ -1,11 +1,12 @@
-from django.shortcuts import render
+import io
+import zipfile
+import urllib.parse
+from django.conf import settings
+from django.http import HttpResponse
+from django.core.files.storage import default_storage
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from django.http import HttpResponse
-from django.core.files.storage import default_storage
-import io, zipfile, urllib.parse
-from django.conf import settings
 
 from admin_app.models import Project, Round, FinalGroupMember
 from student_app.models import Student
@@ -24,12 +25,12 @@ NOTIFICATION_TEMPLATES = {
     },
     "post_round_finish_industry": {
         "subject": "Candidate CVs",
-        "body": "Dear Industry Partner,\n\nPlease find attached batches of relevant CVs/Resumes.\n\nRegards,\nAdmin",
+        "body": "Dear Industry Partner,\n\nPlease check the zip file for relevant CVs/Resumes.\n\nRegards,\nAdmin",
         "audience": "industry",
     },
     "post_round_finish_students": {
-        "subject": "Round Outcome",
-        "body": "Dear Student,\n\nWe are pleased to inform you of your outcome. Please check the portal for details.\n\nRegards,\nAdmin",
+        "subject": "Industry Round Selection",
+        "body": "Dear Student,\n\nCongratulations! You have been selected for the Industry Round. Please check the portal for details.\n\nRegards,\nAdmin",
         "audience": "students",
     },
     "post_round_finish_finalised_groups": {
@@ -39,23 +40,49 @@ NOTIFICATION_TEMPLATES = {
     },
 }
 
+# --- Email Service ---
+def generate_mailto_link(subject, body, audience="students", project_id=None):
+    """Generate mailto: links for different audiences without attaching resume links."""
+    recipients = []
 
+    if audience == "students":
+        members = FinalGroupMember.objects.select_related("final_group__project", "student")
+        recipients = [
+            m.student.email
+            for m in members
+            if m.student and m.student.email and m.final_group.project.rounds.filter(is_internal=True).exists()
+        ]
+        if not recipients:
+            return None
 
+    elif audience == "hosts":
+        recipients = list(
+            Project.objects.exclude(host_email__isnull=True).exclude(host_email="").values_list("host_email", flat=True)
+        )
 
+    elif audience == "finalised_groups":
+        members = FinalGroupMember.objects.select_related("student")
+        recipients = [m.student.email for m in members if m.student and m.student.email]
+        if not recipients:
+            return None
 
+    elif audience == "industry" and project_id:
+        try:
+            project = Project.objects.get(pk=project_id, rounds__is_internal=True)
+        except Project.DoesNotExist:
+            return None
+        recipients = [project.host_email] if project.host_email else []
+        # Do not attach resume links
+        body += "\n\nPlease check the portal for candidate resumes."
 
+    if not recipients:
+        return None
 
+    to_emails = ";".join(recipients)
+    query = urllib.parse.urlencode({"subject": subject, "body": body}, quote_via=urllib.parse.quote)
+    return f"mailto:{to_emails}?{query}"
 
-
-
-
-
-
-
-
-
-
-
+# --- API Views ---
 class MailtoLinkView(APIView):
     permission_classes = [IsAdminUser]
 
@@ -79,8 +106,6 @@ class MailtoLinkView(APIView):
         if notification_type == "post_round_finish_industry":
             if not project_id:
                 return Response({"error": "project_id is required"}, status=400)
-
-            # Ensure project is linked to an internal round
             valid_project = Project.objects.filter(pk=project_id, rounds__is_internal=True).distinct()
             if not valid_project.exists():
                 return Response({"error": "Invalid project (not internal)"}, status=400)
@@ -142,54 +167,3 @@ class ProjectResumesZipView(APIView):
         response = HttpResponse(buffer, content_type="application/zip")
         response["Content-Disposition"] = f'attachment; filename="project_{project_id}_resumes.zip"'
         return response
-
-
-# --- Email Service ---
-def generate_mailto_link(subject, body, audience="students", project_id=None):
-    recipients = []
-
-    if audience == "students":
-        # Only students in final groups of projects with at least one internal round
-        members = FinalGroupMember.objects.select_related("final_group__project", "student")
-        recipients = [
-            m.student.email
-            for m in members
-            if m.student and m.student.email and m.final_group.project.rounds.filter(is_internal=True).exists()
-        ]
-        if not recipients:
-            return None
-
-    elif audience == "hosts":
-        recipients = list(Project.objects.exclude(host_email__isnull=True).exclude(host_email="").values_list("host_email", flat=True))
-    elif audience == "finalised_groups":
-        members = FinalGroupMember.objects.select_related("student")
-        recipients = [m.student.email for m in members if m.student and m.student.email]
-        if not recipients:
-            return None
-    elif audience == "industry" and project_id:
-        try:
-            project = Project.objects.get(pk=project_id, rounds__is_internal=True)
-        except Project.DoesNotExist:
-            return None
-
-        recipients = [project.host_email] if project.host_email else []
-
-        final_groups = project.final_groups.all().prefetch_related("members__student")
-        resume_links = []
-        for group in final_groups:
-            for member in group.members.all():
-                if member.student.resume:
-                    resume_links.append(f"{settings.MEDIA_URL}{member.student.resume}")
-
-        if resume_links:
-            body += "\n\nAttached CVs/Resumes (please download from links):\n" + "\n".join(resume_links)
-        else:
-            body += "\n\n(No resumes found for this project)"
-
-    if not recipients:
-        return None
-
-    to_emails = ";".join(recipients)
-    query = urllib.parse.urlencode({"subject": subject, "body": body}, quote_via=urllib.parse.quote)
-    return f"mailto:{to_emails}?{query}"
-

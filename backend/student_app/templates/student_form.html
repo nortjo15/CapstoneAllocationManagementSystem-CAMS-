@@ -1,66 +1,205 @@
 {% extends "student_base.html" %}
 {% load static %}
-{% block content %}
-<head>
-    <title>Project Application</title>
-</head>
 
-    <h1>Project Application form</h1>
-    <hr>
-    <p>Please complete the Project Application Form carefully to ensure your submission is valid!</p>
-    <div id="form-Container">
-        <form enctype="multipart/form-data" id="application-form">
-            {% csrf_token %}
-            <!-- Student ID -->
-            <p>Begin by entering your student ID, make sure it's a valid number, it should be in the format "12345678".</p>
-            <label for="student_id">Student ID</label>
-            <input type="text" pattern="[0-9]+" maxlength="8" name="student_id" id="student_id" required><br><br>
-            <!-- Email -->
-            <label for="email">Please enter your student email. E.g. john.smith@student.curtin.edu.au OR john.m.smith@student.curtin.edu.au</label><br><br>
-            <input type="email" id="email" name="email"><br><br>
-            <!-- Major -->
-            <label for="major">Select your major from the dropdown menu provided.</label><br><br>
-            <select name="major" id="major" required>
-                <option value=""> loading Majors... </option> 
-            </select><br><br>
-            <!-- CWA -->
-            <label for="cwa">Please enter your current CWA. E.g. 85.34</label><br><br>
-            <input type="number" step="0.01" min="0" max="100" id="cwa" name="cwa" required><br><br>
-            <!-- Project Preferences -->
-            <label>Please choose 0 or 6 preferences for projects you would like to complete</label><br>
-            <select name="project" id="project">
-                <option value=""> loading Projects... </option> 
-            </select><br><br>
-            <ul id="preference-list"></ul>
-            <input type="hidden" name="project_preferences" id="project_preferences">
-            <!-- preferred Group Preferences -->
-            <label> Please use the search bar below to choose your group preferences, type in the student's full name </label><br><br>
-            <input type="text" id="user-search" placeholder="Search Students..."><br>
-            <ul id="autocomplete-results"></ul><br>
-            <label>Please choose 0 or 5 students you would prefer working with</label><br>
-            <ul id="preferred-list"></ul>
-            <input type="hidden" name="preferred_students" id="preferred_students">
-            <!-- avoided Group Preferences -->
-            <label>Please choose 0 or 5 students you would like to avoid working with</label>
-            <ul id="avoided-list"></ul>
-            <input type="hidden" name="avoided_students" id="avoided_students">
-            <!-- Resume -->
-            <p>When uploading your resume, ensure the file is named using the format "lastname-firstname_resume_year" for example, "Doe-Jane_resume_2025" 
-                and that it is in PDF format only.</p>
-            <input type="file" id="resume" name="resume" accept=".pdf"><br><br>
-            <!-- CV -->
-            <input type="file" id="cv" name="cv" accept=".pdf"><br><br>
-            <!-- Split Project -->
-            <label for="splitProject"> If you are completing a split project, please tick the box </label>
-            <input type="checkbox" name="splitProject" id="splitProject"><br>
-            <!-- Agree to terms -->
-            <p>Finally, you must tick the “Agree to Terms” checkbox to confirm your acceptance of the allocation process. 
-                <span style="color: red;">If this box is not ticked, you will not be allocated to any group or project</span></p>
-            <input type="checkbox" name="terms" id="terms">
-            <label for="terms">Agree to Terms</label><br><br>
-            <input type="submit" value="Submit"><br><br>
-        </form>
+{% block page_header %}
+<h1 class="h3 mb-0">Project Application</h1>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'student_app/css/studentForm.css' %}"> 
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted">Complete all required fields to submit a valid application.</p>
+
+                <form id="application-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label">Student ID</label>
+                        <input
+                            type="text"
+                            pattern="[0-9]{8}"
+                            maxlength="8"
+                            class="form-control"
+                            id="student_id"
+                            name="student_id"
+                            required
+                        >
+                        <div class="form-text">8 digits, e.g. 12345678.</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Student email</label>
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            placeholder="firstname.lastname@student.curtin.edu.au"
+                            required
+                        >
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="major" class="form-label">Major</label>
+                        <select id="major" name="major" class="form-select" required>
+                            <option value="">Loading majors…</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cwa" class="form-label">Current CWA</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            max="100"
+                            class="form-control"
+                            id="cwa"
+                            name="cwa"
+                            required
+                        >
+                        <div class="form-text">Example: 85.34</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <!-- Projects box -->
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Project preferences</span>
+                            <span class="text-muted small">Choose up to 6</span>
+                        </div>
+                        <div class="card-body">
+                            <select id="project" name="project" class="form-select">
+                                <option value="">Loading projects…</option>
+                            </select>
+                            <ul id="preference-list" class="list-unstyled mt-3"></ul>
+                            <input type="hidden" id="project_preferences" name="project_preferences">
+                            <div id="pref-error" class="invalid-feedback d-block" style="display: none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Student search -->
+                    <div class="mb-3">
+                        <label for="user-search" class="form-label">Search students</label>
+                        <div class="position-relative search-wrap">
+                            <input
+                                id="user-search"
+                                class="form-control"
+                                type="text"
+                                placeholder="Search students by full name"
+                                autocomplete="off"
+                                aria-expanded="false"
+                            >
+                            <ul id="autocomplete-results" class="dropdown-menu w-100"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Preferred / Avoided students -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header">Preferred students (max 5)</div>
+                                <div class="card-body p-3">
+                                    <ul id="preferred-list" class="list-unstyled mb-0"></ul>
+                                    <input type="hidden" id="preferred_students" name="preferred_students">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header">Avoided students (max 5)</div>
+                                <div class="card-body p-3">
+                                    <ul id="avoided-list" class="list-unstyled mb-0"></ul>
+                                    <input type="hidden" id="avoided_students" name="avoided_students">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            <div id="resume-section" class="mt-2 mb-3">
+                <label for="resume" class="form-label">Resume (PDF)</label>
+                <input id="resume" name="resume" type="file" accept=".pdf" class="form-control">
+            </div>
+
+            <div id="cv-section" class="mb-3">
+                <label for="cv" class="form-label">CV (PDF)</label>
+                <input id="cv" name="cv" type="file" accept=".pdf" class="form-control">
+            </div>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="split_project" name="split_project">
+                        <label class="form-check-label" for="split_project">I am completing a split project this year</label>
+                        <a tabindex="0" 
+                            class="ms-2" 
+                            role="button" 
+                            data-bs-toggle="popover" 
+                            data-bs-trigger="focus" 
+                            data-bs-title="Split Project"
+                            data-bs-content="By selecting this, you will be completing a split project. Please read the above information for what a split project is.
+                            If you have anymore questions please contact the Unit Coordinator">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                        </a>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">Agree to Terms</label>
+                        <a tabindex="0" 
+                            class="ms-2" 
+                            role="button" 
+                            data-bs-toggle="popover" 
+                            data-bs-trigger="focus" 
+                            data-bs-title="Terms and Conditions"
+                            data-bs-content="By submitting this form, you agree to the allocation process and read the terms and conditions above">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                        </a>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <script src="{% static 'student_app/js/form.js' %}"></script>
-{% endblock content %}
+
+    <div class="col-lg-5">
+        <div class="card bg-light h-100">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">Important Information & Terms</h5>
+                <p>Please read the following tips and conditions carefully before submitting your application.</p>
+                
+                <h6>Tips for Success</h6>
+                <ul>
+                    <li>Organizing yourself into a group helps, especially if the group is appropriate.</li>
+                    <li>Ensure you and your group members submit the same group and project preferences.</li>
+                    <li>Projects will have a specific capacity thus try to form a group that matches preferred project's capacity </li>
+                    <li>Try your best to have a group with a variety of majors</li>
+                </ul>
+
+                <h6>Terms and Conditions</h6>
+                <ul>
+                    <li>All information submitted must be accurate and truthful.</li>
+                    <li>If project requires, you are able to provide proof of working rights in Australia</li>
+                    <li>By submitting this form, you agree to the allocation process as determined by the faculty.</li>
+                    <li>File uploads must be in PDF format and named according to the specified convention.</li>
+                </ul>
+            </div>
+        </div>
+    </div> 
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script defer src="{% static 'student_app/js/form.js' %}"></script>
+{% endblock scripts%}
+
 

@@ -24,6 +24,7 @@ class Student(models.Model):
     notes = models.TextField(null=True, blank=True)
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
     cv = models.FileField(upload_to='cvs/', null=True, blank=True)
+    split_project = models.BooleanField(default=False)
     # Settings.py should configure media settings 
 
     def __str__(self):
@@ -57,4 +58,4 @@ class GroupPreference(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.student} → {self.target_student} ({self.preference_type})"
+        return f"{self.student} → {self.target_student} ({self.preference_type})"        

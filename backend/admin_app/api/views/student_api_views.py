@@ -3,7 +3,7 @@ import pprint
 
 from rest_framework import generics
 from student_app.models import *
-from student_app.serializers import *
+from student_app.api.serializers import *
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -142,6 +142,8 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
     filterset_class = StudentFilter
 
     def get_queryset(self):
+        print("allocated_group param:", self.request.query_params.get("allocated_group"))
+        
         qs = (
             Student.objects.all()
             .select_related("major")
