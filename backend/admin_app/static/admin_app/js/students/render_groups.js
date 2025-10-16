@@ -247,6 +247,13 @@ export function renderProjectInfo(group, groupSize, projectName,
                 btn.dataset.members = JSON.stringify(updatedGroup.members || []);
             }
 
+            if (btn) {
+                const labelType = updatedGroup.is_manual ? "Manual" : "Auto";
+                btn.textContent = updatedGroup.project
+                    ? `${updatedGroup.project.title} (${labelType})`
+                    : btn.dataset.display || btn.textContent;
+            }
+
             // --- Re-render UI for the updated group ---
             renderGroupUI(updatedGroup);
         })
