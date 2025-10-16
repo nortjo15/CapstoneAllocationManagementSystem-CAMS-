@@ -65,7 +65,7 @@ def download_suggested_groups(request):
     # Build data
     data = []
     for group in SuggestedGroup.objects.prefetch_related('members__student').all():
-        project_title = group.project.title if group.project else None  # <-- safe check
+        project_title = group.project.title if group.project else None
         data.append({
             'group_name': group.name or f"SuggestedGroup {group.suggestedgroup_id}",
             'project_title': project_title,
