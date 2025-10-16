@@ -1,5 +1,8 @@
 const pageCache = {};
 
+// Exported so settings.html can call it after clear
+window.loadAdminLogs = loadAdminLogs;
+
 document.addEventListener('DOMContentLoaded', function() {
     loadAdminLogs(window.ENDPOINTS.adminLogs);
 });
@@ -7,6 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadAdminLogs(url) {
     const container = document.getElementById('admin-logs-container');
     if(!container) return; 
+
+    // Invalidate cache when loading the first page after a clear
+    if (url === window.ENDPOINTS.adminLogs) {
+        for (const k in pageCache) delete pageCache[k];
+    }
 
     //Check cache
     if (pageCache[url]) {

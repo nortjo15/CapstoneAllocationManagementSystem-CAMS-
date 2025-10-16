@@ -4,7 +4,6 @@ from admin_app.models import SuggestedGroup, Major
 from django.contrib.auth.decorators import login_required
 
 # Webpage
-@login_required
 class GroupListView(LoginRequiredMixin, ListView):
     model = SuggestedGroup
     template_name = "students/suggested_groups_view.html"  
