@@ -1,0 +1,222 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+html,body{overflow-x:hidden}
+.container-narrow{max-width:1100px;margin:0 auto}
+.table thead th{white-space:nowrap}
+</style>
+{% endblock %}
+
+{% block page_header %}
+<h1 class="h3 mb-0">Degrees & Majors</h1>
+{% endblock %}
+
+{% block page_toolbar %}
+<div class="d-flex gap-2">
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#degreeModal">Add Degree</button>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#majorModal">Add Major</button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-narrow">
+  <div class="row g-3">
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-header fw-semibold">Degrees</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm mb-0">
+              <thead><tr><th>Degree</th><th class="text-end">Actions</th></tr></thead>
+              <tbody id="degree-tbody">
+                <tr><td colspan="2" class="text-center p-3 text-muted">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-header fw-semibold">Majors</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm mb-0">
+              <thead><tr><th>Degree</th><th>Major</th><th>Student Count</th><th class="text-end">Actions</th></tr></thead>
+              <tbody id="major-tbody">
+                <tr><td colspan="4" class="text-center p-3 text-muted">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="small text-muted mt-2">Deleting a major assigned to students returns HTTP 409 with a message.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Degree Modal -->
+<div class="modal fade" id="degreeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="degree-form" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Add Degree</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Major Modal -->
+<div class="modal fade" id="majorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="major-form" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Add Major</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Degree</label>
+        <select name="degree" id="degree-select" class="form-select" required></select>
+        <label class="form-label mt-3">Name</label>
+        <input name="name" class="form-control" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const DEG_LIST = "{% url 'api_admin:degree-list' %}";
+const MAJ_LIST = "{% url 'api_admin:major-list' %}";
+
+function csrf(){ const el=document.querySelector('input[name=csrfmiddlewaretoken]'); return el?el.value:''; }
+async function getJSON(u){ const r=await fetch(u,{credentials:'same-origin'}); if(!r.ok) throw new Error('Request failed'); return r.json(); }
+
+function degreeRow(d){
+  const del="{% url 'api_admin:degree-detail' 0 %}".replace(/0\/$/, d.id + "/");
+  return `<tr data-id="${d.id}"><td>${d.name}</td>
+    <td class="text-end"><button class="btn btn-sm btn-outline-danger js-del" data-url="${del}">Delete</button></td></tr>`;
+}
+function majorRow(m){
+  const del="{% url 'api_admin:major-detail' 0 %}".replace(/0\/$/, m.id + "/");
+  return `<tr data-id="${m.id}"><td>${m.degree_name || m.degree?.name || ''}</td>
+    <td>${m.name}</td><td>${m.student_count ?? 0}</td>
+    <td class="text-end"><button class="btn btn-sm btn-outline-danger js-del" data-url="${del}">Delete</button></td></tr>`;
+}
+
+async function loadTables(){
+  const degrees = await getJSON(DEG_LIST);
+  document.getElementById('degree-tbody').innerHTML =
+    degrees.length ? degrees.map(degreeRow).join('') :
+    `<tr><td colspan="2" class="text-center p-3">No degrees found.</td></tr>`;
+
+  const majors = await getJSON(MAJ_LIST);
+  document.getElementById('major-tbody').innerHTML =
+    majors.length ? majors.map(majorRow).join('') :
+    `<tr><td colspan="4" class="text-center p-3">No majors found.</td></tr>`;
+
+  document.getElementById('degree-select').innerHTML =
+    degrees.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+}
+
+async function apiDelete(url,row){
+  const r=await fetch(url,{method:'DELETE',headers:{'X-CSRFToken':csrf()},credentials:'same-origin'});
+  if(r.status===204){ row.remove(); return; }
+  let msg='Delete failed'; try{ const j=await r.json(); if(j.detail) msg=j.detail; }catch{}
+  alert(msg);
+}
+
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('js-del')){
+    const row=e.target.closest('tr');
+    if(confirm('Delete?')) apiDelete(e.target.dataset.url,row);
+  }
+});
+
+// ---- CREATE DEGREE ----
+const degForm = document.getElementById('degree-form');
+degForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  if (degForm.dataset.submitting === '1') return;
+  degForm.dataset.submitting = '1';
+
+  const btn = degForm.querySelector('[type=submit]');
+  btn.disabled = true;
+
+  const name = degForm.elements.name.value.trim();
+  if (!name) { btn.disabled=false; degForm.dataset.submitting='0'; return; }
+
+  const r = await fetch("{% url 'api_admin:degree-list' %}", {
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('input[name=csrfmiddlewaretoken]').value},
+    credentials:'same-origin',
+    body: JSON.stringify({name})
+  });
+
+  if (r.status === 201 || r.status === 200) {
+    degForm.reset();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('degreeModal')).hide();
+    await loadTables();
+  } else {
+    let msg = 'Create failed';
+    try { const j = await r.json(); msg = j.detail || JSON.stringify(j); } catch {}
+    alert(msg);
+  }
+  btn.disabled = false;
+  degForm.dataset.submitting = '0';
+});
+
+// ---- CREATE MAJOR ----
+const majForm = document.getElementById('major-form');
+majForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  if (majForm.dataset.submitting === '1') return;
+  majForm.dataset.submitting = '1';
+
+  const btn = majForm.querySelector('[type=submit]');
+  btn.disabled = true;
+
+  const name = majForm.elements.name.value.trim();
+  const degree = majForm.elements.degree.value;
+  if (!name || !degree) { btn.disabled=false; majForm.dataset.submitting='0'; return; }
+
+  const r = await fetch("{% url 'api_admin:major-list' %}", {
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('input[name=csrfmiddlewaretoken]').value},
+    credentials:'same-origin',
+    body: JSON.stringify({name, degree})
+  });
+
+  if (r.status === 201 || r.status === 200) {
+    majForm.reset();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('majorModal')).hide();
+    await loadTables();
+  } else {
+    let msg = 'Create failed';
+    try { const j = await r.json(); msg = j.detail || JSON.stringify(j); } catch {}
+    alert(msg);
+  }
+  btn.disabled = false;
+  majForm.dataset.submitting = '0';
+});
+
+loadTables();
+</script>
+{% endblock %}

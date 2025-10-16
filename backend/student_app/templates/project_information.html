@@ -1,14 +1,110 @@
 {% extends "student_base.html" %}
 {% load static %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'student_app/css/studentProject.css' %}">
+<style>
+  .project-card:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
+  .project-card { transition: transform .15s ease, box-shadow .15s ease; }
+  .project-desc { -webkit-line-clamp: 5; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+</style>
 {% endblock %}
+
+{% block page_header %}
+<h1 class="h3 mb-0">Projects</h1>
+{% endblock %}
+
 {% block content %}
-
-<h1> Projects <h1>
-<div id="project-container">
-    <p>Loading projects...</p>
+<div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <div class="col">
+    <div class="card h-100 d-flex align-items-center justify-content-center py-5">
+      <div class="spinner-border" role="status" aria-label="Loading"></div>
+    </div>
+  </div>
 </div>
+{% endblock %}
 
-<script src="{% static 'student_app/js/studentProject.js' %}"></script>
+{% block scripts %}
+<script>
+  (function () {
+    const container = document.getElementById('project-container');
+    const url = window.ENDPOINTS && window.ENDPOINTS.projects;
+
+    function colWrap(el) {
+      const c = document.createElement('div');
+      c.className = 'col';
+      c.appendChild(el);
+      return c;
+    }
+
+    function renderEmpty() {
+      container.innerHTML = '';
+      const card = document.createElement('div');
+      card.className = 'card h-100';
+      card.innerHTML = '<div class="card-body text-center py-5 text-muted">No projects found.</div>';
+      container.appendChild(colWrap(card));
+    }
+
+    function renderError() {
+      container.innerHTML = '';
+      const card = document.createElement('div');
+      card.className = 'card h-100 border-danger';
+      card.innerHTML = '<div class="card-body text-center py-5 text-danger">Could not load projects.</div>';
+      container.appendChild(colWrap(card));
+    }
+
+    function renderProjects(list) {
+      container.innerHTML = '';
+      list.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card h-100 project-card';
+
+        const body = document.createElement('div');
+        body.className = 'card-body d-flex flex-column';
+
+        const title = document.createElement('h3');
+        title.className = 'h5 card-title mb-1';
+        title.textContent = p.title ?? 'Untitled project';
+
+        const host = document.createElement('div');
+        host.className = 'text-muted small mb-2';
+        host.textContent = p.host_name ? `Host: ${p.host_name}` : '';
+
+        const desc = document.createElement('p');
+        desc.className = 'card-text project-desc mb-3';
+        desc.textContent = p.description ?? '';
+
+        const footer = document.createElement('div');
+        footer.className = 'mt-auto pt-2 d-flex justify-content-between align-items-center border-top';
+
+        const cap = document.createElement('span');
+        cap.className = 'badge text-bg-primary';
+        cap.textContent = `Capacity: ${p.capacity ?? '-'}`;
+
+        footer.appendChild(cap);
+        body.appendChild(title);
+        body.appendChild(host);
+        body.appendChild(desc);
+        body.appendChild(footer);
+        card.appendChild(body);
+
+        container.appendChild(colWrap(card));
+      });
+    }
+
+    async function loadOnce() {
+      if (!url) { renderError(); return; }
+      try {
+        const res = await fetch(url, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.results || []);
+        if (!list.length) renderEmpty(); else renderProjects(list);
+      } catch (e) {
+        renderError();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadOnce);
+  })();
+</script>
 {% endblock %}

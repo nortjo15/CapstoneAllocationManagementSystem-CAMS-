@@ -1,0 +1,60 @@
+/* Smaller search box */
+.search-wrap { max-width: 420px; }
+
+/* Dropdown rows styled as boxes */
+#autocomplete-results { max-height: 18rem; overflow: auto; padding: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
+#autocomplete-results .student-result {
+    border: 1px solid var(--bs-border-color); border-radius: .5rem; background: var(--bs-body-bg);
+    margin: .25rem; padding: .5rem .75rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+}
+#autocomplete-results .student-result:hover { background: var(--bs-tertiary-bg); }
+#autocomplete-results .student-name { font-weight: 500; color: var(--bs-body-color); }
+#autocomplete-results .actions .btn { padding: .2rem .6rem; }
+
+/* Selected item tiles */
+.list-tile {
+    border: 1px solid var(--bs-border-color); border-radius: .5rem; background: var(--bs-body-bg);
+    padding: .5rem .75rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.05);
+}
+.list-tile + .list-tile { margin-top: .5rem; }
+
+/* Preference list tiles with numbering + controls */
+#preference-list .pref-item { display: flex; align-items: center; gap: .75rem; }
+.pref-num {
+    width: 2rem; height: 2rem; flex: 0 0 2rem; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; background: var(--bs-primary-bg-subtle); color: var(--bs-primary); font-weight: 600;
+}
+.pref-title { flex: 1 1 auto; }
+.pref-controls .btn { padding: .15rem .45rem; }
+
+/* Grey out name + background for chosen projects */
+#project option[disabled],
+#project option[data-chosen="1"] {
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-tertiary-bg) !important;
+}
+
+/* modern chip buttons */
+.chip-btn {
+    border: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    border-radius: 9999px;
+    padding: .3rem .7rem;
+    font-weight: 500;
+    display: inline-flex; align-items: center; gap: .4rem;
+    transition: transform .12s ease, box-shadow .12s ease, background-color .12s;
+}
+.chip-btn:hover { transform: translateY(-1px); box-shadow: 0 .25rem .5rem rgba(0,0,0,.08); }
+.chip-success {
+    color: var(--bs-success);
+    background: var(--bs-success-bg-subtle);
+    border-color: var(--bs-success-border-subtle);
+}
+.chip-danger {
+    color: var(--bs-danger);
+    background: var(--bs-danger-bg-subtle);
+    border-color: var(--bs-danger-border-subtle);
+}
+.chip-btn svg { width: 14px; height: 14px; }
+

@@ -57,7 +57,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'CAS.urls'
 LOGIN_REDIRECT_URL = 'admin_dashboard:login_success'          #If loggged in, redirect to url
 #LOGOUT_REDIRECT_URL = '/login/'    #if logged out, redirect to url
-#LOGIN_URL = '/login/'              #login url
+LOGIN_URL = 'admin_dashboard:login'              #login url
 
 TEMPLATES = [
     {
@@ -69,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'student_app.context_processors.active_rounds',
             ],
         },
     },

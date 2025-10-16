@@ -1,5 +1,24 @@
 {% extends "student_base.html" %}
-{% block content %}
-<h1> Successfully submitted form </h1>
+{% load static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'student_app/css/formSuccess.css' %}"> 
+{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="success-icon-wrapper mx-auto mb-4">
+        <i class="bi bi-check-circle-fill"></i>
+    </div>
+
+    <h1 class="display-5 fw-bold">Congratulations!</h1>
+    <p class="lead text-muted">
+        Your application has been submitted successfully.
+    </p>
+    <p>You will be notified once groups have been allocated.</p>
+
+    <a href="{% url 'students:student_home' %}" class="btn btn-custom btn-lg mt-3">
+        Go to Home
+    </a>
+</div>
 {% endblock %}

@@ -9,6 +9,8 @@ const createRoundForm = document.getElementById('create-round-form');
 const editRoundForm = document.getElementById('edit-round-form');
 const deleteRoundBtn = document.getElementById('delete-round-btn');
 
+const createAlertBox = document.getElementById('create-submit-alert');
+const editAlertBox = document.getElementById('edit-submit-alert');
 
 function showRightPane(view) {
     roundDetailsView.classList.add('hidden');
@@ -27,9 +29,15 @@ function formatDateForInput(isoString) {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+function showSuccessAlert(alertBox) {
+    alertBox.style.display = 'block';
+    setTimeout(() => alertBox.style.display = 'none', 3000);
+}
+
 async function fetchProjects() {
+    const apiUrl = window.ENDPOINTS.projects;
     try {
-        const response = await fetch('/api/admin/projects/');
+        const response = await fetch(apiUrl);
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -41,8 +49,9 @@ async function fetchProjects() {
 }
 
 async function fetchRounds() {
+    const apiUrl = window.ENDPOINTS.rounds;
     try {
-        const response = await fetch('/api/admin/rounds/');
+        const response = await fetch(apiUrl);
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -77,8 +86,9 @@ async function populateRoundsList() {
 }
 
 async function showRoundDetails(roundId) {
+    const apiUrl = window.ENDPOINTS.rounds;
     try {
-        const response = await fetch(`/api/admin/rounds/${roundId}/`);
+        const response = await fetch(`${apiUrl}${roundId}/`);
         const round = await response.json();
         const projects = await fetchProjects();
 
@@ -87,6 +97,7 @@ async function showRoundDetails(roundId) {
         document.getElementById('edit-open-date').value = formatDateForInput(round.open_date);
         document.getElementById('edit-close-date').value = formatDateForInput(round.close_date);
         document.getElementById('edit-status').value = round.status;
+        document.getElementById('edit-type').value = round.is_internal;
 
         const editProjectsSelect = document.getElementById('edit-round-projects');
         editProjectsSelect.innerHTML = '';
@@ -142,12 +153,15 @@ async function getSelectedProjects() {
 }
 
 createRoundForm.addEventListener('submit', async function(e) {
+    const apiUrl = window.ENDPOINTS.rounds;
     e.preventDefault();
     
     const roundName = document.getElementById('create-round-name').value;
     const openDate = document.getElementById('create-open-date').value;
     const closeDate = document.getElementById('create-close-date').value;
-    const isInternal = 'False';
+    const status = document.getElementById('edit-status').value;
+    //const isInternal = 'False';
+    const type = document.getElementById('create-type').value;
 
     let selectedProjects = Array.from(
         document.querySelectorAll('#create-round-projects input[type="checkbox"]:checked')
@@ -158,18 +172,23 @@ createRoundForm.addEventListener('submit', async function(e) {
         round_name: roundName,
         open_date: openDate,
         close_date: closeDate,
-        is_internal: isInternal,
+        status: status,
+        is_internal: type,
         project_ids: selectedProjects
     };
 
     try {
-        const response = await fetch('/api/admin/rounds/', {
+        const response = await fetch(apiUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            "Content-Type": "application/json",
+            },
             body: JSON.stringify(newRound)
         });
         if (response.ok) {
             console.log('Round created successfully!', 'success');
+            showSuccessAlert(createAlertBox);
             createRoundForm.reset();
             populateRoundsList(); 
             rightPaneTitle.textContent = 'Select a Round';
@@ -189,12 +208,14 @@ createRoundForm.addEventListener('submit', async function(e) {
 
 
 editRoundForm.addEventListener('submit', async function(e) {
+    const apiUrl = window.ENDPOINTS.rounds;
     e.preventDefault();
     const roundId = document.getElementById('edit-round-id').value;
     const roundName = document.getElementById('edit-round-name').value;
     const openDate = document.getElementById('edit-open-date').value;
     const closeDate = document.getElementById('edit-close-date').value;
     const status = document.getElementById('edit-status').value;
+    const type = document.getElementById('edit-type').value;
 
     let selectedProjects = Array.from(
         document.querySelectorAll('#edit-round-projects input[type="checkbox"]:checked')
@@ -205,17 +226,23 @@ editRoundForm.addEventListener('submit', async function(e) {
         open_date: openDate,
         close_date: closeDate,
         status: status,
+        is_internal: type,
         project_ids: selectedProjects
     };
-
+    //console.log("is_internal value: ", is_internal);
+    console.log("type value: ", type);
     try {
-        const response = await fetch(`/api/admin/rounds/${roundId}/`, {
+        const response = await fetch(`${apiUrl}${roundId}/`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            "Content-Type": "application/json",
+            },
             body: JSON.stringify(updatedRound)
         });
         if (response.ok) {
             //showMessage('Round updated successfully!', 'info');
+            showSuccessAlert(editAlertBox);
             populateRoundsList();
         } else {
             console.error('Error updating round:', response.statusText);
@@ -228,11 +255,17 @@ editRoundForm.addEventListener('submit', async function(e) {
 });
 
 deleteRoundBtn.addEventListener('click', async function() {
+    const apiUrl = window.ENDPOINTS.rounds;
     const roundId = document.getElementById('edit-round-id').value;
     if (confirm('Are you sure you want to delete this round?')) {
         try {
-            const response = await fetch(`/api/rounds/${roundId}/`, {
-                method: 'DELETE'
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const response = await fetch(`${apiUrl}${roundId}/`, {
+                method: 'DELETE',
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "Content-Type": "application/json"
+                }
             });
             if (response.status === 204) {
                 //showMessage('Round deleted successfully!', 'error');

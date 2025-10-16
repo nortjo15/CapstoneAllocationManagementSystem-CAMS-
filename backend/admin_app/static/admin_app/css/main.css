@@ -1,4 +1,9 @@
-.navbar .container-fluid .nav-link{
-    padding-left: 40px !important;
-    padding-right: 40px !important;
+.navbar{
+    background-color: #465ac2;
+}
+
+/* Admin information list: red outline for expired rows */
+.expired-row > * {
+    border-top: 2px solid var(--bs-danger);
+    border-bottom: 2px solid var(--bs-danger);
 }

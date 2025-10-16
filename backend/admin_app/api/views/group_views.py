@@ -1,0 +1,214 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+from rest_framework import viewsets
+from admin_app.models import *
+from admin_app.api.serializers import *
+from rest_framework import generics  
+from rest_framework.views import APIView
+from admin_app.group_utils import generate_suggestions_from_likes
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
+from admin_app.models import AdminLog
+from django.contrib.contenttypes.models import ContentType
+
+class SuggestedGroupViewSet(viewsets.ModelViewSet):
+    queryset = SuggestedGroup.objects.all()
+    serializer_class = SuggestedGroupSerializer
+
+class SuggestedGroupMemberViewSet(viewsets.ModelViewSet):
+    queryset = SuggestedGroupMember.objects.all()
+    serializer_class = SuggestedGroupMemberSerializer
+
+class FinalGroupViewSet(viewsets.ModelViewSet):
+    queryset = FinalGroup.objects.all()
+    serializer_class = FinalGroupSerializer
+
+class FinalGroupMemberViewSet(viewsets.ModelViewSet):
+    queryset = FinalGroupMember.objects.all()
+    serializer_class = FinalGroupMemberSerializer
+
+class FinalGroupListView(generics.ListAPIView):
+    serializer_class = FinalGroupSerializer
+
+    def get_queryset(self):
+        return (
+            FinalGroup.objects
+            .select_related("project")
+            .prefetch_related("members__student__major")
+        )
+
+# List + create suggested groups
+class SuggestedGroupListCreateView(generics.ListCreateAPIView):
+    queryset = SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major")
+    serializer_class = SuggestedGroupSerializer
+
+class SuggestedGroupLiteListView(generics.ListAPIView):
+    serializer_class = SuggestedGroupLiteSerializer
+
+    def get_queryset(self):
+        return (
+            SuggestedGroup.objects
+            .select_related("project")
+            .prefetch_related("members__student__major")
+            .filter(is_manual=False)   # only auto groups
+        )
+
+# Retrieve one suggested group by ID
+class SuggestedGroupDetailView(generics.RetrieveAPIView):
+    serializer_class = SuggestedGroupSerializer
+    lookup_field = 'suggestedgroup_id'
+
+    def get_queryset(self):
+        return (
+            SuggestedGroup.objects
+            .select_related("project")
+            .prefetch_related(
+                "members__student__major",
+                "members__student__preferences__project",
+                "members__student__given_preferences__target_student",
+                "members__student__received_preferences__student",
+            )
+        )
+
+
+# GroupMember 
+class SuggestedGroupMemberListCreateView(generics.ListCreateAPIView):
+    queryset = SuggestedGroupMember.objects.all()
+    serializer_class = SuggestedGroupMemberSerializer
+
+# GenerateSuggestions View
+class GenerateSuggestionsView(APIView):
+    def post(self, request, *args, **kwargs):
+        # Run generator
+        suggestions = generate_suggestions_from_likes()
+
+        return Response(suggestions, status=status.HTTP_201_CREATED)
+    
+# SuggestedGroupUpdate View
+class SuggestedGroupUpdateView(generics.UpdateAPIView):
+    queryset = SuggestedGroup.objects.all()
+    serializer_class = SuggestedGroupSerializer
+    lookup_field = "suggestedgroup_id"
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        instance = self.get_object()                
+        serializer = self.get_serializer(instance)  
+        return Response(serializer.data)
+
+# ManualGroups View
+class ManualGroupListView(generics.ListAPIView):
+    serializer_class = SuggestedGroupLiteSerializer
+
+    def get_queryset(self):
+        return SuggestedGroup.objects.select_related("project").prefetch_related("members__student__major").filter(is_manual=True)
+    
+@api_view(["POST"])
+def remove_student_from_group(request, suggestedgroup_id):
+    group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id)
+    student_id = request.data.get("student_id")
+    SuggestedGroupMember.objects.filter(
+        suggested_group=group,
+        student__student_id=student_id
+    ).delete()
+
+    group = (
+        SuggestedGroup.objects
+        .select_related("project")
+        .prefetch_related("members__student__major")
+        .get(pk=group.pk)
+    )
+
+    serializer = SuggestedGroupLiteSerializer(group)
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def add_student_to_group(request, suggestedgroup_id):
+    group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id)
+    student_id = request.data.get("student_id")
+
+    if not student_id:
+        return Response({"error": "student_id is required"}, status=status.HTTP_400_BAD_REQUEST) 
+    
+    # Look up student
+    student = get_object_or_404(Student, student_id=student_id)
+
+    group = (
+        SuggestedGroup.objects
+        .select_related("project")
+        .prefetch_related("members__student__major")
+        .get(pk=group.pk)
+    )
+
+    # Prevent duplicates
+    if SuggestedGroupMember.objects.filter(suggested_group=group, student=student).exists():
+        serializer = SuggestedGroupLiteSerializer(group)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    SuggestedGroupMember.objects.create(suggested_group=group, student=student)
+    group.refresh_from_db()
+    serializer = SuggestedGroupSerializer(group)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(["POST"])
+def create_manual_group(request):
+    existing = (
+        SuggestedGroup.objects.filter(name__startswith="Manual Group")
+        .values_list("name", flat=True)
+    )
+    
+    # Extract numbers
+    numbers = []
+    for n in existing: 
+        parts = n.split(" ")
+        if len(parts) == 3 and parts[2].isdigit():
+            numbers.append(int(parts[2]))
+
+    next_num = max(numbers) + 1 if numbers else 1
+
+    group = SuggestedGroup.objects.create(
+        name=f"Manual Group {next_num}",
+        project=None,
+        is_manual=True
+    )
+
+     #log admin action
+    user_content_type = ContentType.objects.get_for_model(request.user)
+    AdminLog.objects.create(
+                user=request.user, 
+                action='GROUP_CREATED',
+                target_content_type=user_content_type,
+                target_id=next_num,
+                notes=f"New group created (Manually Created): {group.name}"
+            )
+    return Response(SuggestedGroupLiteSerializer(group).data)
+
+@api_view(["DELETE"])
+def delete_manual_group(request, suggestedgroup_id):
+    group = get_object_or_404(SuggestedGroup, suggestedgroup_id=suggestedgroup_id, is_manual=True)
+    group.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+# FinalGroup Create View
+class FinalGroupCreateView(generics.CreateAPIView):
+    queryset = FinalGroup.objects.all()
+    serializer_class = FinalGroupCreateSerializer
+
+    #log the creation of a final group
+    def perform_create(self, serializer):
+        group = serializer.save()
+        content_type = ContentType.objects.get_for_model(group)
+        AdminLog.objects.create(
+            user=self.request.user,
+            action='CREATE_GROUP',
+            target_content_type=content_type,
+            target_id=group.pk,
+            notes=f"Final group created: {getattr(group, 'name', group.pk)}",
+        )
+
+
+class ProjectListCreateView(generics.ListCreateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer

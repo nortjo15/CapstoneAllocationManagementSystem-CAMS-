@@ -1,7 +1,6 @@
-import { setButtonLoading } from "./utils.js";
+import { setButtonLoading } from "../utils.js";
 import { openNotesModal, openPreferenceModal, openModal, openImportModal, openFilterModal, openMemberPreferenceModal } from "./modal_function.js";
 import { loadGroup } from "./suggested_groups.js";
-import { updateGroupUI } from "./render_groups.js";
 
 window.selectedStudentIds = new Set();
 
@@ -16,7 +15,9 @@ function getGroupCapacityInfo() {
 }
 
 export function fetchStudents(targetId = "studentsTableBody", params = "") {
-    fetch(`/api/students/${params}`)
+    console.log("FETCH URL:", `/api/admin/students/${params}`);
+
+    fetch(`/api/admin/students/${params}`)
         .then(res => res.json())
         .then(data => {
 
@@ -103,7 +104,7 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                         e.stopPropagation();
 
                         //Get the full student before opening modal
-                        fetch(`/api/students/${student.student_id}/`)
+                        fetch(`/api/admin/students/${student.student_id}/`)
                             .then(res => res.json())
                             .then(fullStudent => openPreferenceModal(fullStudent))
                     });
@@ -130,7 +131,7 @@ export function fetchStudents(targetId = "studentsTableBody", params = "") {
                         e.stopPropagation();
 
                         //Get full student before opening modal
-                        fetch(`/api/students/${student.student_id}`)
+                        fetch(`/api/admin/students/${student.student_id}`)
                             .then(res => res.json())
                             .then(fullStudent => openMemberPreferenceModal(fullStudent))
                     })
@@ -241,7 +242,7 @@ addBtn.addEventListener("click", (e) =>
 
     Promise.all(
         selectedIds.map(id => 
-            fetch(`/api/suggested_groups/${activeGroupId}/add_student/`,
+            fetch(`/api/admin/suggested_groups/${activeGroupId}/add_student/`,
             {
                 method: "POST",
                 headers: {
@@ -291,6 +292,11 @@ function applyFiltersAndSearch(targetId, searchVal= "")
 {
     const form = document.getElementById("studentFilterForm");
     const params = new URLSearchParams();
+
+    if (targetId === "studentsTableBodyModal") 
+    {
+        params.append("allocated_group", "false");
+    }
 
     //Collect filter form data
     if (form)

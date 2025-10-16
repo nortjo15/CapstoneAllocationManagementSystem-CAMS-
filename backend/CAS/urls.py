@@ -26,13 +26,13 @@ urlpatterns = [
     path('students/', include(('student_app.urls', 'student_app'), namespace='students')), #Student App
 
     # Yes - we do need this (Muhammad)
-    path('api/', include('admin_app.urls')),
-    path('api/', include('admin_app.api.urls')),
+    # path('api/', include('admin_app.urls')),
+    # path('api/', include('admin_app.api.urls')),
     # ----------------------------------------
     
     #APIs for student and Admin
     path('api/admin/', include('admin_app.api.urls', namespace='api_admin')),
-    path('api/student/', include('student_app.urls', namespace='api_student')),
+    path('api/student/', include('student_app.api.urls', namespace='api_student')),
 
     #root view
     path('', include(('student_app.urls', 'student_app'), namespace='root')),

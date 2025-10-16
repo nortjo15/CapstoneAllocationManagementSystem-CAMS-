@@ -1,42 +1,23 @@
-from rest_framework import viewsets
-from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from .models import Student
 from admin_app.models import Project
-from .serializers import StudentSerializer, MajorSerializer, FullFormSerializer
 from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent
-from admin_app.serializers import ProjectSerializer
 from django.http import JsonResponse 
 from django.db.models import Prefetch, Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
+from admin_app.models import CapstoneInformationSection, CapstoneInformationContent
+from django.http import JsonResponse
+from django.db.models import Prefetch, Q
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
-class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+#Render Templates
+# def student_form_view(request):
+#     return render(request, "student_form.html")
 
-class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-
-class MajorViewSet(viewsets.ModelViewSet):
-    queryset = Major.objects.all()
-    serializer_class = MajorSerializer
-
-class StudentApplicationView(APIView):
-    def post(self, request):
-        serializer = FullFormSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Application submitted successfully"}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-def student_form_view(request):
+def student_form_view(request, round_id):
     return render(request, "student_form.html")
 
 def student_form_success(request):
@@ -45,14 +26,7 @@ def student_form_success(request):
 def project_view(request):
     return render(request, "project_information.html")
 
-@require_GET #Only respond to get requests
-def autocomplete_users(request):
-    #extracts query from URL
-    query = request.GET.get('q', '')
-    #limit matches to 10
-    results = Student.objects.filter(name__icontains=query)[:10]
-    return JsonResponse([{'student_id': u.student_id, 'name': u.name} for u in results], safe=False)
-
+#Root view/Landing page
 def landing_page(request):
     sections = (CapstoneInformationSection.objects
                 .prefetch_related(
@@ -64,6 +38,16 @@ def landing_page(request):
                 ))
     return render(request, "capstone_information.html", {"sections": sections})
 
+#Search Functionality
+@require_GET #Only respond to get requests
+def autocomplete_users(request):
+    #extracts query from URL
+    query = request.GET.get('q', '')
+    #limit matches to 10
+    results = Student.objects.filter(name__icontains=query)[:10]
+    return JsonResponse([{'student_id': u.student_id, 'name': u.name} for u in results], safe=False)
+
+#Capstone Information views
 def section_detail(request, id):
     section = get_object_or_404(CapstoneInformationSection, id=id)
     now = timezone.now()
