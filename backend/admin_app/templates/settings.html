@@ -76,7 +76,6 @@
             </div>
         </div>
     </div>
-
     <button type="button" style="margin-top: 20px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dumpDataModal">
         Download Database Dump
     </button>
@@ -99,6 +98,13 @@
             </div>
         </div>
     </div>
+
+    <a href="{% url 'admin_dashboard:download_final_groups' %}" class="btn btn-primary" style="margin-top: 20px;">
+        Export Finalized Groups
+    </a>
+    <a href="{% url 'admin_dashboard:download_suggested_groups' %}" class="btn btn-primary" style="margin-top: 20px;">
+        Export Suggested Groups
+    </a>
 </div>
 
     <script>
