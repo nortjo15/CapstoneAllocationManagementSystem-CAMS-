@@ -469,8 +469,9 @@ def fill_undersized_groups(project_prefs, projects):
     Operates after all initial suggestions are generated.
     """
 
-    all_students = list(Student.objects.filter(allocated_group=False))
-    project_pref_map = {s.student_id: [pid for _, pid in prefs] for s, prefs in project_prefs.items()}
+    all_students = list(Student.objects.exclude(suggested_groups__isnull=False))
+
+    project_pref_map = {sid: [pid for _, pid in prefs] for sid, prefs in project_prefs.items()}
 
     for sg in SuggestedGroup.objects.filter(is_manual=False, project__isnull=False):
         project = sg.project

@@ -114,13 +114,14 @@ class ProjectPreference(models.Model):
 # Can be Strong, medium or weak (adjust for further functionality as needed  later)
 class SuggestedGroup(models.Model):
     STRENGTH_CHOICES = [
+        ('strongest', 'Strongest Group'),
         ('strong', 'Strong Group'),
         ('medium', 'Medium Group'),
         ('weak', 'Weak Group'),
     ]
 
     suggestedgroup_id = models.AutoField(primary_key=True)
-    strength = models.CharField(max_length=6, choices=STRENGTH_CHOICES)
+    strength = models.CharField(max_length=9, choices=STRENGTH_CHOICES)
     notes=models.TextField(null=True, blank=True)
     name=models.CharField(max_length=50, null=True, blank=True, unique=True)
     has_anti_preference=models.BooleanField(default=False)

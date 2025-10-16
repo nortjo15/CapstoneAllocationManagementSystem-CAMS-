@@ -34,8 +34,12 @@ export function renderManualGroup(group)
 
 export function renderSuggestedGroups(groups) 
 {
-    const order = {strong: 1, medium: 2, weak: 3};
-    groups.sort((a, b) => order[a.strength] - order[b.strength]);
+    const order = {strongest: 0, strong: 1, medium: 2, weak: 3};
+    groups.sort((a, b) => {
+        const orderA = order[a.strength?.toLowerCase()] ?? 999;
+        const orderB = order[b.strength?.toLowerCase()] ?? 999;
+        return orderA - orderB;
+    });
 
     suggestedGroupsUl.innerHTML = "";
     groups.forEach((group, idx) => {
