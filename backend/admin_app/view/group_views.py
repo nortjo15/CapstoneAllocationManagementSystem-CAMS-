@@ -1,10 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from admin_app.models import SuggestedGroup, Major
-from django.contrib.auth.decorators import login_required
 
 # Webpage
-@login_required
 class GroupListView(LoginRequiredMixin, ListView):
     model = SuggestedGroup
     template_name = "students/suggested_groups_view.html"  

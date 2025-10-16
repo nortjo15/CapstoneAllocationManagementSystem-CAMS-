@@ -25,6 +25,14 @@ export function renderMemberCard(m, group)
         <p><span class="member-label">Major:</span> ${majorName}</p>
     `;
 
+    //Split project indicator
+    if (m.student.split_project) 
+    {
+        const splitBadge = document.createElement("p");
+        splitBadge.innerHTML = `<span class="split-project-badge">Split Project</span>`;
+        div.appendChild(splitBadge);
+    }
+
     // remove button
     const removeBtn = document.createElement("span");
     removeBtn.classList.add("remove-btn");

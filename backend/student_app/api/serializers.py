@@ -82,6 +82,7 @@ class StudentListSerializer(serializers.ModelSerializer):
             "notes",
             "has_preferences",
             "has_teamPref",
+            "split_project",
         ]
 
 class StudentSerializer(serializers.ModelSerializer):
