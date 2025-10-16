@@ -41,25 +41,19 @@ def prefetch_student_data(students):
 
 def classify_group(students, group_likes, group_avoids, project_prefs, projects, top_n=3):
     """
-    Classify a group of students as 'strong', 'medium', or 'weak'.
+    Determines the classification strength of a potential group of students.
+    Returns a list of result dictionaries, each describing the suggested
+    project association and strength level.
 
-    Rules:
-    - Strong:
-        * All members mutually like each other
-        * No anti-preferences (downgrade to medium if any)
-        * All members have identical project preference ordering
-        * Associated project is in top 2 preferences
-        * Group size == project capacity
-    - Medium:
-        * Same as strong but:
-            - Group size < project capacity, OR
-            - There is an anti-preference, OR
-            - Associated project rank >= 3
-        * OR project order differs but sets overlap (subset or top-3 overlap)
-        * OR all mutual likes exist but no project preferences
-    - Weak:
-        * Students share the same top project but no mutual likes
-        * OR some mutual likes but no common project
+    Classification summary:
+        - Strongest: all members mutually like each other, identical project order,
+          project within top 3 preferences, group size matches project capacity,
+          and at least four distinct majors.
+        - Strong: all members mutually like each other, same set of projects (not identical order),
+          project within top 3 preferences, capacity match, and at least two distinct majors.
+        - Medium: meets most strong conditions but has rank >=4, smaller size, or partial overlap
+          in preferences. Also covers mutual-like groups without project data.
+        - Weak: minimal alignment, partial likes or no shared project preferences.
     """
 
     if len(students) < 2:
@@ -67,44 +61,68 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
 
     ids = [s.student_id for s in students]
 
-    # --- Pairwise check for mutual likes and anti-preferences ---
+    # Pairwise checks for mutual liking and anti-preferences
     pair_count = 0
     mutual_like_count = 0
     has_anti = False
     for i, a in enumerate(ids):
-        for b in ids[i+1:]:
+        for b in ids[i + 1:]:
             pair_count += 1
             if b in group_avoids.get(a, set()) or a in group_avoids.get(b, set()):
                 has_anti = True
             if b in group_likes.get(a, set()) and a in group_likes.get(b, set()):
                 mutual_like_count += 1
 
-    all_mutual_likes = (mutual_like_count == pair_count)
+    if has_anti:
+        return []
 
-    # --- Build each student's project preference set ---
+    all_mutual_likes = mutual_like_count == pair_count
+
+    # Utility: ordered preferences
     def prefs_as_list(sid):
-        # Returns projects in preference order, lowest rank first
         return [pid for _, pid in sorted(project_prefs.get(sid, []), key=lambda x: x[0])]
 
-    sets = [set(prefs_as_list(sid)) for sid in ids]
+    # Metrics: diversity and CWA
+    major_ids = set(s.major_id for s in students if s.major_id)
+    major_diversity = len(major_ids)
+    avg_cwa = sum(float(s.cwa or 0) for s in students) / len(students)
 
-    # Case: no project prefs for this group
-    if not sets or not all(sets):
-        if all_mutual_likes:
-            return [{
-                "project": None,
-                "strength": "medium",
-                "has_anti_preference": has_anti
-            }]
+    # Handle no project preferences
+    if not any(project_prefs.get(sid) for sid in ids):
+        strength = "medium" if all_mutual_likes else "weak"
+        return [{
+            "project": None,
+            "strength": strength,
+            "has_anti_preference": False
+        }]
+
+    # Find common projects
+    sets = [set(prefs_as_list(sid)) for sid in ids if prefs_as_list(sid)]
+    common_projects = set.intersection(*sets) if sets else set()
+
+    # If no common projects, check for similar CWAs (Weak fallback)
+    if not common_projects:
+        # CWA similarity: within ±5 or ±10 tolerance
+        if len(students) > 1:
+            min_cwa = min(float(s.cwa or 0) for s in students)
+            max_cwa = max(float(s.cwa or 0) for s in students)
+            diff = max_cwa - min_cwa
+            if diff <= 5:
+                strength = "medium" if all_mutual_likes else "weak"
+            elif diff <= 10:
+                strength = "weak"
+            else:
+                strength = "weak"
         else:
-            return [{
-                "project": None,
-                "strength": "weak",
-                "has_anti_preference": has_anti
-            }]
+            strength = "weak"
 
-    # --- Common projects across all members ---
-    common_projects = set.intersection(*sets)
+        return [{
+            "project": None,
+            "strength": strength,
+            "has_anti_preference": False
+        }]
+
+    # Project-based classification
     results = []
 
     for project_id in common_projects:
@@ -112,200 +130,207 @@ def classify_group(students, group_likes, group_avoids, project_prefs, projects,
         if not project:
             continue
 
-        # Reference ordering from first student
         ref_id = ids[0]
         ref_prefs = prefs_as_list(ref_id)
         rank_lookup = {pid: rank for rank, pid in project_prefs.get(ref_id, [])}
         rank = rank_lookup.get(project_id)
 
-        # Order and set checks
         identical_order = all(ref_prefs == prefs_as_list(sid) for sid in ids[1:])
         same_set = all(set(ref_prefs) == set(prefs_as_list(sid)) for sid in ids[1:])
-        overlap_top = all(
-            bool(set(ref_prefs[:top_n]) & set(prefs_as_list(sid)[:top_n]))
-            for sid in ids[1:]
-        )
+        # overlap ratio of shared top projects
+        overlap_ratio = sum(
+            1 for sid in ids[1:]
+            if set(ref_prefs[:top_n]) & set(prefs_as_list(sid)[:top_n])
+        ) / max(1, len(ids) - 1)
 
-        # --- Apply classification rules ---
+        # Rule hierarchy
         if all_mutual_likes:
-            # Strong candidate
             if (
-                not has_anti and
-                identical_order and
-                rank is not None and rank <= 2 and
-                len(students) == project.capacity
+                identical_order
+                and rank is not None and rank <= 3
+                and len(students) == project.capacity
+                and major_diversity >= 4
+            ):
+                strength = "strongest"
+            elif (
+                same_set
+                and rank is not None and rank <= 3
+                and len(students) == project.capacity
+                and 2 <= major_diversity < 4
             ):
                 strength = "strong"
+            elif (
+                len(students) < project.capacity
+                or (rank is not None and rank > 3)
+                or overlap_ratio < 1.0
+            ):
+                # Sub-case: smaller than capacity or rank≥4
+                strength = "medium"
             else:
-                # Downgrade from strong to medium if any strong condition fails
-                if (
-                    has_anti or
-                    (rank is not None and rank >= 3) or
-                    len(students) < project.capacity or
-                    same_set or overlap_top
-                ):
-                    strength = "medium"
-                else:
-                    strength = "weak"
+                strength = "weak"
         else:
-            # Not all mutual likes → only weak
+            # No full mutual liking → Weak by default
             strength = "weak"
 
         results.append({
             "project": project,
             "strength": strength,
-            "has_anti_preference": has_anti
+            "has_anti_preference": False
         })
 
-    return results
-
-"""
-Classify a group of students as 'strong', 'medium' or 'weak'
-Return a dict with strength & flag
-def classify_group(students, group_likes, group_avoids, project_prefs, projects, top_n=3):
-    if len(students) < 2:
-        raise ValueError("Groups must contain at least 2 students")
-    
-    has_anti = False
-    mutual_like_count = 0
-    pair_count = 0
-    ids = [s.student_id for s in students]
-
-    # Pair by pair, check mutual like/avoid
-    for i, a in enumerate(ids):
-        for b in ids[i+1:]:
-            pair_count += 1
-            if b in group_avoids.get(a, set()) or a in group_avoids.get(b, set()):
-                has_anti = True # Found an anti-preference
-            if b in group_likes.get(a, set()) and a in group_likes.get(b, set()):
-                mutual_like_count += 1
-
-    # Common Projects
-    sets = [set(pid for _, pid in project_prefs.get(sid, [])) for sid in ids] 
-    if not sets or not all(sets):
-        # These students have group preferences, but no project preferences 
-        if mutual_like_count == pair_count:
-            return [{"project": None, "strength": "medium", "has_anti_preference": has_anti}]
-        else:
-            return [{"project": None, "strength": "weak", "has_anti_preference": has_anti}]
-    
-    common_projects = set.intersection(*sets)
-        
-    results = []
-    for project_id in common_projects:
-        project = projects.get(project_id) 
-
-        if not project:
-            continue
-
-        if mutual_like_count == pair_count: 
-            ref_id = ids[0] # take first student as reference
-
-            # Compare ordering 
-            def prefs_as_list(sid): return [pid for _, pid in project_prefs.get(sid, [])]
-            ref_prefs = prefs_as_list(ref_id)
-
-            # For each student, compare preferences list with the prefix of ref_prefs of the same length, allowing for subset matches
-            identical_order = all(ref_prefs[:len(prefs_as_list(sid))] == prefs_as_list(sid) for sid in ids[1:])
-            # Compare projects sets (instead of order)
-            same_set = all(
-                set(ref_prefs).issubset(set(prefs_as_list(sid))) 
-                or set(prefs_as_list(sid)).issubset(set(ref_prefs)) for sid in ids[1:]
-                )
-            # Compare top 3 projects
-            overlap_top = all(
-                bool(set(ref_prefs[:top_n]) & set(prefs_as_list(sid)[:top_n]))
-                for sid in ids[1:]
+    # -------------------------------------------------
+    # Limit to three strongest project matches per clique
+    # Also refine tie-break using capacity, diversity, avg CWA
+    # -------------------------------------------------
+    if results:
+        results = sorted(
+            results,
+            key=lambda r: (
+                abs(len(students) - (r["project"].capacity if r["project"] else 0)),
+                -major_diversity,
+                -avg_cwa
             )
-
-            if identical_order:
-                rank_lookup = dict(project_prefs.get(ref_id, []))
-                rank = rank_lookup.get(project_id)
-                if rank in [1, 2]:
-                    # Should generate a strong group, since top 1 or 2 project
-                    if len(students) == project.capacity:
-                        results.append({
-                            "project": project,
-                            "strength": "medium" if has_anti else "strong",
-                            "has_anti_preference": has_anti
-                        })
-                        continue 
-                    else: 
-                        # Medium group for projects at preference 3 onwards
-                        # Also catches overfill group
-                        results.append({
-                            "project": project,
-                            "strength": "medium",
-                            "has_anti_preference": has_anti
-                        })
-                        continue
-
-            # Not identical order, but the top 3 projects overlap 
-            if same_set or overlap_top:
-                results.append({
-                    "project": project, 
-                    "strength": "medium",
-                    "has_anti_preference": has_anti
-                })
-
-        # No matches - fallback to weak group
-        results.append({
-            "project": project, 
-            "strength": "weak",
-            "has_anti_preference": has_anti
-        })
+        )[:3]
 
     return results
-"""
-"""
-Project-only grouping for students with no member preferences
-- Group students who have no mutual likes but share the same top project(s)
-- Always classified as weak
-"""
+    
 def generate_project_only_groups(students, project_prefs, projects, top_n=1):
+    """
+    Creates weaker fallback groups for any remaining students who were not part
+    of a mutual-like clique. Groups are primarily based on shared top project
+    preferences, while also considering project capacity, balancing coverage,
+    and CWA similarity.
+
+    Behaviour summary:
+        - Groups students who share the same top-N project preferences.
+        - Respects project capacity limits.
+        - Prioritises projects that currently have the fewest suggested groups.
+        - Adds CWA-based matching when filling groups.
+        - Remaining ungrouped students form diverse weak groups (4–5, ±CWA 5–10).
+    """
+
     groups = []
     project_bins = {}
 
+    # Group remaining students by their top-N project preferences
     for s in students:
         prefs = project_prefs.get(s.student_id, [])
         if not prefs:
-            continue # skip students with no preferences at all
-
-        # Take their top-N projects
+            continue
         top_projects = [pid for rank, pid in prefs if rank <= top_n]
         for pid in top_projects:
             project_bins.setdefault(pid, []).append(s)
 
-    # Build groups 
-    for pid, members in project_bins.items():
-        if len(members) < 2:
-            continue # Skip if less than 2 people
+    # Determine which projects are least represented so far
+    existing_counts = (
+        SuggestedGroup.objects.filter(project__isnull=False, is_manual=False)
+        .values_list("project_id")
+    )
+    project_usage = {}
+    for pid, in existing_counts:
+        project_usage[pid] = project_usage.get(pid, 0) + 1
+
+    sorted_projects = sorted(
+        project_bins.items(),
+        key=lambda kv: project_usage.get(kv[0], 0)
+    )
+
+    allocated_students = set()
+
+    # Create groups for each project
+    for pid, members in sorted_projects:
         project = projects.get(pid)
         if not project:
+            continue
+
+        # Remove already grouped students
+        members = [s for s in members if s.student_id not in allocated_students]
+        if len(members) < 2:
+            continue
+
+        # Sort by descending CWA for balanced capacity
+        members.sort(key=lambda s: float(s.cwa or 0), reverse=True)
+
+        max_size = project.capacity or len(members)
+
+        while members:
+            # Take subset by capacity
+            group_members = members[:max_size]
+            members = members[max_size:]
+
+            # Compute internal CWA range
+            cwas = [float(s.cwa or 0) for s in group_members]
+            diff = max(cwas) - min(cwas) if cwas else 0
+
+            # Determine strength: "medium" if all CWAs within ±5, else "weak"
+            strength = "medium" if diff <= 5 else "weak"
+
+            sg = SuggestedGroup.objects.create(
+                strength=strength,
+                has_anti_preference=False,
+                project=project,
+            )
+            sg.name = f"project_only_{sg.suggestedgroup_id}"
+            sg.save(update_fields=["name"])
+
+            for s in group_members:
+                SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
+                allocated_students.add(s.student_id)
+
+            groups.append({
+                "suggestedgroup_id": sg.suggestedgroup_id,
+                "students": [s.student_id for s in group_members],
+                "project": project.title,
+                "strength": strength,
+                "has_anti_preference": False,
+            })
+
+    # Handle leftover ungrouped students with CWA-based fallback
+    leftovers = [s for s in students if s.student_id not in allocated_students]
+
+    # Sort by CWA to form similar-range clusters
+    leftovers.sort(key=lambda s: float(s.cwa or 0), reverse=True)
+
+    while leftovers:
+        # take next 4–5 students near same CWA
+        base_cwa = float(leftovers[0].cwa or 0)
+        cluster = [s for s in leftovers if abs(float(s.cwa or 0) - base_cwa) <= 5]
+
+        if len(cluster) < 2:
+            # widen tolerance to ±10
+            cluster = [s for s in leftovers if abs(float(s.cwa or 0) - base_cwa) <= 10]
+
+        # limit cluster size to 5
+        group_members = cluster[:5]
+        # remove them from leftovers
+        ids_to_remove = {s.student_id for s in group_members}
+        leftovers = [s for s in leftovers if s.student_id not in ids_to_remove]
+
+        if len(group_members) < 2:
             continue
 
         sg = SuggestedGroup.objects.create(
             strength="weak",
             has_anti_preference=False,
-            project=project,
+            project=None,
         )
-        sg.name = f"project_only_{sg.suggestedgroup_id}"
+        sg.name = f"fallback_{sg.suggestedgroup_id}"
         sg.save(update_fields=["name"])
 
-        # Add members 
-        for s in members:
+        for s in group_members:
             SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
+            allocated_students.add(s.student_id)
 
         groups.append({
             "suggestedgroup_id": sg.suggestedgroup_id,
-            "students": [s.student_id for s in members],
-            "project": project.title,
+            "students": [s.student_id for s in group_members],
+            "project": None,
             "strength": "weak",
             "has_anti_preference": False,
         })
 
     return groups
-    
+
 # Builds an undirected graph of students with mutual 'like' edges 
 def build_mutual_like_graph():
     G = nx.Graph()
@@ -333,62 +358,161 @@ def build_mutual_like_graph():
 # Generates candidate groups from mutual-like groups, classifies them, returns results
 @transaction.atomic
 def generate_suggestions_from_likes():
-    # Clear out old suggested groups & members
+    # Clear old autogenerated suggestions
     SuggestedGroupMember.objects.filter(
         suggested_group__is_manual=False
     ).delete()
     SuggestedGroup.objects.filter(is_manual=False).delete()
 
-    # Get students not in a final group
     students = list(Student.objects.filter(allocated_group=False))
     graph = build_mutual_like_graph()
 
     suggestions = []
     group_likes, group_avoids, project_prefs, projects = prefetch_student_data(students)
 
+    # Iterate over all mutual-like cliques
     for clique in nx.find_cliques(graph):
         if len(clique) < 2:
-            continue # Skip, can't have a group of 1 student
+            continue
 
-        results = classify_group(clique, group_likes, group_avoids, project_prefs, projects)
+        # Determine dominant project capacity (for over-capacity split)
+        candidate_projects = set.intersection(
+            *[
+                set(pid for _, pid in project_prefs.get(s.student_id, []))
+                for s in clique
+                if project_prefs.get(s.student_id)
+            ]
+        )
+        capacity = None
+        if candidate_projects:
+            sample_project = projects.get(next(iter(candidate_projects)))
+            capacity = sample_project.capacity if sample_project else None
 
-        for result in results:
-            if result["strength"] == "invalid":
-                continue 
+        # split clique by CWA if it exceeds capacity
+        subgroups = split_clique_by_cwa(clique, capacity) if capacity else [clique]
 
-            # --- SAVE SuggestedGroup in the DB ---
-            sg = SuggestedGroup.objects.create(
-                strength=result["strength"],
-                has_anti_preference=result["has_anti_preference"],
-                project=result["project"],
+        for subgroup in subgroups:
+            if len(subgroup) < 2:
+                continue
+
+            # Classify subgroup based on mutual likes, prefs, and capacity
+            results = classify_group(
+                subgroup, group_likes, group_avoids, project_prefs, projects
             )
 
-            # Assign auto-generated name
-            sg.name = f"group_{sg.suggestedgroup_id}"
-            sg.save(update_fields=["name"])
-
-            # Save members in SuggestedGroupMember
-            for s in clique:
-                SuggestedGroupMember.objects.create(
-                    suggested_group=sg,
-                    student=s
+            # Create SuggestedGroup entries for each classified project result
+            for result in results:
+                sg = SuggestedGroup.objects.create(
+                    strength=result["strength"],
+                    has_anti_preference=result["has_anti_preference"],
+                    project=result["project"],
                 )
+                sg.name = f"group_{sg.suggestedgroup_id}"
+                sg.save(update_fields=["name"])
 
-            # Send dict as response
-            suggestions.append({
-                "suggestedgroup_id": sg.suggestedgroup_id, 
-                "students": [s.student_id for s in clique],
-                "project": result["project"].title if result["project"] else None, 
-                "strength": result["strength"],
-                "has_anti_preference": result["has_anti_preference"],
-            })
+                for s in subgroup:
+                    SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
 
-    # Handle students not covered by any group preferences 
-    # - They only have project preferences
+                suggestions.append({
+                    "suggestedgroup_id": sg.suggestedgroup_id,
+                    "students": [s.student_id for s in subgroup],
+                    "project": result["project"].title if result["project"] else None,
+                    "strength": result["strength"],
+                    "has_anti_preference": result["has_anti_preference"],
+                })
+
+    # Handle ungrouped students to project-based or fallback Weak groups
     grouped_ids = {sid for g in suggestions for sid in g["students"]}
     remaining_students = [s for s in students if s.student_id not in grouped_ids]
 
-    project_groups = generate_project_only_groups(remaining_students, project_prefs, projects, top_n=1) 
+    project_groups = generate_project_only_groups(
+        remaining_students, project_prefs, projects, top_n=1
+    )
     suggestions.extend(project_groups)
 
+    # Fill undersized groups with similar-CWA students who prefer the same project
+    fill_undersized_groups(project_prefs, projects)
+
     return suggestions
+
+def split_clique_by_cwa(students, project_capacity):
+    """
+    Split a mutual-like clique into subgroups if it exceeds a project's capacity.
+    Groups higher CWA students together (descending sort).
+    Balances leftover size (prefers even split: e.g., 5+4 over 6+3).
+    """
+    if project_capacity is None or len(students) <= project_capacity:
+        return [students]
+
+    # Sort descending by CWA (None -> 0.0)
+    ordered = sorted(students, key=lambda s: float(s.cwa or 0), reverse=True)
+
+    groups = []
+    total = len(ordered)
+    while total > 0:
+        # When remainder smaller than half capacity, balance sizes
+        if total - project_capacity < project_capacity / 2:
+            size = (total + 1) // 2 if total > project_capacity else total
+        else:
+            size = project_capacity
+
+        groups.append(ordered[:size])
+        ordered = ordered[size:]
+        total = len(ordered)
+
+    return groups
+
+def fill_undersized_groups(project_prefs, projects):
+    """
+    Fills undersized groups by adding unallocated students who prefer the same project
+    and have a CWA close to the group’s average (±5 ideal, ±10 fallback).
+    Operates after all initial suggestions are generated.
+    """
+
+    all_students = list(Student.objects.exclude(suggested_groups__isnull=False))
+
+    project_pref_map = {sid: [pid for _, pid in prefs] for sid, prefs in project_prefs.items()}
+
+    for sg in SuggestedGroup.objects.filter(is_manual=False, project__isnull=False):
+        project = sg.project
+        if not project or not project.capacity:
+            continue
+
+        members = list(SuggestedGroupMember.objects.filter(suggested_group=sg))
+        current_count = len(members)
+        if current_count >= project.capacity:
+            continue
+
+        current_students = [m.student for m in members]
+        avg_cwa = sum(float(s.cwa or 0) for s in current_students) / current_count if current_count else 0
+        needed = project.capacity - current_count
+
+        candidates = []
+        for s in all_students:
+            prefs = project_pref_map.get(s.student_id, [])
+            if project.project_id not in prefs:
+                continue
+            if s.cwa is None:
+                continue
+            diff = abs(float(s.cwa) - avg_cwa)
+            if diff <= 5:
+                candidates.append((diff, s))
+            elif diff <= 10:
+                candidates.append((diff + 5, s))  # small bias to prefer tighter matches
+
+        if not candidates:
+            continue
+
+        candidates.sort(key=lambda x: x[0])
+        chosen = [s for _, s in candidates[:needed]]
+
+        for s in chosen:
+            SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
+            s.allocated_group = True
+            s.save(update_fields=["allocated_group"])
+            all_students.remove(s)
+
+        # Keep strength as medium; only update if weaker
+        if sg.strength == "weak":
+            sg.strength = "medium"
+            sg.save(update_fields=["strength"])

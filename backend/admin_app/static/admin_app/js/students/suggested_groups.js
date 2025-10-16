@@ -24,8 +24,13 @@ export function renderManualGroup(group)
     btn.classList.add("btn", "list-item-btn");
     btn.classList.add("strength-manual");
     btn.dataset.id = group.suggestedgroup_id;
-    btn.dataset.display = group.name; 
-    btn.textContent = group.name; 
+
+    const displayName = group.project
+            ? `${group.project.title} (Manual)`
+            : `Group ${idx + 1}`;
+    btn.textContent = displayName;
+    btn.dataset.display = displayName;
+
     li.appendChild(btn);
     manualGroupsUl.appendChild(li);
 
@@ -34,19 +39,27 @@ export function renderManualGroup(group)
 
 export function renderSuggestedGroups(groups) 
 {
-    const order = {strong: 1, medium: 2, weak: 3};
-    groups.sort((a, b) => order[a.strength] - order[b.strength]);
+    const order = {strongest: 0, strong: 1, medium: 2, weak: 3};
+    groups.sort((a, b) => {
+        const orderA = order[a.strength?.toLowerCase()] ?? 999;
+        const orderB = order[b.strength?.toLowerCase()] ?? 999;
+        return orderA - orderB;
+    });
 
     suggestedGroupsUl.innerHTML = "";
     groups.forEach((group, idx) => {
         const li = document.createElement("li");
         const btn = document.createElement("button");
         btn.type = "button";
-
         btn.classList.add("btn", "list-item-btn");
         btn.dataset.id = group.suggestedgroup_id;
-        btn.dataset.display = idx + 1;
-        btn.textContent = `Group ${idx+1}`;
+
+        const displayName = group.project
+            ? `${group.project.title} (Auto)`
+            : `Group ${idx + 1}`;
+        btn.textContent = displayName;
+        btn.dataset.display = displayName;
+
         btn.classList.add(`strength-${group.strength.toLowerCase()}`);
 
         btn.dataset.projectId = group.project ? group.project.project_id : "";

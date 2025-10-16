@@ -1,4 +1,4 @@
-import { showPageLoader, hidePageLoader } from "../utils.js";
+import { showPageLoader, hidePageLoader, setButtonLoading } from "../utils.js";
 import { renderManualGroup, renderSuggestedGroups } from "./suggested_groups.js";
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -20,6 +20,7 @@ export function setupFinaliseValidation() {
 
 export function finaliseGroup(groupId, name, notes) {
     const errorBox = document.getElementById("finalise-errors");
+    const confirmBtn = document.getElementById("confirmGroupBtn");
     errorBox.style.display = "none";
     errorBox.textContent = "";
 
@@ -27,6 +28,11 @@ export function finaliseGroup(groupId, name, notes) {
         errorBox.textContent = "Group name is required.";
         errorBox.style.display = "block";
         return;
+    }
+
+    if (confirmBtn)
+    {
+        setButtonLoading(confirmBtn, true)
     }
 
     showPageLoader();
@@ -158,7 +164,11 @@ export function finaliseGroup(groupId, name, notes) {
         .catch((err) => {
             console.error("Error creating final group:", err);
         })
-        .finally(() => hidePageLoader());
+        .finally(() => 
+        {
+            hidePageLoader();
+            setButtonLoading(confirmBtn, false);
+        });
 }
 
 
@@ -166,7 +176,8 @@ const finalGroupsUl = document.createElement("ul");
 finalGroupsUl.id = "final-groups-ul";
 finalGroupsUl.classList.add("list");
 
-function renderFinalGroups(groups) {
+function renderFinalGroups(groups) 
+{
     finalGroupsUl.innerHTML = "";
     if (!groups.length) {
         const p = document.createElement("p");
@@ -296,6 +307,23 @@ function renderFinalGroupUI(group) {
         const updatedNotes = notesArea.value.trim();
         saveFinalGroupNotes(group.finalgroup_id, updatedNotes);
     };
+
+    const copyBtn = document.getElementById("copy-final-ids-btn");
+    const copyStatus = document.getElementById("copy-status");
+
+    if (copyBtn) {
+        copyBtn.onclick = () => {
+            if (!group.members || !group.members.length) return;
+
+            const ids = group.members.map(m => m.student.student_id).join(", ");
+            navigator.clipboard.writeText(ids)
+                .then(() => {
+                    copyStatus.style.display = "block";
+                    setTimeout(() => copyStatus.style.display = "none", 1500);
+                })
+                .catch(err => console.error("Failed to copy IDs:", err));
+        };
+    }
 }
 
 function deleteFinalGroup(id) {

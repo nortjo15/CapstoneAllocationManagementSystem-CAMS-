@@ -323,6 +323,10 @@ function applyFiltersAndSearch(targetId, searchVal= "")
         params.append("student_id", searchVal);
     }
 
+    if (form && form.querySelector("#sort_by_cwa")?.checked) {
+        params.append("sort_by_cwa", "true");
+    }
+
     fetchStudents(targetId, "?" + params.toString());
 }
 
