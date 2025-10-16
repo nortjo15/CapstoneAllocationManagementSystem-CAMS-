@@ -1,4 +1,3 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -8,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from admin_app.models import CapstoneInformationContent, CapstoneInformationSection
 from admin_app.forms.admin_forms import InformationForm
 
-@staff_member_required
+@login_required
 def information_list(request):
     """Admin list with filters + search + pagination."""
     now = timezone.now()
@@ -57,7 +56,7 @@ def information_list(request):
         "current_status": current_status,
     })
 
-@staff_member_required
+@login_required
 def information_create(request):
     if not CapstoneInformationSection.objects.exists():
         messages.warning(request, "Please create a section before adding an information section.")
@@ -75,7 +74,7 @@ def information_create(request):
         form = InformationForm()
     return render(request, "information_form.html", {"form": form})
 
-@staff_member_required
+@login_required
 def information_edit(request, pk):
     obj = get_object_or_404(CapstoneInformationContent, pk=pk)
     if request.method == "POST":
@@ -91,7 +90,7 @@ def information_edit(request, pk):
         form = InformationForm(instance=obj)
     return render(request, "information_form.html", {"form": form})
 
-@staff_member_required
+@login_required
 def information_delete(request, pk):
     obj = get_object_or_404(CapstoneInformationContent, pk=pk)
     if request.method == "POST":

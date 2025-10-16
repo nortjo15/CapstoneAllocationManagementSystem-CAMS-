@@ -1,4 +1,4 @@
-import { showPageLoader, hidePageLoader } from "../utils.js";
+import { showPageLoader, hidePageLoader, setButtonLoading } from "../utils.js";
 import { renderManualGroup, renderSuggestedGroups } from "./suggested_groups.js";
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -20,6 +20,7 @@ export function setupFinaliseValidation() {
 
 export function finaliseGroup(groupId, name, notes) {
     const errorBox = document.getElementById("finalise-errors");
+    const confirmBtn = document.getElementById("confirmGroupBtn");
     errorBox.style.display = "none";
     errorBox.textContent = "";
 
@@ -27,6 +28,11 @@ export function finaliseGroup(groupId, name, notes) {
         errorBox.textContent = "Group name is required.";
         errorBox.style.display = "block";
         return;
+    }
+
+    if (confirmBtn)
+    {
+        setButtonLoading(confirmBtn, true)
     }
 
     showPageLoader();
@@ -158,7 +164,11 @@ export function finaliseGroup(groupId, name, notes) {
         .catch((err) => {
             console.error("Error creating final group:", err);
         })
-        .finally(() => hidePageLoader());
+        .finally(() => 
+        {
+            hidePageLoader();
+            setButtonLoading(confirmBtn, false);
+        });
 }
 
 

@@ -41,8 +41,8 @@
 </nav>
 {% endblock %}
 
-<main class="{% block container_class %}container-xxl my-3{% endblock %}">
-  
+<main class="{% block container_class %}container-xxl{% endblock %} my-3">
+
   {% if messages %}
     {% for message in messages %}
       <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
