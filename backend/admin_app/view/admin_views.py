@@ -1,5 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core import management
+from django.http import HttpResponse
+#from django.contrib.admin.views.decorators import staff_member_required
+from io import StringIO
+import datetime
 from admin_app.models import Project
 
 #Email notification view, needs to be updated to use the API
@@ -19,3 +24,14 @@ def email_page(request):
 @login_required
 def settings_view(request):
     return render(request, 'settings.html')
+
+@login_required
+def download_db(request):
+    out = StringIO()
+    management.call_command('dumpdata', '--indent', '2', stdout=out)
+    data = out.getvalue()
+
+    filename = f"db_backup_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+    response = HttpResponse(data, content_type='application/json')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
