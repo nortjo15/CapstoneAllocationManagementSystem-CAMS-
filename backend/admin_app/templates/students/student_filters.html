@@ -35,6 +35,12 @@
             <div id="cwa_error" style="color:red; margin-top:5px; display:none;"></div>
             <br><br>
 
+            <label>
+                <input type="checkbox" id="sort_by_cwa" name="sort_by_cwa" value="true">
+                Sort by CWA (High → Low)
+            </label>
+            <br><br>
+
             <!-- 
             Degree-Major CheckBox
             - Allows for selection of multiple majors for filtering the view
@@ -78,12 +84,6 @@
                     <option value="false" {% if group_status == 'false' %}selected{% endif %}>Unassigned Students Only</option>
                 </select>
             {% endif %}
-
-            <label>
-                <input type="checkbox" id="sort_by_cwa" name="sort_by_cwa" value="true">
-                Sort by CWA (High → Low)
-            </label>
-            <br><br>
 
             <!-- Reset button that clears all filters -->
             <!-- Filter Button to handle submit -->
