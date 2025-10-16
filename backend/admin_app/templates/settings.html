@@ -76,8 +76,35 @@
             </div>
         </div>
     </div>
+    <button type="button" style="margin-top: 20px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dumpDataModal">
+        Download Database Dump
+    </button>
 
-    
+    <div class="modal fade" id="dumpDataModal" tabindex="-1" aria-labelledby="dumpDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dumpDataModalLabel">Download Database Dump</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This will create and download a full backup of the current database in JSON format.</p>
+                    <p><strong>Note:</strong> It may take a few seconds depending on the database size.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'admin_dashboard:download_db' %}" class="btn btn-primary">Download Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'admin_dashboard:download_final_groups' %}" class="btn btn-primary" style="margin-top: 20px;">
+        Export Finalized Groups
+    </a>
+    <a href="{% url 'admin_dashboard:download_suggested_groups' %}" class="btn btn-primary" style="margin-top: 20px;">
+        Export Suggested Groups
+    </a>
 </div>
 
     <script>
