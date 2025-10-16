@@ -79,6 +79,11 @@ if (filterForm) {
                 params.append(key, value);
             }
         }
+        
+        // Append sort flag
+        if (formData.get("sort_by_cwa") === "true") {
+            params.append("sort_by_cwa", "true");
+        }
 
         // decide target
         let targetId = "studentsTableBody";

@@ -175,6 +175,10 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
                 ),
             )
         )
+
+        sort_flag = self.request.query_params.get("sort_by_cwa")
+        if sort_flag and sort_flag.lower() == "true":
+            qs = qs.order_by("-cwa")
        
         # Pre-fetch
         if self.request.method != "GET":
