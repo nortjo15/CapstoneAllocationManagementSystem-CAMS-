@@ -430,6 +430,9 @@ def generate_suggestions_from_likes():
     )
     suggestions.extend(project_groups)
 
+    # Fill undersized groups with similar-CWA students who prefer the same project
+    fill_undersized_groups(project_prefs, projects)
+
     return suggestions
 
 def split_clique_by_cwa(students, project_capacity):
@@ -458,3 +461,57 @@ def split_clique_by_cwa(students, project_capacity):
         total = len(ordered)
 
     return groups
+
+def fill_undersized_groups(project_prefs, projects):
+    """
+    Fills undersized groups by adding unallocated students who prefer the same project
+    and have a CWA close to the group’s average (±5 ideal, ±10 fallback).
+    Operates after all initial suggestions are generated.
+    """
+
+    all_students = list(Student.objects.filter(allocated_group=False))
+    project_pref_map = {s.student_id: [pid for _, pid in prefs] for s, prefs in project_prefs.items()}
+
+    for sg in SuggestedGroup.objects.filter(is_manual=False, project__isnull=False):
+        project = sg.project
+        if not project or not project.capacity:
+            continue
+
+        members = list(SuggestedGroupMember.objects.filter(suggested_group=sg))
+        current_count = len(members)
+        if current_count >= project.capacity:
+            continue
+
+        current_students = [m.student for m in members]
+        avg_cwa = sum(float(s.cwa or 0) for s in current_students) / current_count if current_count else 0
+        needed = project.capacity - current_count
+
+        candidates = []
+        for s in all_students:
+            prefs = project_pref_map.get(s.student_id, [])
+            if project.project_id not in prefs:
+                continue
+            if s.cwa is None:
+                continue
+            diff = abs(float(s.cwa) - avg_cwa)
+            if diff <= 5:
+                candidates.append((diff, s))
+            elif diff <= 10:
+                candidates.append((diff + 5, s))  # small bias to prefer tighter matches
+
+        if not candidates:
+            continue
+
+        candidates.sort(key=lambda x: x[0])
+        chosen = [s for _, s in candidates[:needed]]
+
+        for s in chosen:
+            SuggestedGroupMember.objects.create(suggested_group=sg, student=s)
+            s.allocated_group = True
+            s.save(update_fields=["allocated_group"])
+            all_students.remove(s)
+
+        # Keep strength as medium; only update if weaker
+        if sg.strength == "weak":
+            sg.strength = "medium"
+            sg.save(update_fields=["strength"])
