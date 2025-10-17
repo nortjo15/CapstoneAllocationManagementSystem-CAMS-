@@ -28,7 +28,15 @@ class AdminLog(models.Model):
         ('LOGOUT', 'User Logged Out'),
         ('GROUP_CREATED', 'Group Created'),
         ('GROUP_UPDATED', 'Group Updated'),
-        ('GROUP_DELETED', 'Group Deleted')
+        ('GROUP_DELETED', 'Group Deleted'),
+        ('PROJECT_CREATED', 'Project Created'),
+        ('PROJECT_UPDATED', 'Project Updated'),
+        ('PROJECT_DELETED', 'Project Deleted'),
+        ('ROUND_CREATED', 'Round Created'),
+        ('ROUND_UPDATED', 'Round Updated'),
+        ('ROUND_DELETED', 'Round Deleted'),
+        ('STUDENT_APPLIED', 'Student Applied'),
+        ('STUDENT_UPDATED', 'Student Updated'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
