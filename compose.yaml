@@ -5,15 +5,6 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "8000:8000" #this is the local host port for development
+      - "8000:8000"
     env_file:
       - .env
-    # environment:
-    #   POSTGRES_DB: cas_db_v3
-    #   POSTGRES_USER: cas_db_user
-    #   POSTGRES_PASSWORD: oxh68Dm0EPYorASbiinv12pgRiopLtfm
-    #   POSTGRES_HOST: dpg-d3drggi4d50c739ouhf0-a.singapore-postgres.render.com
-    #   POSTGRES_PORT: 5432
-    #   SECRET_KEY: django-insecure-cwvx9hp!sdh*6p+_-i8rq!5cr2i771u*v(b_1*dcv*7v8*ympt
-    #   DEBUG: "True"
-    #   DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
