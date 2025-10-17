@@ -1,9 +1,9 @@
 # Makefile 
 CONTAINER_NAME_B = i2a-project-allocation-backend-1
 CONTAINER_NAME_F = i2a-project-allocation-frontend-1
-POSTGRES_HOST = dpg-d3drggi4d50c739ouhf0-a.singapore-postgres.render.com
-POSTGRES_USER = cas_db_user
-POSTGRES_DB = cas_db_v3 
+POSTGRES_HOST = dpg-d3p0f7umcj7s739louvg-a.singapore-postgres.render.com
+POSTGRES_USER = cams_user
+POSTGRES_DB = i2a_postgres_database
 
 .PHONY: help 
 help: 
