@@ -45,10 +45,6 @@ class ProjectPreferenceSerializer(serializers.ModelSerializer):
         model = ProjectPreference
         fields = '__all__'
 
-class SuggestedGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SuggestedGroup
-        fields = '__all__'
 
 class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
     student = StudentSerializer(read_only=True)
@@ -70,6 +66,7 @@ class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
         fields = ['id', 'student', "group_preferences", "received_group_preferences"]
 
 class SuggestedGroupSerializer(serializers.ModelSerializer):
+    display_name = serializers.SerializerMethodField()
     members = SuggestedGroupMemberSerializer(many=True, read_only=True)
     project = ProjectSerializer(read_only=True)
     project_id = serializers.PrimaryKeyRelatedField(
@@ -83,15 +80,23 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = SuggestedGroup
         fields = [
-            'name',
-            'suggestedgroup_id', 
-            'strength', 
-            'notes', 
-            'has_anti_preference',
-            'project',
-            'project_id',
-            'members',
-            'is_manual']
+            "suggestedgroup_id",
+            "name",
+            "display_name",      # <-- ensure this stays in
+            "strength",
+            "notes",
+            "has_anti_preference",
+            "project",
+            "project_id",
+            "members",
+            "is_manual",
+        ]
+
+    def get_display_name(self, obj):
+        if obj.project:
+            label = "Manual" if obj.is_manual else "Auto"
+            return f"{obj.project.title} - {label}"
+        return obj.name
 
 class SuggestedGroupMemberLiteSerializer(serializers.ModelSerializer):
     student = StudentListSerializer(read_only=True)
@@ -100,9 +105,11 @@ class SuggestedGroupMemberLiteSerializer(serializers.ModelSerializer):
         model = SuggestedGroupMember
         fields = ["id", "student"]
 
+
 class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
     members = SuggestedGroupMemberLiteSerializer(many=True, read_only=True)
     project = ProjectSerializer(read_only=True)
+    display_name = serializers.SerializerMethodField()
 
     class Meta:
         model = SuggestedGroup
@@ -113,7 +120,14 @@ class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
             "project",
             "members",
             "is_manual",
+            "display_name",
         ]
+        
+    def get_display_name(self, obj):
+        if obj.project:
+            label = "(Manual)" if obj.is_manual else "(Auto)"
+            return f"{obj.project.title} {label}"
+        return obj.name
 
 class FinalGroupCreateSerializer(serializers.ModelSerializer):
     suggestedgroup_id = serializers.IntegerField(write_only=True)

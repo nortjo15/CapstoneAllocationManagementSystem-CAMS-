@@ -25,6 +25,14 @@ export function renderMemberCard(m, group)
         <p><span class="member-label">Major:</span> ${majorName}</p>
     `;
 
+    //Split project indicator
+    if (m.student.split_project) 
+    {
+        const splitBadge = document.createElement("p");
+        splitBadge.innerHTML = `<span class="split-project-badge">Split Project</span>`;
+        div.appendChild(splitBadge);
+    }
+
     // remove button
     const removeBtn = document.createElement("span");
     removeBtn.classList.add("remove-btn");
@@ -237,6 +245,13 @@ export function renderProjectInfo(group, groupSize, projectName,
                     ? updatedGroup.project.is_assigned
                     : false;
                 btn.dataset.members = JSON.stringify(updatedGroup.members || []);
+            }
+
+            if (btn) {
+                const labelType = updatedGroup.is_manual ? "Manual" : "Auto";
+                btn.textContent = updatedGroup.project
+                    ? `${updatedGroup.project.title} (${labelType})`
+                    : btn.dataset.display || btn.textContent;
             }
 
             // --- Re-render UI for the updated group ---

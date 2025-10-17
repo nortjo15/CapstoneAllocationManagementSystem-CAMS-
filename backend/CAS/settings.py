@@ -88,19 +88,34 @@ WSGI_APPLICATION = 'CAS.wsgi.application'
 #    }
 #}
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('POSTGRES_DB', 'mydatabase_cas'), # Use your chosen DB name
+#         'USER': os.environ.get('POSTGRES_USER', 'cas_user'), # Use your chosen DB user
+#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'cas_password'), # Use your chosen DB password
+#         'HOST': os.environ.get('POSTGRES_HOST', 'db'), # This 'db' refers to the service name in docker-compose.yml
+#         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+#         'OPTIONS': {
+#             'sslmode': 'require', 
+#         }
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'mydatabase_cas'), # Use your chosen DB name
-        'USER': os.environ.get('POSTGRES_USER', 'cas_user'), # Use your chosen DB user
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'cas_password'), # Use your chosen DB password
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'), # This 'db' refers to the service name in docker-compose.yml
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
         'OPTIONS': {
             'sslmode': 'require', 
         }
     }
 }
+
 # Also ensure SECRET_KEY, ALLOWED_HOSTS, DEBUG are pulled from env vars
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-insecure-default-secret-key-for-dev')
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')

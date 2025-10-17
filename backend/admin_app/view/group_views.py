@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from admin_app.models import SuggestedGroup, Major
-from django.contrib.auth.decorators import login_required
 
 # Webpage
 class GroupListView(LoginRequiredMixin, ListView):

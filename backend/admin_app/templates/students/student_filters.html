@@ -69,6 +69,14 @@
             </select>
             <br><br>
 
+            <label for="split_project">Split Project</label>
+            <select id="split_project" name="split_project">
+                <option value="">-- Any --</option>
+                <option value="true" {% if split_project == 'true' %}selected{% endif %}>Yes</option>
+                <option value="false" {% if split_project == 'false' %}selected{% endif %}>No</option>
+            </select>
+            <br><br>
+
             <!-- Dropdown to show students who are allocated a group, or not -->
             <label for="group_status">Group Status:</label>
 

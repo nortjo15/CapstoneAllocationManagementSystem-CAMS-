@@ -1,4 +1,10 @@
 from .models import Student
+from admin_app.models import Project
+from admin_app.models import Project, Major, CapstoneInformationSection, CapstoneInformationContent
+from django.http import JsonResponse 
+from django.db.models import Prefetch, Q
+from django.core.paginator import Paginator
+from django.shortcuts import render, get_object_or_404
 from admin_app.models import CapstoneInformationSection, CapstoneInformationContent
 from django.http import JsonResponse
 from django.db.models import Prefetch, Q
@@ -6,7 +12,6 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET
-
 
 #Render Templates
 # def student_form_view(request):
