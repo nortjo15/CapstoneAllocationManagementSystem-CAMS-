@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from student_app.api.serializers import StudentSerializer, StudentListSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
+from student_app.models import Student
 from ..models import Project, ProjectPreference, Round, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Degree, Major, AdminLog, CapstoneInformationContent, CapstoneInformationSection, UnitContacts
 from django.db import transaction
 from admin_app.models import AdminLog
@@ -16,9 +17,16 @@ class AdminLogSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'action', 'action_display', 'target', 'timestamp', 'notes']
     
     def get_target(self, obj):
-        if obj.target:
-            return str(obj.target)
-        return None
+        target = obj.target
+        if not target:
+            return None
+
+        # For Student targets, show just the student_id (not the __str__ with name)
+        if isinstance(target, Student):
+            return target.student_id
+
+        # Default fallback
+        return str(target)
 
 class ProjectSerializer(serializers.ModelSerializer):
     is_assigned = serializers.SerializerMethodField()
