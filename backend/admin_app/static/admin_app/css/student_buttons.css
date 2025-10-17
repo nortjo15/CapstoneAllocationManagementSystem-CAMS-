@@ -154,6 +154,11 @@ button.loading::after {
     font-weight: bold;
 }
 
+.list-item-btn.strength-strongest {
+    background-color: #36b8f4;   
+    color: black;
+}
+
 .list-item-btn.strength-strong {
     background-color: #06c575;   
     color: black;

@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required, user_passes_test
 from rest_framework.pagination import PageNumberPagination
 from admin_app.api.serializers import AdminLogSerializer
+from rest_framework.decorators import action
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 25
@@ -20,6 +21,12 @@ class AdminLogViewSet(viewsets.ModelViewSet):
     queryset = AdminLog.objects.all().order_by('-timestamp')
     serializer_class = AdminLogSerializer
     pagination_class = StandardResultsSetPagination
+
+    @action(detail=False, methods=['delete'], permission_classes=[IsAdminUser])
+    def clear(self, request):
+        """Delete all AdminLog entries and return the count deleted."""
+        deleted, _ = AdminLog.objects.all().delete()
+        return Response({"deleted": deleted})
 
 class SendRoundStartView(APIView):
     permission_classes = [IsAdminUser]

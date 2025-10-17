@@ -31,10 +31,10 @@ class StudentImportAPIView(APIView):
 
         errors, created_count, updated_count = [], 0, 0
 
-        required_columns = {"student_id", "name"}
+        required_columns = {"student_id"}
         if not required_columns.issubset(set(reader.fieldnames)):
             return Response(
-                {"success": False, "error": "CSV must contain 'student_id' and 'name' columns."},
+                {"success": False, "error": "CSV must contain a 'student_id' column."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -43,10 +43,29 @@ class StudentImportAPIView(APIView):
                 continue
 
             student_id = row.get("student_id", "").strip()
-            name = row.get("name", "").strip()
 
             if not student_id.isdigit() or len(student_id) != 8:
                 errors.append(f"Row {i}: student_id must be exactly 8 digits.")
+                continue
+
+            # Support both 'name' or ('First Name' + 'Last Name') fields
+            name = row.get("name", "").strip()
+            first_name = (
+                row.get("first name", "").strip() or row.get("First Name", "").strip()
+            )
+            last_name = (
+                row.get("last name", "").strip() or row.get("Last Name", "").strip()
+            )
+
+            # Concatenate if only separate fields are given
+            if not name and (first_name or last_name):
+                name = f"{first_name} {last_name}".strip()
+
+            # If name still missing, record error and skip row
+            if not name:
+                errors.append(
+                    f"Row {i}: Missing student name (expected 'name' or 'First Name'/'Last Name')."
+                )
                 continue
 
             # Validate major
@@ -125,13 +144,14 @@ class StudentFilter(filters.FilterSet):
     
     application_submitted = filters.BooleanFilter(field_name="application_submitted")
     allocated_group = filters.BooleanFilter(field_name="allocated_group")
+    split_project = filters.BooleanFilter(field_name="split_project")
 
     # Filter by student_id (substring match)
     student_id = filters.CharFilter(field_name="student_id", lookup_expr="istartswith")
 
     class Meta:
         model = Student
-        fields = ["cwa_min", "cwa_max", "major", "application_submitted", "allocated_group", "student_id"]
+        fields = ["cwa_min", "cwa_max", "major", "application_submitted", "allocated_group", "student_id", "split_project",]
 
 class StudentListCreateAPIView(generics.ListCreateAPIView):
     """
@@ -156,6 +176,10 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
                 ),
             )
         )
+
+        sort_flag = self.request.query_params.get("sort_by_cwa")
+        if sort_flag and sort_flag.lower() == "true":
+            qs = qs.order_by("-cwa")
        
         # Pre-fetch
         if self.request.method != "GET":

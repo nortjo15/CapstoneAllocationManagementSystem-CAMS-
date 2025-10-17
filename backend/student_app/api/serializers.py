@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from admin_app.models import Project, Major
 from student_app.models import Student, GroupPreference
-from admin_app.models import Project, Major, ProjectPreference
+from admin_app.models import Project, Major, ProjectPreference, AdminLog
+from django.contrib.contenttypes.models import ContentType
 
 #Generic Serializers
 class ProjectSerializer(serializers.ModelSerializer):
@@ -82,6 +83,7 @@ class StudentListSerializer(serializers.ModelSerializer):
             "notes",
             "has_preferences",
             "has_teamPref",
+            "split_project",
         ]
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -201,4 +203,25 @@ class FullFormSerializer(serializers.Serializer):
                 print(f"Warning: Student not found. Skipping.")
                 continue 
         
+        # --- Base AdminLog write (safe, non-blocking) ---
+        try:
+            request = self.context.get('request') if hasattr(self, 'context') else None
+            user = getattr(request, 'user', None)
+            # Only log when we have an authenticated Django user (e.g., admin proxying this action)
+            if user is not None and getattr(user, 'is_authenticated', False):
+                ct = ContentType.objects.get_for_model(Student)
+                AdminLog.objects.create(
+                    user=user,
+                    action='EDIT',
+                    target_content_type=ct,
+                    target_id=student.pk,
+                    notes=(
+                        f"Student {student.student_id} updated via FullForm: "
+                        f"projects={project_preference_ids}, preferred={preferred_preference_ids}, avoided={avoided_preference_ids}"
+                    )
+                )
+        except Exception as e:
+            # Never block student submission if logging fails
+            print(f"[AdminLog] Skipped logging due to error: {e}")
+
         return student

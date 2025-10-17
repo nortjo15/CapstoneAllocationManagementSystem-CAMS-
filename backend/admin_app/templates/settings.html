@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div style="padding: 40px;">
+<div style="padding: 20px 40px 40px 40px;">
     <h1>Settings</h1>
     <p>Manage your account settings here.</p>
 
@@ -71,18 +71,118 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="clearAdminLogs()" data-bs-dismiss="modal">Confirm Clear</button>
                 </div>
             </div>
         </div>
     </div>
 
-    
+    <!-- Clear Data  -->
+    <button type="button" style="margin-top: 20px; margin-left: 10px;" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+    Clear Data
+    </button>
+    <!-- First confirmation modal for Clear Data -->
+    <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Clear Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to clear data? This may remove records and cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- Continue opens a second confirmation modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal4" data-bs-dismiss="modal">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Final Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please confirm again: clearing data is permanent. Do you want to proceed?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="confirmClearDataBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clearAllData()">Confirm Clear Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" style="margin-top: 20px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dumpDataModal">
+        Download Database Dump
+    </button>
+
+    <div class="modal fade" id="dumpDataModal" tabindex="-1" aria-labelledby="dumpDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dumpDataModalLabel">Download Database Dump</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This will create and download a full backup of the current database in JSON format.</p>
+                    <p><strong>Note:</strong> It may take a few seconds depending on the database size.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'admin_dashboard:download_db' %}" class="btn btn-primary">Download Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'admin_dashboard:download_final_groups' %}" class="btn btn-primary" style="margin-top: 20px;">
+        Export Finalised Groups
+    </a>
+    <a href="{% url 'admin_dashboard:download_suggested_groups' %}" class="btn btn-primary" style="margin-top: 20px;">
+        Export Suggested Groups
+    </a>
 </div>
 
     <script>
     function changePassword() {
         window.location.href = '{% url 'admin_dashboard:change_password' %}';
+    }
+
+    // CSRF helpers for POST/DELETE
+    function getCSRFCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    function getCSRFToken() {
+        return getCSRFCookie('csrftoken');
+    }
+
+    async function clearAdminLogs() {
+        try {
+            const resp = await fetch(window.ENDPOINTS.adminLogs + 'clear/', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            });
+            if (!resp.ok) throw new Error('Failed to clear logs');
+            // After clearing, reload first page
+            if (window.loadAdminLogs) {
+                window.loadAdminLogs(window.ENDPOINTS.adminLogs);
+            } else {
+                location.reload();
+            }
+        } catch (e) {
+            console.error('Clear logs failed:', e);
+            alert('Failed to clear logs: ' + e.message);
+        }
     }
     </script>
 {% endblock %}

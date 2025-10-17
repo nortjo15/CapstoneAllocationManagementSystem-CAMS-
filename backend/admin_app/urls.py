@@ -45,6 +45,9 @@ urlpatterns = [
     path("suggested_groups_view/", group_views.GroupListView.as_view(), name="groups_view"),
     #Settings_views
     path('settings/', admin_views.settings_view, name='settings'),
+    path('download-db/', admin_views.download_db, name='download_db'),
+    path('export-final-groups/', admin_views.download_final_groups, name='download_final_groups'),
+    path('export-suggested-groups/', admin_views.download_suggested_groups, name='download_suggested_groups'),
     #Information CRUD
     path('information/',              information_views.information_list,  name='information_list'),
     path('information/new/',          information_views.information_create, name='information_create'),

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from student_app.api.serializers import StudentSerializer, StudentListSerializer, GroupPreferenceNestedSerializer, GroupPreferenceReceivedSerializer
+from student_app.models import Student
 from ..models import Project, ProjectPreference, Round, SuggestedGroup, SuggestedGroupMember, FinalGroup, FinalGroupMember, Degree, Major, AdminLog, CapstoneInformationContent, CapstoneInformationSection, UnitContacts
 from django.db import transaction
 from admin_app.models import AdminLog
@@ -16,9 +17,16 @@ class AdminLogSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'action', 'action_display', 'target', 'timestamp', 'notes']
     
     def get_target(self, obj):
-        if obj.target:
-            return str(obj.target)
-        return None
+        target = obj.target
+        if not target:
+            return None
+
+        # For Student targets, show just the student_id (not the __str__ with name)
+        if isinstance(target, Student):
+            return target.student_id
+
+        # Default fallback
+        return str(target)
 
 class ProjectSerializer(serializers.ModelSerializer):
     is_assigned = serializers.SerializerMethodField()
@@ -37,10 +45,6 @@ class ProjectPreferenceSerializer(serializers.ModelSerializer):
         model = ProjectPreference
         fields = '__all__'
 
-class SuggestedGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SuggestedGroup
-        fields = '__all__'
 
 class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
     student = StudentSerializer(read_only=True)
@@ -62,6 +66,7 @@ class SuggestedGroupMemberSerializer(serializers.ModelSerializer):
         fields = ['id', 'student', "group_preferences", "received_group_preferences"]
 
 class SuggestedGroupSerializer(serializers.ModelSerializer):
+    display_name = serializers.SerializerMethodField()
     members = SuggestedGroupMemberSerializer(many=True, read_only=True)
     project = ProjectSerializer(read_only=True)
     project_id = serializers.PrimaryKeyRelatedField(
@@ -75,15 +80,23 @@ class SuggestedGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = SuggestedGroup
         fields = [
-            'name',
-            'suggestedgroup_id', 
-            'strength', 
-            'notes', 
-            'has_anti_preference',
-            'project',
-            'project_id',
-            'members',
-            'is_manual']
+            "suggestedgroup_id",
+            "name",
+            "display_name",      # <-- ensure this stays in
+            "strength",
+            "notes",
+            "has_anti_preference",
+            "project",
+            "project_id",
+            "members",
+            "is_manual",
+        ]
+
+    def get_display_name(self, obj):
+        if obj.project:
+            label = "Manual" if obj.is_manual else "Auto"
+            return f"{obj.project.title} - {label}"
+        return obj.name
 
 class SuggestedGroupMemberLiteSerializer(serializers.ModelSerializer):
     student = StudentListSerializer(read_only=True)
@@ -92,9 +105,11 @@ class SuggestedGroupMemberLiteSerializer(serializers.ModelSerializer):
         model = SuggestedGroupMember
         fields = ["id", "student"]
 
+
 class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
     members = SuggestedGroupMemberLiteSerializer(many=True, read_only=True)
     project = ProjectSerializer(read_only=True)
+    display_name = serializers.SerializerMethodField()
 
     class Meta:
         model = SuggestedGroup
@@ -105,7 +120,14 @@ class SuggestedGroupLiteSerializer(serializers.ModelSerializer):
             "project",
             "members",
             "is_manual",
+            "display_name",
         ]
+        
+    def get_display_name(self, obj):
+        if obj.project:
+            label = "(Manual)" if obj.is_manual else "(Auto)"
+            return f"{obj.project.title} {label}"
+        return obj.name
 
 class FinalGroupCreateSerializer(serializers.ModelSerializer):
     suggestedgroup_id = serializers.IntegerField(write_only=True)

@@ -35,6 +35,12 @@
             <div id="cwa_error" style="color:red; margin-top:5px; display:none;"></div>
             <br><br>
 
+            <label>
+                <input type="checkbox" id="sort_by_cwa" name="sort_by_cwa" value="true">
+                Sort by CWA (High → Low)
+            </label>
+            <br><br>
+
             <!-- 
             Degree-Major CheckBox
             - Allows for selection of multiple majors for filtering the view
@@ -60,6 +66,14 @@
                 <option value="">-- Any --</option>
                 <option value="true" {% if application_submitted == 'true' %}selected{% endif %}>Yes</option>
                 <option value="false" {% if application_submitted == 'false' %}selected{% endif %}>No</option>
+            </select>
+            <br><br>
+
+            <label for="split_project">Split Project</label>
+            <select id="split_project" name="split_project">
+                <option value="">-- Any --</option>
+                <option value="true" {% if split_project == 'true' %}selected{% endif %}>Yes</option>
+                <option value="false" {% if split_project == 'false' %}selected{% endif %}>No</option>
             </select>
             <br><br>
 

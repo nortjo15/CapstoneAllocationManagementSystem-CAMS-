@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate, logout, update_session_auth
 from admin_app.models import AdminLog
 from django.contrib.contenttypes.models import ContentType
 
+@login_required
 def register_view(request):
     if request.method == "POST":               
         form = UserCreationForm(request.POST)  

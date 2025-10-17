@@ -1,15 +1,15 @@
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from admin_app.models import CapstoneInformationSection
 from admin_app.forms.admin_forms import SectionForm
 
-@staff_member_required
+@login_required
 def section_list(request):
     sections = CapstoneInformationSection.objects.order_by("order", "id")
     return render(request, "section_list.html", {"sections": sections})
 
-@staff_member_required
+@login_required
 def section_create(request):
     if request.method == "POST":
         form = SectionForm(request.POST)
@@ -21,7 +21,7 @@ def section_create(request):
         form = SectionForm()
     return render(request, "section_form.html", {"form": form})
 
-@staff_member_required
+@login_required
 def section_edit(request, pk):
     obj = get_object_or_404(CapstoneInformationSection, pk=pk)
     if request.method == "POST":
@@ -34,7 +34,7 @@ def section_edit(request, pk):
         form = SectionForm(instance=obj)
     return render(request, "section_form.html", {"form": form})
 
-@staff_member_required
+@login_required
 def section_delete(request, pk):
     obj = get_object_or_404(CapstoneInformationSection, pk=pk)
     if request.method == "POST":
