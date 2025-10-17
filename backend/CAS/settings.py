@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cwvx9hp!sdh*6p+_-i8rq!5cr2i771u*v(b_1*dcv*7v8*ympt'
-
+#SECRET_KEY = 'django-insecure-cwvx9hp!sdh*6p+_-i8rq!5cr2i771u*v(b_1*dcv*7v8*ympt'
+SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -81,13 +81,6 @@ WSGI_APPLICATION = 'CAS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -116,10 +109,9 @@ DATABASES = {
     }
 }
 
-# Also ensure SECRET_KEY, ALLOWED_HOSTS, DEBUG are pulled from env vars
-SECRET_KEY = os.environ.get('SECRET_KEY', 'your-insecure-default-secret-key-for-dev')
+#SECRET_KEY = os.environ.get('SECRET_KEY', 'your-insecure-default-secret-key-for-dev')
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+#DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
