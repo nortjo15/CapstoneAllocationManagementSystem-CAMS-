@@ -34,7 +34,7 @@ def prefetch_student_data(students):
         project_prefs.setdefault(pp.student_id, []).append((pp.rank, pp.project_id))
 
     # Load all projects
-    all_projects = Project.objects.all()
+    all_projects = Project.objects.filter(final_groups__isnull=True)
     projects  = {p.project_id: p for p in all_projects}
 
     return group_likes, group_avoids, project_prefs, projects
