@@ -15,25 +15,24 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 let suggestedGroupsInitialised = false;
 window.suggestedGroupsCache = new Map(); 
 
-export function renderManualGroup(group)
-{
-    //Add it to the sidebar 
+
+export function renderManualGroup(group) {
     const li = document.createElement("li");
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.classList.add("btn", "list-item-btn");
-    btn.classList.add("strength-manual");
+    btn.classList.add("btn", "list-item-btn", "strength-manual");
     btn.dataset.id = group.suggestedgroup_id;
 
+    const index = manualGroupsUl.children.length + 1;
     const displayName = group.project
-            ? `${group.project.title} (Manual)`
-            : `Group ${idx + 1}`;
+        ? `${group.project.title || group.project} (Manual)`
+        : `Group ${index}`;
+
     btn.textContent = displayName;
     btn.dataset.display = displayName;
 
     li.appendChild(btn);
     manualGroupsUl.appendChild(li);
-
     btn.addEventListener("click", () => loadGroup(btn.dataset.id));
 }
 
@@ -55,7 +54,7 @@ export function renderSuggestedGroups(groups)
         btn.dataset.id = group.suggestedgroup_id;
 
         const displayName = group.project
-            ? `${group.project.title} (Auto)`
+            ? `${(group.project.title || group.project)} (Auto)`
             : `Group ${idx + 1}`;
         btn.textContent = displayName;
         btn.dataset.display = displayName;
