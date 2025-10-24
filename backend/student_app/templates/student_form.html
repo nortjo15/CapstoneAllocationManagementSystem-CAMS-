@@ -128,11 +128,18 @@
             <div id="resume-section" class="mt-2 mb-3">
                 <label for="resume" class="form-label">Resume (PDF)</label>
                 <input id="resume" name="resume" type="file" accept=".pdf" class="form-control">
+                <div class="invalid-feedback"></div>
             </div>
 
             <div id="cv-section" class="mb-3">
                 <label for="cv" class="form-label">CV (PDF)</label>
                 <input id="cv" name="cv" type="file" accept=".pdf" class="form-control">
+                <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="card-body">
+                <label for="notes"> Additional Comments </label>
+                <textarea class="form-control" id="notes" name="notes" rows="4" placeholder="Please add any additional Notes here "></textarea>
             </div>
 
                     <div class="form-check mb-2">

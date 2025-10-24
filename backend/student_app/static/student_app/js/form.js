@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     });
 
     const cvInput = document.getElementById('cv');
-    resumeInput.addEventListener('change', () => {
+    cvInput.addEventListener('change', () => {
         validateFile(cvInput, 'cv'); 
     });
 

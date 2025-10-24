@@ -123,6 +123,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ---------- edit-project submit ----------
+  const editForm = document.getElementById('edit-project-modal-form');
+  if (editForm && apiUrl) {
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(editForm);
+      const data = Object.fromEntries(formData.entries());
+      const id = formData.get('id'); // Assuming you have a hidden input like <input type="hidden" name="id" id="edit-project-id">
+
+      if (!id) {
+        alert('Error: Project ID is missing. Cannot update.');
+        return;
+      }
+
+      const detailUrl = joinDetailUrl(apiUrl, id);
+
+      try {
+        const rsp = await fetch(detailUrl, {
+          method: 'PATCH', // Or 'PUT' if you're replacing the entire object
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken(),
+          },
+          credentials: 'same-origin',
+          cache: 'no-store',
+          body: JSON.stringify(data),
+        });
+
+        const bodyText = await rsp.clone().text();
+        console.log('Update:', rsp.status, bodyText);
+
+        if (!rsp.ok) {
+          alert(`Update failed (${rsp.status})\n${bodyText}`);
+          return;
+        }
+
+        // Refresh the list to show the updated data
+        await getProjectData();
+
+        // Hide the modal
+        const modalEl = document.getElementById('editProjectModal');
+        if (modalEl && window.bootstrap?.Modal) {
+          window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error during update');
+      }
+    });
+  }
+
   // ---------- edit prefill + delete delegate ----------
   document.addEventListener('click', async (ev) => {
     // prefill edit
